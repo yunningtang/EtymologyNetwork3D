@@ -20,7 +20,9 @@
 
 <br/>
 
-![词源星图截图](screenshot.png)
+![3D 星图视图](screenshot-3d.png)
+
+![分类筛选栏](screenshot-2d.png)
 
 </div>
 
