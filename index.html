@@ -874,7 +874,7 @@ function buildGraph() {
     const hex = getCatColor(m.id);
     // Word list: merge inline words + expanded MORPH_WORDS data
     const inlineWords = m.words.map(w => { const sp=w.lastIndexOf(' '); return {en:w.substring(0,sp),cn:w.substring(sp+1)}; });
-    const expandedWords = (MORPH_WORDS[m.id]||[]).map(w => ({en:w, cn:''}));
+    const expandedWords = (MORPH_WORDS[m.id]||[]).map(w => ({en:w, cn:WORD_CN[w.toLowerCase()]||''}));
     // Merge, dedup by lowercase word
     const seen = new Set();
     const allWords = [];
@@ -1486,7 +1486,8 @@ function showTooltip(node,x,y){
         ttWords.innerHTML=''; ttCount.textContent='';
         node.wordList.slice(0,limit).forEach(w=>{
           const t=document.createElement('span'); t.className='word-tag';
-          t.textContent=w.cn ? w.en+' '+w.cn : w.en;
+          const cn=w.cn||getWordCN(w.en);
+          t.textContent=cn ? w.en+' '+cn : w.en;
           t.onclick=(e)=>{
             e.stopPropagation();
             ttPushHistory({type:'morpheme', id:node.id, x:e.clientX, y:e.clientY});
