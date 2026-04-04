@@ -203,19 +203,38 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
   #instructions{display:none}
   #metrics{font-size:10px}
 }
+@media(max-width:480px){
+  #topbar{padding:10px 10px}
+  #brand{font-size:13px}
+  #search-wrap{width:calc(100% - 20px);left:10px}
+  .filter-btn{padding:5px 10px;font-size:10px}
+  #tooltip .label{font-size:15px}
+  .related-card .rc-word{font-size:12px}
+  .related-card .rc-cn{font-size:11px}
+}
 @media(max-width:640px){
-  #topbar{padding:14px 16px}
-  #brand{font-size:15px}
-  #brand span{display:none}
-  #search-wrap{width:240px;top:14px}
-  #search{font-size:12px;padding:8px 14px 8px 34px}
-  #filters{bottom:16px;gap:5px}
-  .filter-btn{padding:5px 12px;font-size:10px}
-  #sub-filters{bottom:54px;max-width:95vw}
-  #intro-overlay .tagline{font-size:20px}
-  #study-toggle{left:12px;bottom:16px;width:32px;height:32px;border-radius:10px}
-  #study-panel{width:280px;right:-300px}
-  #view-toggle{right:12px;top:56px}
+  #topbar{padding:12px 12px}
+  #brand{font-size:14px}
+  #metrics{display:none}
+  #search-wrap{width:calc(100% - 24px);top:12px;left:12px;transform:none}
+  #search{font-size:13px;padding:10px 14px 10px 36px;border-radius:20px}
+  #search::placeholder{font-size:11px}
+  #filters{bottom:14px;gap:4px;padding:0 8px;flex-wrap:wrap;justify-content:center;max-width:100vw}
+  .filter-btn{padding:6px 14px;font-size:11px}
+  #sub-filters{bottom:52px;max-width:95vw}
+  #intro-overlay .tagline{font-size:18px}
+  #study-toggle{left:10px;bottom:14px;width:32px;height:32px;border-radius:10px}
+  #study-panel{width:100%;right:-100%}
+  #study-panel.open{right:0}
+  #view-toggle{right:10px;top:52px}
+  #tooltip{max-width:calc(100vw - 16px);left:8px!important;right:8px!important}
+  #tooltip-inner{padding:14px 14px;border-radius:12px}
+  #tooltip .label{font-size:17px}
+  #tooltip .meaning{font-size:13px}
+  .related-cards{max-height:180px}
+  #tooltip .words-list{max-height:180px}
+  #hint{font-size:11px;bottom:56px}
+  #instructions{display:none}
 }
 </style>
 </head>
@@ -714,6 +733,48 @@ const IPA_MAP = {
 'government':'/ˈɡʌv.ərn.mənt/','development':'/dɪˈvel.əp.mənt/','management':'/ˈmæn.ɪdʒ.mənt/',
 'awareness':'/əˈwer.nəs/','business':'/ˈbɪz.nɪs/','happiness':'/ˈhæp.i.nəs/',
 };
+
+// Approximate IPA for words not in IPA_MAP — rule-based phonetic estimation
+function approxIPA(w){
+  w=w.toLowerCase().replace(/[^a-z]/g,'');
+  if(!w) return '';
+  // Common suffix pronunciation patterns
+  const rules=[
+    [/tion$/,'ʃən'],[/sion$/,'ʒən'],[/ious$/,'i.əs'],[/eous$/,'i.əs'],[/ous$/,'əs'],
+    [/ment$/,'mənt'],[/ness$/,'nəs'],[/able$/,'ə.bəl'],[/ible$/,'ɪ.bəl'],
+    [/ful$/,'fəl'],[/less$/,'ləs'],[/ly$/,'li'],[/ity$/,'ɪ.ti'],[/ive$/,'ɪv'],
+    [/ize$/,'aɪz'],[/ise$/,'aɪz'],[/ate$/,'eɪt'],[/ure$/,'ər'],[/ence$/,'əns'],
+    [/ance$/,'əns'],[/ant$/,'ənt'],[/ent$/,'ənt'],[/ing$/,'ɪŋ'],[/tion$/,'ʃən'],
+    [/al$/,'əl'],[/ic$/,'ɪk'],[/ical$/,'ɪ.kəl'],[/er$/,'ər'],[/or$/,'ər'],
+    [/ist$/,'ɪst'],[/dom$/,'dəm'],[/ship$/,'ʃɪp'],[/hood$/,'hʊd'],
+  ];
+  // Common prefix patterns
+  const prefRules=[
+    [/^un/,'ʌn.'],[/^re/,'rɪ.'],[/^pre/,'priː.'],[/^dis/,'dɪs.'],[/^mis/,'mɪs.'],
+    [/^over/,'oʊ.vər.'],[/^under/,'ʌn.dər.'],[/^inter/,'ɪn.tər.'],[/^trans/,'træns.'],
+    [/^sub/,'sʌb.'],[/^super/,'suː.pər.'],[/^anti/,'æn.ti.'],[/^auto/,'ɔː.toʊ.'],
+    [/^ex/,'ɛks.'],[/^in/,'ɪn.'],[/^im/,'ɪm.'],[/^de/,'dɪ.'],[/^com/,'kəm.'],
+    [/^con/,'kən.'],[/^pro/,'proʊ.'],[/^per/,'pər.'],
+  ];
+  let pref='', suf='', mid=w;
+  for(const [rx,ph] of prefRules){ if(rx.test(mid)&&mid.length>rx.source.replace(/[^a-z]/g,'').length+2){ pref=ph; mid=mid.replace(rx,''); break; } }
+  for(const [rx,ph] of rules){ if(rx.test(mid)&&mid.length>rx.source.replace(/[^a-z]/g,'').length+1){ suf=ph; mid=mid.replace(rx,''); break; } }
+  // Rough middle approximation
+  const vowelMap={a:'æ',e:'ɛ',i:'ɪ',o:'ɒ',u:'ʌ'};
+  let midIpa='';
+  for(let i=0;i<mid.length;i++){
+    const c=mid[i];
+    if(vowelMap[c]) midIpa+=vowelMap[c];
+    else midIpa+=c;
+  }
+  if(midIpa&&suf) midIpa+='.';
+  return '/'+pref+midIpa+suf+'/';
+}
+
+function getIPA(w){
+  const clean=w.toLowerCase().replace(/[^a-z]/g,'');
+  return IPA_MAP[clean]||approxIPA(clean);
+}
 
 // ============================================================
 //  EXPANDED WORD DATA (30k+ words → morpheme mappings)
@@ -1403,7 +1464,7 @@ function showTooltip(node,x,y){
   if(node.type==='w' || node.isVirtual){
     // Virtual word node from search
     const cleanWord=node.label.toLowerCase().replace(/[^a-z]/g,'');
-    const ipa=IPA_MAP[cleanWord];
+    const ipa=getIPA(cleanWord);
     // IPA + Speak
     ttIpa.style.display='flex';
     const ipaText=ipa||'';
@@ -1452,7 +1513,7 @@ function showTooltip(node,x,y){
             if(count>=limit) return;
             const card=document.createElement('div'); card.className='related-card';
             const cn=getWordCN(w);
-            const ipa=IPA_MAP[w.toLowerCase().replace(/[^a-z]/g,'')]||'';
+            const ipa=getIPA(w);
             const etym=buildEtymologyStr(w);
             // Top row: word + IPA + speak
             const top=document.createElement('div'); top.className='rc-top';
