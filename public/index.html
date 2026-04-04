@@ -1487,52 +1487,36 @@ function showTooltip(node,x,y){
         ttEtymology.appendChild(arrow); ttEtymology.appendChild(result);
       }
     }
-    // Related words (from same morphemes, using expanded data)
+    // Related words (from same morphemes) — lightweight tags
     if(node.morphemes&&node.morphemes.length>0){
-      const related=new Set();
+      const related=[];
+      const seen=new Set(); seen.add(node.label.toLowerCase());
       node.morphemes.forEach(m=>{
         const mWords = MORPH_WORDS[m.id] || [];
-        mWords.slice(0,30).forEach(w => { if(w !== node.label.toLowerCase()) related.add(w); });
+        mWords.forEach(w => { if(!seen.has(w)){ seen.add(w); related.push(w); } });
       });
-      if(related.size>0){
+      if(related.length>0){
         ttRelated.style.display='block';
         ttRelated.innerHTML='<div class="tt-related-title">相关词汇</div>';
-        const list=document.createElement('div'); list.className='related-cards';
-        let rc=0;
-        const showRelatedCards=(limit)=>{
+        const list=document.createElement('div'); list.className='words-list';
+        const renderRelated=(limit)=>{
           list.innerHTML='';
-          let count=0;
-          related.forEach(w=>{
-            if(count>=limit) return;
-            const card=document.createElement('div'); card.className='related-card';
-            const cn=getWordCN(w);
-            const ipa=getIPA(w);
-            const etym=buildEtymologyStr(w);
-            // Top row: word + IPA + speak
-            const top=document.createElement('div'); top.className='rc-top';
-            const wordEl=document.createElement('span'); wordEl.className='rc-word'; wordEl.textContent=w;
-            top.appendChild(wordEl);
-            if(ipa){ const ipaEl=document.createElement('span'); ipaEl.className='rc-ipa'; ipaEl.textContent=ipa; top.appendChild(ipaEl); }
-            const speakBtn=document.createElement('button'); speakBtn.className='rc-speak';
-            speakBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
-            speakBtn.onclick=(e)=>{ e.stopPropagation(); speakWord(w); };
-            top.appendChild(speakBtn);
-            card.appendChild(top);
-            // Chinese meaning
-            if(cn){ const cnEl=document.createElement('div'); cnEl.className='rc-cn'; cnEl.textContent=cn; card.appendChild(cnEl); }
-            // Etymology breakdown
-            if(etym){ const etymEl=document.createElement('div'); etymEl.className='rc-etym'; etymEl.textContent=etym; card.appendChild(etymEl); }
-            card.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(w, e.clientX, e.clientY); };
-            list.appendChild(card); count++;
+          related.slice(0,limit).forEach(w=>{
+            const cn=WORD_CN[w]||'';
+            const t=document.createElement('span'); t.className='word-tag';
+            t.textContent=cn?w+' '+cn:w;
+            t.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(w, e.clientX, e.clientY); };
+            list.appendChild(t);
           });
-          if(related.size>limit){
-            const more=document.createElement('div'); more.className='related-card'; more.style.cssText='text-align:center;color:var(--cyan);font-size:11px;cursor:pointer';
-            more.textContent='展开全部 '+related.size+' 个相关词';
-            more.onclick=(e)=>{ e.stopPropagation(); showRelatedCards(related.size); };
+          if(related.length>limit){
+            const more=document.createElement('span'); more.className='word-tag';
+            more.style.cssText='color:var(--cyan);border-color:rgba(0,229,255,0.2);cursor:pointer';
+            more.textContent='展开全部 '+related.length+' 个';
+            more.onclick=(e)=>{ e.stopPropagation(); renderRelated(related.length); };
             list.appendChild(more);
           }
         };
-        showRelatedCards(8);
+        renderRelated(15);
         ttRelated.appendChild(list);
       }
     }
@@ -1562,7 +1546,7 @@ function showTooltip(node,x,y){
         ttWords.innerHTML=''; ttCount.textContent='';
         node.wordList.slice(0,limit).forEach(w=>{
           const t=document.createElement('span'); t.className='word-tag';
-          const cn=w.cn||getWordCN(w.en);
+          const cn=w.cn||WORD_CN[w.en.toLowerCase()]||'';
           t.textContent=cn ? w.en+' '+cn : w.en;
           t.onclick=(e)=>{
             e.stopPropagation();
@@ -1600,15 +1584,14 @@ function positionTooltip(x,y){
 function hideTooltip(){ tooltip.classList.remove('visible'); tooltip.classList.remove('pinned'); }
 function scheduleHide(){ tooltipHideTimer=setTimeout(()=>{ if(!pinnedNode){hoveredNode=null;hideTooltip();applyHighlight();} },200); }
 
-// Tooltip dragging (desktop only)
+// Tooltip dragging
 (function(){
   let dragging=false, dx=0, dy=0;
   const header=document.querySelector('.tt-header');
-  header.style.cursor='grab';
   header.addEventListener('mousedown',e=>{
-    if(e.target.closest('button')) return; // don't drag when clicking buttons
+    if(e.target.closest('button')) return;
     if(!tooltip.classList.contains('pinned')) return;
-    dragging=true; header.style.cursor='grabbing';
+    dragging=true; ttDragged=true;
     dx=e.clientX-tooltip.offsetLeft; dy=e.clientY-tooltip.offsetTop;
     e.preventDefault();
   });
@@ -1616,7 +1599,7 @@ function scheduleHide(){ tooltipHideTimer=setTimeout(()=>{ if(!pinnedNode){hover
     if(!dragging) return;
     tooltip.style.left=(e.clientX-dx)+'px'; tooltip.style.top=(e.clientY-dy)+'px';
   });
-  window.addEventListener('mouseup',()=>{ if(dragging){ dragging=false; header.style.cursor='grab'; } });
+  window.addEventListener('mouseup',()=>{ dragging=false; });
 })();
 
 // ============================================================
@@ -1657,7 +1640,7 @@ function pinNode(node){
 }
 
 function unpinNode(){
-  pinnedNode=null; pinnedWordNode=null; tooltip.classList.remove('pinned'); hideTooltip(); applyHighlight(); ttClearHistory();
+  pinnedNode=null; pinnedWordNode=null; ttDragged=false; tooltip.classList.remove('pinned'); hideTooltip(); applyHighlight(); ttClearHistory();
 }
 
 document.getElementById('tt-close').onclick=()=>unpinNode();
@@ -1893,6 +1876,7 @@ function markInteraction(){ lastInteraction=Date.now(); autoRotate=false; }
 
 window.addEventListener('mousemove',e=>{
   mouse.x=e.clientX; mouse.y=e.clientY;
+  if(currentView!=='3d') return;
   if(isDragging){
     camT.theta+=(e.clientX-prevMouse.x)*0.005;
     camT.phi-=(e.clientY-prevMouse.y)*0.005;
@@ -1918,27 +1902,24 @@ window.addEventListener('mousemove',e=>{
 });
 
 window.addEventListener('mousedown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')) return;
+  if(currentView!=='3d') return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')||e.target.closest('#study-panel')||e.target.closest('#search-dropdown')) return;
   isDragging=true; prevMouse.x=e.clientX; prevMouse.y=e.clientY;
 });
 
 window.addEventListener('mouseup',e=>{
   if(!isDragging) return;
-  const dx=e.clientX-prevMouse.x,dy=e.clientY-prevMouse.y;
   isDragging=false;
-  // Detect click (no/minimal drag)
-  if(Math.abs(e.clientX-prevMouse.x)<3&&Math.abs(e.clientY-prevMouse.y)<3){
-    // Suppress - mousedown already set prevMouse, but we need original start
-  }
 });
 
 // Click handler (separate from drag)
 let mouseDownPos={x:0,y:0};
 window.addEventListener('mousedown',e=>{mouseDownPos.x=e.clientX;mouseDownPos.y=e.clientY;},{capture:true});
 window.addEventListener('click',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')) return;
+  if(currentView!=='3d') return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')||e.target.closest('#study-panel')||e.target.closest('#search-dropdown')) return;
   const dx=e.clientX-mouseDownPos.x,dy=e.clientY-mouseDownPos.y;
-  if(Math.sqrt(dx*dx+dy*dy)>5) return; // Was a drag, not a click
+  if(Math.sqrt(dx*dx+dy*dy)>5) return;
   mouse.x=e.clientX; mouse.y=e.clientY;
   const found=findHoveredNode();
   if(found){ pinNode(found); }
@@ -1948,6 +1929,7 @@ window.addEventListener('click',e=>{
 window.addEventListener('wheel',e=>{
   // Let tooltip, study panel, and search dropdown scroll naturally
   const t=e.target;
+  if(currentView!=='3d') return;
   if(t.closest('#tooltip')||t.closest('#study-panel')||t.closest('#search-dropdown')) return;
   camT.dist+=e.deltaY*0.15;
   camT.dist=Math.max(50,Math.min(400,camT.dist));
@@ -2070,9 +2052,12 @@ function updateIntro(){
 // ============================================================
 //  MAIN LOOP
 // ============================================================
+let ttDragged=false; // set by drag handler to prevent auto-reposition
+let _animLF=0;
 function animate(){
   requestAnimationFrame(animate);
   if(document.hidden) return;
+  if(currentView!=='3d') return; // skip 3D rendering in 2D mode
 
   // Idle auto-rotate resume
   if(appState==='active'&&!autoRotate&&!pinnedNode&&Date.now()-lastInteraction>IDLE_TIMEOUT){
@@ -2083,16 +2068,15 @@ function animate(){
   updateCamera();
   updateIntro();
 
-  // Pinned tooltip follows node
-  if(pinnedNode){
+  // Pinned tooltip follows node (only if not manually dragged)
+  if(pinnedNode && !ttDragged && !pinnedNode.isVirtual){
     projVec.set(pinnedNode.x,pinnedNode.y,pinnedNode.z); projVec.project(camera);
     const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
     positionTooltip(sx,sy);
   }
 
   renderer.render(scene,camera);
-  if(!this._lf) this._lf=0;
-  if(++this._lf%2===0||highlightSet) renderLabels();
+  if(++_animLF%2===0||highlightSet) renderLabels();
 }
 
 // ============================================================
