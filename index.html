@@ -938,31 +938,53 @@ function buildWordReverse(){
   });
 }
 
-// Build a meaning from morpheme parts when no Chinese available
+// Build a meaning from morpheme parts — always returns something if morphemes exist
 function buildMorphMeaning(morphIds){
-  const parts=[];
+  const cnParts=[], enParts=[];
   morphIds.forEach(mid=>{
     const n=nodeMap[mid]; if(!n) return;
     const m=n.meaning||'';
     const cnMatch=m.match(/[\u4e00-\u9fff\u2026].+/);
-    if(cnMatch) parts.push(cnMatch[0]);
+    if(cnMatch) cnParts.push(cnMatch[0]);
+    // Also collect English meaning as fallback
+    const enMatch=m.match(/^[a-zA-Z\s,/()-]+/);
+    if(enMatch) enParts.push(enMatch[0].trim());
   });
-  return parts.length>0?parts.join('+'):'';
+  if(cnParts.length>0) return cnParts.join('+');
+  if(enParts.length>0) return enParts.join('+');
+  return '';
 }
 
-// Get Chinese meaning for any word (3-layer fallback)
+// Get Chinese meaning for any word (4-layer fallback)
 function getWordCN(w){
   w=w.toLowerCase();
+  // Layer 1: direct WORD_CN lookup (~1300 words)
   let cn=WORD_CN[w]||'';
-  if(!cn){
-    const morphIds=getWordMorphIds(w);
-    for(const mid of morphIds){
-      const wl=nodeMap[mid]&&nodeMap[mid].wordList;
-      if(wl){ const f=wl.find(ww=>ww.en.toLowerCase()===w); if(f&&f.cn){ cn=f.cn; break; } }
-    }
-    if(!cn) cn=buildMorphMeaning(morphIds);
+  if(cn) return cn;
+  // Layer 2: search all morpheme wordLists for this word's cn
+  const morphIds=getWordMorphIds(w);
+  for(const mid of morphIds){
+    const wl=nodeMap[mid]&&nodeMap[mid].wordList;
+    if(wl){ const f=wl.find(ww=>ww.en.toLowerCase()===w); if(f&&f.cn){ return f.cn; } }
   }
-  return cn;
+  // Layer 3: construct from morpheme Chinese meanings
+  cn=buildMorphMeaning(morphIds);
+  if(cn) return cn;
+  // Layer 4: construct from ALL morpheme IDs (including unmapped ones)
+  const rawIds=WORD_DATA.get(w)||[];
+  if(rawIds.length>0){
+    const labels=rawIds.map(mid=>{
+      const n=nodeMap[mid];
+      if(n){
+        const m=n.meaning||'';
+        const cnM=m.match(/[\u4e00-\u9fff\u2026].+/);
+        return cnM?cnM[0]:(m||mid);
+      }
+      return mid;
+    });
+    return labels.join('+');
+  }
+  return '';
 }
 
 // Get morpheme IDs for any word
