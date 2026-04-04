@@ -152,9 +152,11 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 .sp-empty{padding:32px 18px;color:var(--muted);font-size:13px;text-align:center;line-height:1.8}
 
 /* Favorite button in tooltip */
-#tt-fav{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:var(--muted);cursor:pointer;padding:4px;transition:all 0.2s;display:none;border-radius:8px;width:28px;height:28px;align-items:center;justify-content:center}
-#tt-fav:hover{color:var(--pink);background:rgba(255,128,171,0.1);border-color:rgba(255,128,171,0.2)}
-#tt-fav.active{color:var(--pink);background:rgba(255,128,171,0.15);border-color:rgba(255,128,171,0.3)}
+.tt-label-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.tt-label-row .label{margin-bottom:0}
+#tt-fav{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px;transition:all 0.2s;display:none;flex-shrink:0}
+#tt-fav:hover{color:var(--pink);transform:scale(1.15)}
+#tt-fav.active{color:var(--pink)}
 #tt-fav.active svg{fill:var(--pink);stroke:var(--pink)}
 
 /* Search Dropdown */
@@ -294,15 +296,17 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
         <button id="tt-back" title="Back 返回" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button id="tt-fav" title="Favorite 收藏">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </button>
         <button id="tt-close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
     </div>
-    <div class="label" id="tt-label"></div>
+    <div class="tt-label-row">
+      <div class="label" id="tt-label"></div>
+      <button id="tt-fav" title="收藏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
     <div class="tt-ipa" id="tt-ipa" style="display:none"></div>
     <div class="origin" id="tt-origin"></div>
     <div class="meaning" id="tt-meaning"></div>
@@ -1363,7 +1367,7 @@ function showTooltip(node,x,y){
   // Favorite button — works for both words and morphemes
   const ttFav=document.getElementById('tt-fav');
   const favKey = (node.type==='w'||node.isVirtual) ? node.label : node.label;
-  ttFav.style.display='flex';
+  ttFav.style.display='inline-block';
   ttFav.classList.toggle('active', isFavorite(favKey));
   ttFav.onclick=(e)=>{
     e.stopPropagation();
