@@ -16,6 +16,12 @@
 
 <br/>
 
+### [>>> Try it now — Live Demo <<<](https://yunningtang.github.io/EtymologyNetwork3D/)
+
+<br/>
+
+![3D Globe View](screenshot.png)
+
 </div>
 
 ---
