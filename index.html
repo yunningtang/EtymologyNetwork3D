@@ -101,6 +101,17 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 #tooltip .word-tag:hover{background:rgba(255,255,255,0.12)}
 #tooltip .morpheme-tag{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;border:1px solid;cursor:pointer;transition:filter 0.2s}
 #tooltip .morpheme-tag:hover{filter:brightness(1.4)}
+.related-card{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:background 0.2s}
+.related-card:hover{background:rgba(255,255,255,0.08)}
+.related-card .rc-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.related-card .rc-word{font-size:13px;font-weight:500;color:var(--text);font-family:var(--font-mono)}
+.related-card .rc-ipa{font-size:11px;color:var(--muted)}
+.related-card .rc-speak{background:none;border:none;color:var(--muted);cursor:pointer;padding:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;transition:color 0.2s;flex-shrink:0}
+.related-card .rc-speak:hover{color:var(--cyan)}
+.related-card .rc-speak svg{width:12px;height:12px}
+.related-card .rc-cn{font-size:12px;color:rgba(255,255,255,0.6);font-family:var(--font-cn)}
+.related-card .rc-etym{font-size:10px;color:var(--muted);margin-top:2px}
+.related-cards{display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
 
 /* Sub-category filter chips */
 #sub-filters{position:fixed;bottom:66px;left:50%;transform:translateX(-50%) translateY(8px);z-index:20;display:flex;gap:5px;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.3s;flex-wrap:wrap;justify-content:center;max-width:90vw}
@@ -919,12 +930,46 @@ function buildMorphMeaning(morphIds){
   const parts=[];
   morphIds.forEach(mid=>{
     const n=nodeMap[mid]; if(!n) return;
-    // Extract Chinese part from meaning like "before 在…之前" → "在…之前"
     const m=n.meaning||'';
     const cnMatch=m.match(/[\u4e00-\u9fff\u2026].+/);
     if(cnMatch) parts.push(cnMatch[0]);
   });
   return parts.length>0?parts.join('+'):'';
+}
+
+// Get Chinese meaning for any word (3-layer fallback)
+function getWordCN(w){
+  w=w.toLowerCase();
+  let cn=WORD_CN[w]||'';
+  if(!cn){
+    const morphIds=getWordMorphIds(w);
+    for(const mid of morphIds){
+      const wl=nodeMap[mid]&&nodeMap[mid].wordList;
+      if(wl){ const f=wl.find(ww=>ww.en.toLowerCase()===w); if(f&&f.cn){ cn=f.cn; break; } }
+    }
+    if(!cn) cn=buildMorphMeaning(morphIds);
+  }
+  return cn;
+}
+
+// Get morpheme IDs for any word
+function getWordMorphIds(w){
+  w=w.toLowerCase();
+  let ids=WORD_DATA.get(w)||[];
+  let valid=ids.filter(m=>nodeMap[m]);
+  if(valid.length===0 && WORD_MORPH_REVERSE[w]) valid=[...WORD_MORPH_REVERSE[w]];
+  return valid;
+}
+
+// Build etymology string like "pre-(before) + dict(say)"
+function buildEtymologyStr(w){
+  const morphIds=getWordMorphIds(w.toLowerCase());
+  if(morphIds.length===0) return '';
+  return morphIds.map(mid=>{
+    const n=nodeMap[mid]; if(!n) return '';
+    const meaning=n.meaning||'';
+    return n.label+'('+meaning+')';
+  }).filter(Boolean).join(' + ');
 }
 
 // ============================================================
@@ -1365,21 +1410,44 @@ function showTooltip(node,x,y){
       });
       if(related.size>0){
         ttRelated.style.display='block';
-        ttRelated.innerHTML='<div class="tt-related-title">Related Words</div>';
-        const list=document.createElement('div'); list.className='words-list';
+        ttRelated.innerHTML='<div class="tt-related-title">Related Words 相关词汇</div>';
+        const list=document.createElement('div'); list.className='related-cards';
         let rc=0;
-        related.forEach(w=>{
-          if(rc>=10) return;
-          const t=document.createElement('span'); t.className='word-tag';
-          t.textContent=w;
-          t.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(w, e.clientX, e.clientY); };
-          list.appendChild(t); rc++;
-        });
+        const showRelatedCards=(limit)=>{
+          list.innerHTML='';
+          let count=0;
+          related.forEach(w=>{
+            if(count>=limit) return;
+            const card=document.createElement('div'); card.className='related-card';
+            const cn=getWordCN(w);
+            const ipa=IPA_MAP[w.toLowerCase().replace(/[^a-z]/g,'')]||'';
+            const etym=buildEtymologyStr(w);
+            // Top row: word + IPA + speak
+            const top=document.createElement('div'); top.className='rc-top';
+            const wordEl=document.createElement('span'); wordEl.className='rc-word'; wordEl.textContent=w;
+            top.appendChild(wordEl);
+            if(ipa){ const ipaEl=document.createElement('span'); ipaEl.className='rc-ipa'; ipaEl.textContent=ipa; top.appendChild(ipaEl); }
+            const speakBtn=document.createElement('button'); speakBtn.className='rc-speak';
+            speakBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+            speakBtn.onclick=(e)=>{ e.stopPropagation(); speakWord(w); };
+            top.appendChild(speakBtn);
+            card.appendChild(top);
+            // Chinese meaning
+            if(cn){ const cnEl=document.createElement('div'); cnEl.className='rc-cn'; cnEl.textContent=cn; card.appendChild(cnEl); }
+            // Etymology breakdown
+            if(etym){ const etymEl=document.createElement('div'); etymEl.className='rc-etym'; etymEl.textContent=etym; card.appendChild(etymEl); }
+            card.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(w, e.clientX, e.clientY); };
+            list.appendChild(card); count++;
+          });
+          if(related.size>limit){
+            const more=document.createElement('div'); more.className='related-card'; more.style.cssText='text-align:center;color:var(--cyan);font-size:11px;cursor:pointer';
+            more.textContent='Show all '+related.size+' related words 展开全部';
+            more.onclick=(e)=>{ e.stopPropagation(); showRelatedCards(related.size); };
+            list.appendChild(more);
+          }
+        };
+        showRelatedCards(8);
         ttRelated.appendChild(list);
-        if(related.size>10){
-          const more=document.createElement('div'); more.style.cssText='font-size:10px;color:var(--muted);margin-top:4px';
-          more.textContent='+'+(related.size-10)+' more'; ttRelated.appendChild(more);
-        }
       }
     }
     // Morpheme tags
