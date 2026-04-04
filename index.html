@@ -1407,7 +1407,7 @@ function showWordDetail(word, x, y, _fromBack){
   if(!cn) cn=buildMorphMeaning(validMorphs);
   const vNode = {
     id:'w_'+w, type:'w', label:word, meaning:cn,
-    morphemes: validMorphs.map(m=>({id:m, type:nodeMap[m].type, label:nodeMap[m].label})),
+    morphemes: validMorphs.filter(m=>nodeMap[m]).map(m=>({id:m, type:nodeMap[m].type, label:nodeMap[m].label})),
     colorHex: color, isVirtual: true
   };
   if(primaryId && nodeMap[primaryId]){
@@ -2267,8 +2267,8 @@ function expandNode(nodeId){
 
     mmExpanded.add(nodeId);
     const morphNode = nodeMap[nodeId];
-    // Show up to 8 words only
-    const words = morphNode && morphNode.wordList ? morphNode.wordList.slice(0, 8) : [];
+    // Show up to 12 words
+    const words = morphNode && morphNode.wordList ? morphNode.wordList.slice(0, 12) : [];
     const count = words.length;
     if(!count) return;
 
@@ -2461,17 +2461,21 @@ mindmapCanvas.addEventListener('mouseup', e => {
   const dx = e.clientX - mmDragStart.x, dy = e.clientY - mmDragStart.y;
   mmDragging = false;
   mindmapCanvas.style.cursor = 'grab';
-  if(Math.abs(dx)<4 && Math.abs(dy)<4){
+  if(Math.abs(dx)<8 && Math.abs(dy)<8){
     // Click
     const found = mmHitTest(e.clientX, e.clientY);
     if(found){
       if(found.isWord){
-        // Show word detail with etymology breakdown
         showWordDetail(found.label, e.clientX, e.clientY);
-      } else {
-        // Toggle expand/collapse
+      } else if(found.isGroup || found.isCenter){
         if(mmExpanded.has(found.id)) collapseNode(found.id);
         else expandNode(found.id);
+      } else {
+        // Morpheme node: show tooltip AND expand
+        if(!mmExpanded.has(found.id)) expandNode(found.id);
+        if(found.data && nodeMap[found.data.id]){
+          pinNode(nodeMap[found.data.id]);
+        }
       }
     } else {
       if(pinnedNode){ unpinNode(); }
@@ -2510,10 +2514,17 @@ mindmapCanvas.addEventListener('touchmove', e => {
 mindmapCanvas.addEventListener('touchend', e => {
   if(!mmTouchStart.isDrag && Date.now()-mmTouchStart.time<300){
     const found = mmHitTest(mmTouchStart.x, mmTouchStart.y);
-    if(found && !found.isWord){
-      if(mmExpanded.has(found.id)) collapseNode(found.id); else expandNode(found.id);
-    } else if(found && found.isWord){
-      showWordDetail(found.label, mmTouchStart.x, mmTouchStart.y);
+    if(found){
+      if(found.isWord){
+        showWordDetail(found.label, mmTouchStart.x, mmTouchStart.y);
+      } else if(found.isGroup || found.isCenter){
+        if(mmExpanded.has(found.id)) collapseNode(found.id); else expandNode(found.id);
+      } else {
+        if(!mmExpanded.has(found.id)) expandNode(found.id);
+        if(found.data && nodeMap[found.data.id]) pinNode(nodeMap[found.data.id]);
+      }
+    } else {
+      if(pinnedNode) unpinNode();
     }
   }
 });
