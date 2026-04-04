@@ -79,7 +79,7 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 #instructions kbd{display:inline-block;padding:1px 5px;border:1px solid rgba(255,255,255,0.1);border-radius:3px;font-size:9px;margin:0 1px;background:rgba(255,255,255,0.03)}
 
 /* Tooltip */
-#tooltip{position:fixed;z-index:30;pointer-events:none;opacity:0;transition:opacity 0.12s ease;max-width:380px}
+#tooltip{position:fixed;z-index:30;pointer-events:none;opacity:0;transition:opacity 0.12s ease;max-width:380px;max-height:85vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
 #tooltip.visible{opacity:1}
 #tooltip.pinned{pointer-events:auto}
 #tooltip-inner{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(10,14,22,0.95);border:1px solid var(--glass-border);border-radius:var(--radius);padding:16px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
@@ -95,7 +95,7 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 #tooltip .label{font-size:20px;font-weight:600;margin-bottom:4px;font-family:var(--font-mono)}
 #tooltip .origin{font-size:12px;color:var(--muted);margin-bottom:4px}
 #tooltip .meaning{font-size:14px;color:var(--text);margin-bottom:10px;font-family:var(--font-cn)}
-#tooltip .words-list{display:flex;flex-wrap:wrap;gap:5px;max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
+#tooltip .words-list{display:flex;flex-wrap:wrap;gap:5px;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
 #tooltip .word-count{font-size:10px;color:var(--muted);margin-top:6px}
 #tooltip .word-tag{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;background:rgba(255,255,255,0.05);color:var(--text);border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:filter 0.2s,background 0.2s}
 #tooltip .word-tag:hover{background:rgba(255,255,255,0.12)}
@@ -1846,6 +1846,9 @@ window.addEventListener('click',e=>{
 });
 
 window.addEventListener('wheel',e=>{
+  // Let tooltip, study panel, and search dropdown scroll naturally
+  const t=e.target;
+  if(t.closest('#tooltip')||t.closest('#study-panel')||t.closest('#search-dropdown')) return;
   camT.dist+=e.deltaY*0.15;
   camT.dist=Math.max(50,Math.min(400,camT.dist));
   markInteraction(); e.preventDefault();
