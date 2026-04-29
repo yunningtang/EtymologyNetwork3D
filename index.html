@@ -1874,6 +1874,29 @@ let isDragging=false, prevMouse={x:0,y:0};
 
 function markInteraction(){ lastInteraction=Date.now(); autoRotate=false; }
 
+// Hover work is gated to one rAF: mousemove (100+ Hz) just records coords;
+// the actual O(N) projection + GPU buffer rewrite runs at most once per frame.
+let _hoverPending=false;
+function scheduleHoverCheck(){
+  if(_hoverPending) return;
+  _hoverPending=true;
+  requestAnimationFrame(()=>{
+    _hoverPending=false;
+    if(currentView!=='3d') return;
+    if(isDragging||pinnedNode) return;
+    const found=findHoveredNode();
+    if(found!==hoveredNode){
+      clearTimeout(tooltipHideTimer);
+      if(found){
+        hoveredNode=found; applyHighlight(); showTooltip(found,mouse.x,mouse.y);
+        document.body.style.cursor='pointer';
+      } else {
+        scheduleHide(); document.body.style.cursor='default';
+      }
+    } else if(hoveredNode){ positionTooltip(mouse.x,mouse.y); }
+  });
+}
+
 window.addEventListener('mousemove',e=>{
   mouse.x=e.clientX; mouse.y=e.clientY;
   if(currentView!=='3d') return;
@@ -1889,16 +1912,7 @@ window.addEventListener('mousemove',e=>{
     const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
     positionTooltip(sx,sy); return;
   }
-  const found=findHoveredNode();
-  if(found!==hoveredNode){
-    clearTimeout(tooltipHideTimer);
-    if(found){
-      hoveredNode=found; applyHighlight(); showTooltip(found,mouse.x,mouse.y);
-      document.body.style.cursor='pointer';
-    } else {
-      scheduleHide(); document.body.style.cursor='default';
-    }
-  } else if(hoveredNode){ positionTooltip(mouse.x,mouse.y); }
+  scheduleHoverCheck();
 });
 
 window.addEventListener('mousedown',e=>{
