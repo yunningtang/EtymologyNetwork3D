@@ -2,12 +2,9 @@
   "name": "etymology-network-3d",
   "version": "3.0.0",
   "description": "Etymology Network 词源星图 — 30k+ words, 200+ morphemes, 3D/2D visualization",
-  "main": "main.js",
   "scripts": {
-    "start": "unset ELECTRON_RUN_AS_NODE && electron .",
-    "dev": "unset ELECTRON_RUN_AS_NODE && electron . --dev"
+    "build": "node scripts/build-html.js",
+    "preview": "python -m http.server 8000"
   },
-  "devDependencies": {
-    "electron": "^28.3.3"
-  }
+  "license": "MIT"
 }

@@ -43,15 +43,14 @@
 
 ## 快速开始
 
-**方式一 — 浏览器直接打开**
-> 打开 [`index.html`](index.html) 即可使用，无需服务器。
+**在线版**：[yunningtang.github.io/EtymologyNetwork3D](https://yunningtang.github.io/EtymologyNetwork3D/)
 
-**方式二 — Electron 桌面应用**
+**本地预览**：直接双击 [`index.html`](index.html) 用浏览器打开即可。需要本地静态服务器的话：
+
 ```bash
 git clone https://github.com/yunningtang/EtymologyNetwork3D.git
 cd EtymologyNetwork3D
-npm install
-npm start
+python -m http.server 8000   # 然后访问 http://localhost:8000
 ```
 
 ## 产品逻辑
@@ -74,7 +73,6 @@ npm start
 |------|---------|
 | 3D 渲染 | **Three.js** r128 — 自定义 GLSL Shader、Point Sprites、Additive Blending |
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
-| 桌面端 | **Electron** v28 |
 | 架构 | Single-file HTML — 所有 CSS/JS 内嵌，零依赖部署 |
 | 数据 | 200+ 词素，30,000+ 单词及词源映射 |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
@@ -85,13 +83,10 @@ npm start
 EtymologyNetwork3D/
 ├── public/
 │   └── index.html          # 主应用（单文件应用）
-├── index.html               # GitHub Pages 入口
-├── main.js                  # Electron 主进程
+├── index.html               # GitHub Pages 入口（构建产物）
 ├── package.json
-├── data/
-│   └── etymology.db         # 词源数据库
 └── scripts/
-    ├── build-html.js         # HTML 构建脚本
+    ├── build-html.js         # HTML 构建脚本（注入词汇数据）
     ├── build-vocabulary.js   # 词汇处理脚本
     ├── embed-words.js        # 单词数据嵌入
     └── scrape-words.js       # 单词爬取脚本
