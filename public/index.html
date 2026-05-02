@@ -1404,29 +1404,35 @@ function speakWord(word){
   speechSynthesis.speak(u);
 }
 
-// Helper: show word detail directly (builds virtual word node on-the-fly)
+// Helper: show word detail directly (builds virtual word node on-the-fly).
+// Distinguishes verified Chinese (WORD_CN / hand-curated wordList) from
+// constructed Chinese (morpheme meanings concatenated). Showing the latter
+// as the primary translation was misleading — e.g. "filament" was rendering
+// as "心智+结果/手段(名词)" because no curated translation exists.
 function showWordDetail(word, x, y, _fromBack){
   const w = word.toLowerCase();
-  // Get morpheme IDs from WORD_DATA, then fallback to reverse index
   let morphIds = WORD_DATA.get(w) || [];
   let validMorphs = morphIds.filter(m=>nodeMap[m]);
-  // Fallback: use reverse index built from wordLists
   if(validMorphs.length===0 && WORD_MORPH_REVERSE[w]){
     validMorphs = [...WORD_MORPH_REVERSE[w]];
   }
   const primaryId = validMorphs.find(id=>nodeMap[id]&&nodeMap[id].type==='r') || validMorphs[0];
   const color = primaryId && nodeMap[primaryId] ? nodeMap[primaryId].colorHex : '#FFD740';
-  // Look up Chinese meaning: WORD_CN → wordList → construct from morphemes
-  let cn=WORD_CN[w]||'';
-  if(!cn){
+
+  // Verified: WORD_CN direct, then any wordList human entry. Never constructed.
+  let verifiedCn = WORD_CN[w] || '';
+  if(!verifiedCn){
     for(const mid of validMorphs){
-      const wl=nodeMap[mid]&&nodeMap[mid].wordList;
-      if(wl){ const found=wl.find(ww=>ww.en.toLowerCase()===w); if(found&&found.cn){ cn=found.cn; break; } }
+      const wl = nodeMap[mid] && nodeMap[mid].wordList;
+      if(wl){ const f = wl.find(ww=>ww.en.toLowerCase()===w); if(f && f.cn && /[一-鿿]/.test(f.cn)){ verifiedCn = f.cn; break; } }
     }
   }
-  if(!cn) cn=buildMorphMeaning(validMorphs);
+  const constructedCn = buildMorphMeaning(validMorphs);
+
   const vNode = {
-    id:'w_'+w, type:'w', label:word, meaning:cn,
+    id:'w_'+w, type:'w', label:word,
+    meaning: verifiedCn,                    // empty if no curated translation
+    constructedMeaning: constructedCn,      // morpheme parts joined; always available if morphemes resolve
     morphemes: validMorphs.filter(m=>nodeMap[m]).map(m=>({id:m, type:nodeMap[m].type, label:nodeMap[m].label})),
     colorHex: color, isVirtual: true
   };
@@ -1446,12 +1452,28 @@ function showTooltip(node,x,y){
   ttBadge.style.background=(node.colorHex||'#999')+'26'; ttBadge.style.color=node.colorHex||'#999';
   ttLabel.textContent=node.label; ttOrigin.textContent=node.origin||'';
   ttOrigin.style.display=node.origin?'block':'none';
+
+  // Primary meaning area: only show curated/verified translations.
+  // For words without one, show a muted placeholder; the etymology row
+  // below carries the morpheme breakdown labeled honestly.
+  const isWordView = node.type==='w' || node.isVirtual;
   let displayMeaning = node.meaning || '';
-  if(!displayMeaning && (node.type==='w'||node.isVirtual)){
+  if(!displayMeaning && isWordView){
     displayMeaning = WORD_CN[node.label.toLowerCase()] || '';
-    if(!displayMeaning && node.morphemes) displayMeaning = buildMorphMeaning(node.morphemes.map(m=>m.id||m));
   }
-  ttMeaning.textContent=displayMeaning;
+  if(displayMeaning){
+    ttMeaning.textContent = displayMeaning;
+    ttMeaning.style.color = '';
+    ttMeaning.style.fontStyle = '';
+    ttMeaning.style.opacity = '';
+  } else if(isWordView){
+    ttMeaning.textContent = '暂无中文释义';
+    ttMeaning.style.color = 'var(--muted)';
+    ttMeaning.style.fontStyle = 'italic';
+    ttMeaning.style.opacity = '0.7';
+  } else {
+    ttMeaning.textContent = '';
+  }
   ttWords.innerHTML=''; ttCount.textContent='';
   const ttIpa=document.getElementById('tt-ipa');
   const ttEtymology=document.getElementById('tt-etymology');
@@ -1485,7 +1507,10 @@ function showTooltip(node,x,y){
       '<button class="tt-speak" title="Pronounce"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
     ttIpa.querySelector('.tt-speak').onclick=(e)=>{ e.stopPropagation(); speakWord(node.label); };
     if(!ipaText) ttIpa.querySelector('span')?.remove();
-    // Etymology breakdown
+    // Etymology breakdown — always show morpheme parts. The "→" arrow is
+    // reserved for verified translations (real meaning); when only a
+    // constructed approximation is available we use "≈" so the user can
+    // tell apart "this IS the meaning" from "this is morpheme math".
     if(node.morphemes&&node.morphemes.length>0){
       ttEtymology.style.display='flex';
       node.morphemes.forEach((m,i)=>{
@@ -1499,11 +1524,20 @@ function showTooltip(node,x,y){
         part.onclick=(e)=>{ e.stopPropagation(); if(nodeMap[m.id]){ ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); pinNode(nodeMap[m.id]); } };
         ttEtymology.appendChild(part);
       });
-      const etymMeaning = node.meaning || WORD_CN[node.label.toLowerCase()] || '';
-      if(etymMeaning){
+      const verified = node.meaning || WORD_CN[node.label.toLowerCase()] || '';
+      const constructed = node.constructedMeaning || buildMorphMeaning(node.morphemes.map(m=>m.id||m));
+      if(verified){
         const arrow=document.createElement('span'); arrow.className='tt-morph-arrow'; arrow.textContent='→';
         const result=document.createElement('span'); result.style.fontSize='11px'; result.style.color='var(--text)';
-        result.textContent=etymMeaning;
+        result.textContent=verified;
+        ttEtymology.appendChild(arrow); ttEtymology.appendChild(result);
+      } else if(constructed){
+        const arrow=document.createElement('span'); arrow.className='tt-morph-arrow'; arrow.textContent='≈';
+        arrow.title='词素拼接·非权威释义';
+        const result=document.createElement('span');
+        result.style.cssText='font-size:11px;color:var(--muted);font-style:italic';
+        result.textContent=constructed;
+        result.title='词素拼接·非权威释义';
         ttEtymology.appendChild(arrow); ttEtymology.appendChild(result);
       }
     }
