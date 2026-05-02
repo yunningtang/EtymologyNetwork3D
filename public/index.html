@@ -1509,11 +1509,34 @@ function showTooltip(node,x,y){
     }
     // Related words (from same morphemes) — lightweight tags
     if(node.morphemes&&node.morphemes.length>0){
-      const related=[];
       const seen=new Set(); seen.add(node.label.toLowerCase());
+      // Build {word, cn, hasCn} so we can sort verified-translation entries first
+      const related=[];
       node.morphemes.forEach(m=>{
         const mWords = MORPH_WORDS[m.id] || [];
-        mWords.forEach(w => { if(!seen.has(w)){ seen.add(w); related.push(w); } });
+        mWords.forEach(w => {
+          if(seen.has(w)) return;
+          seen.add(w);
+          // Layer 1+2 only here: WORD_CN direct or wordList match (verified translations).
+          // Skip layer-3 morpheme composition to keep "hasCn" meaningful for sorting.
+          let cn = WORD_CN[w] || '';
+          if(!cn){
+            const ids = WORD_DATA.get(w) || [];
+            for(const mid of ids){
+              const wl = nodeMap[mid] && nodeMap[mid].wordList;
+              if(wl){
+                const f = wl.find(ww=>ww.en.toLowerCase()===w);
+                if(f && f.cn && /[一-鿿]/.test(f.cn)){ cn = f.cn; break; }
+              }
+            }
+          }
+          related.push({w, cn, hasCn: !!cn});
+        });
+      });
+      // Verified-translation words first, then alphabetical
+      related.sort((a,b)=>{
+        if(a.hasCn !== b.hasCn) return a.hasCn ? -1 : 1;
+        return a.w.localeCompare(b.w);
       });
       if(related.length>0){
         ttRelated.style.display='block';
@@ -1521,11 +1544,14 @@ function showTooltip(node,x,y){
         const list=document.createElement('div'); list.className='words-list';
         const renderRelated=(limit)=>{
           list.innerHTML='';
-          related.slice(0,limit).forEach(w=>{
-            const cn=WORD_CN[w]||'';
+          related.slice(0,limit).forEach(item=>{
             const t=document.createElement('span'); t.className='word-tag';
-            t.textContent=cn?w+' '+cn:w;
-            t.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(w, e.clientX, e.clientY); };
+            // Layer-3 fallback (morpheme composition) only at render time, marked with ~
+            const display = item.cn ? item.w+' '+item.cn
+              : (()=>{ const c=getWordCN(item.w); return c ? item.w+' ~'+c : item.w; })();
+            t.textContent=display;
+            if(!item.hasCn) t.style.opacity='0.65';
+            t.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(item.w, e.clientX, e.clientY); };
             list.appendChild(t);
           });
           if(related.length>limit){
