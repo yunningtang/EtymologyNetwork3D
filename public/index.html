@@ -2238,16 +2238,18 @@ function buildMindmap(){
   });
 }
 
-// Collision avoidance helper: push overlapping siblings apart
-function mmResolveCollisions(childIds){
+// Collision avoidance: push children apart from each other AND away from
+// existing nodes (passed as obstacles — they don't move).
+function mmResolveCollisions(childIds, obstacleIds){
   const children=childIds.map(id=>mmNodes.find(n=>n.id===id)).filter(Boolean);
+  const obstacles=(obstacleIds||[]).map(id=>mmNodes.find(n=>n.id===id)).filter(Boolean);
   for(let iter=0;iter<12;iter++){
+    // Children vs children — both move
     for(let i=0;i<children.length;i++){
       for(let j=i+1;j<children.length;j++){
         const a=children[i], b=children[j];
         const dx=a.tx-b.tx, dy=a.ty-b.ty;
         const dist=Math.sqrt(dx*dx+dy*dy);
-        // Account for label width: morphemes ~60px, words ~80px
         const labelW = a.isWord||b.isWord ? 70 : 55;
         const minDist=Math.max((a.r+b.r)*3+labelW, 30);
         if(dist<minDist && dist>0.1){
@@ -2255,6 +2257,20 @@ function mmResolveCollisions(childIds){
           const nx=dx/dist, ny=dy/dist;
           a.tx+=nx*push; a.ty+=ny*push;
           b.tx-=nx*push; b.ty-=ny*push;
+        }
+      }
+    }
+    // Children vs obstacles — only children move (full push)
+    for(const c of children){
+      for(const o of obstacles){
+        const dx=c.tx-o.tx, dy=c.ty-o.ty;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        const labelW = c.isWord||o.isWord ? 70 : 55;
+        const minDist=Math.max((c.r+o.r)*3+labelW, 30);
+        if(dist<minDist && dist>0.1){
+          const push=(minDist-dist);
+          const nx=dx/dist, ny=dy/dist;
+          c.tx+=nx*push; c.ty+=ny*push;
         }
       }
     }
@@ -2299,7 +2315,9 @@ function expandNode(nodeId){
       mmEdges.push({from:nodeId, to:n.id});
       newIds.push(n.id);
     });
-    mmResolveCollisions(newIds);
+    // Avoid the center + previously-placed groups
+    const obstacles = mmNodes.filter(n => (n.isCenter || n.isGroup) && !newIds.includes(n.id)).map(n=>n.id);
+    mmResolveCollisions(newIds, obstacles);
   } else if(!parent.isWord && !parent.isCenter) {
     // Collapse other expanded morphemes in same group first
     const parentGroup = parent.parentId;
@@ -2316,11 +2334,13 @@ function expandNode(nodeId){
     const count = words.length;
     if(!count) return;
 
-    // Place words in an arc away from center
+    // Place words in an arc pointing away from the group center.
+    // Wider spread + larger radius give the collision step room to push
+    // word labels off neighboring sibling morphemes.
     const baseAngle = parent.angle || 0;
-    const minSpacing = 0.2;
-    const totalSpread = Math.max(count * minSpacing, Math.PI * 0.3);
-    const childR = 100;
+    const minSpacing = 0.22;
+    const totalSpread = Math.max(count * minSpacing, Math.PI * 0.5);
+    const childR = 130;
     const newIds = [];
 
     words.forEach((w, i) => {
@@ -2337,7 +2357,12 @@ function expandNode(nodeId){
       mmEdges.push({from:nodeId, to:wid});
       newIds.push(wid);
     });
-    mmResolveCollisions(newIds);
+    // Avoid every existing morpheme (sibling roots, groups, center) so the
+    // new word labels don't bleed into neighboring unexpanded morphemes.
+    const obstacles = mmNodes.filter(n =>
+      !n.isWord && n.id !== nodeId && !newIds.includes(n.id)
+    ).map(n=>n.id);
+    mmResolveCollisions(newIds, obstacles);
   }
 }
 
