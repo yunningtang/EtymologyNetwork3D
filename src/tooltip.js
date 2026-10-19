@@ -178,6 +178,7 @@ function showTooltip(node,x,y){
         const mWords = MORPH_WORDS[m.id] || [];
         mWords.forEach(w => {
           if(seen.has(w)) return;
+          if(!wordVisible(w)) return;
           seen.add(w);
           // Layer 1+2 only here: WORD_CN direct or wordList match (verified translations).
           // Skip layer-3 morpheme composition to keep "hasCn" meaningful for sorting.
@@ -247,9 +248,11 @@ function showTooltip(node,x,y){
     }
     let showMax=pinnedNode?20:10;
     if(node.wordList){
+      const visible = levelFilter.size ? node.wordList.filter(w=>wordVisible(w.en)) : node.wordList;
       const renderWords=(limit)=>{
         ttWords.innerHTML=''; ttCount.textContent='';
-        node.wordList.slice(0,limit).forEach(w=>{
+        if(!visible.length){ ttCount.textContent='当前等级下没有该词素的单词'; return; }
+        visible.slice(0,limit).forEach(w=>{
           const t=document.createElement('span'); t.className='word-tag';
           const cn=w.cn||WORD_CN[w.en.toLowerCase()]||'';
           t.textContent=cn ? w.en+' '+shortCN(cn) : w.en;
@@ -260,13 +263,15 @@ function showTooltip(node,x,y){
           };
           ttWords.appendChild(t);
         });
-        if(node.wordList.length>limit){
+        if(visible.length>limit){
           const more=document.createElement('span'); more.className='word-tag';
           more.style.cssText='color:var(--cyan);border-color:rgba(0,229,255,0.2);cursor:pointer';
-          more.textContent='展开全部 '+node.wordList.length+' 个单词';
-          more.onclick=(e)=>{ e.stopPropagation(); renderWords(node.wordList.length); };
+          more.textContent='展开全部 '+visible.length+' 个单词';
+          more.onclick=(e)=>{ e.stopPropagation(); renderWords(visible.length); };
           ttWords.appendChild(more);
-          ttCount.textContent='共 '+node.wordList.length+' 个单词，已显示 '+limit+' 个';
+          ttCount.textContent='共 '+visible.length+' 个单词，已显示 '+limit+' 个';
+        } else if(levelFilter.size && node.wordList.length>visible.length){
+          ttCount.textContent='当前等级 '+visible.length+' 个（全部 '+node.wordList.length+' 个）';
         }
       };
       renderWords(showMax);

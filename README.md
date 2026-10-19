@@ -39,6 +39,8 @@
 | **发音朗读** | 内置 Text-to-Speech，点击即可听到单词发音 |
 | **收藏夹** | 收藏感兴趣的单词，追踪学习进度 |
 | **分类筛选** | 按 Prefix / Root / Suffix 筛选，支持细分子类别（否定、方向、动作等） |
+| **等级筛选** | 按 中考 / 高考 / CET4 / CET6 / 考研 / TOEFL / IELTS 只看对应考纲的单词 |
+| **键盘操作** | 方向键旋转、+/− 缩放、Enter 固定屏幕中心的词素、/ 搜索、Esc 重置 |
 | **双语界面** | 全程中英文对照 |
 
 ## 快速开始
@@ -74,6 +76,7 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 | 3D 渲染 | **Three.js** r128（自托管于 `vendor/`）— 自定义 GLSL Shader、Point Sprites、Additive Blending |
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
 | 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
+| 界面 | Liquid Glass 风格：半透明毛玻璃面板、高光描边、胶囊按钮；词素以带光照的星球渲染，大小随单词数变化 |
 | 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |

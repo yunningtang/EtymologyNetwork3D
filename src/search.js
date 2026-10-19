@@ -38,21 +38,21 @@ function fuzzySearch(query, limit=20){
   // Search word data using prefix index (fast)
   const wordResults = [];
   // Exact match
-  if(WORD_DATA.has(q)) wordResults.push({word:q, morphs:WORD_DATA.get(q), score:100, match:'exact'});
+  if(WORD_DATA.has(q) && wordVisible(q)) wordResults.push({word:q, morphs:WORD_DATA.get(q), score:100, match:'exact'});
   // Prefix match via index
   const p2 = q.substring(0,2);
   const bucket = WORD_PREFIX[p2] || [];
   for(let i=0; i<bucket.length && wordResults.length<30; i++){
     const w = bucket[i];
     if(w === q) continue; // already added
-    if(w.startsWith(q)) wordResults.push({word:w, morphs:WORD_DATA.get(w), score:85, match:'prefix'});
+    if(w.startsWith(q) && wordVisible(w)) wordResults.push({word:w, morphs:WORD_DATA.get(w), score:85, match:'prefix'});
   }
   // Contains match over the whole vocabulary (only if few prefix results and query >= 3 chars).
   // Scanning every word matters here: "ject" must find "project", not just words starting with "je".
   if(wordResults.length < 10 && q.length >= 3){
     for(const w of WORD_DATA.keys()){
       if(wordResults.length >= 20) break;
-      if(!w.startsWith(q) && w.includes(q)) wordResults.push({word:w, morphs:WORD_DATA.get(w), score:60, match:'contains'});
+      if(!w.startsWith(q) && w.includes(q) && wordVisible(w)) wordResults.push({word:w, morphs:WORD_DATA.get(w), score:60, match:'contains'});
     }
   }
   wordResults.sort((a,b) => b.score-a.score || a.word.length-b.word.length);

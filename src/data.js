@@ -183,6 +183,11 @@ function shortCN(cn){
   s=s.split(/[,，;；]/).slice(0,2).join('，');
   return s.length>14 ? s.slice(0,13)+'…' : s;
 }
+// Exam-level filter: empty = show everything; otherwise a word must carry one of the selected codes.
+// Supplementary words without a level (added for sparse morphemes) only show when no filter is active.
+let levelFilter = new Set();
+function wordVisible(w){ if(levelFilter.size===0) return true; const lv=WORD_LV[w]||''; for(const c of levelFilter) if(lv.includes(c)) return true; return false; }
+function visibleWordCount(){ if(levelFilter.size===0) return WORD_DATA.size; let n=0; for(const w of WORD_DATA.keys()) if(wordVisible(w)) n++; return n; }
 function levelLabel(w){ const lv=WORD_LV[w]||''; return [...lv].map(c=>LV_NAMES[c]).filter(Boolean).join(' · '); }
 
 // Build prefix index for fast word search (2-char prefix → words)

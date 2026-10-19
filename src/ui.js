@@ -167,6 +167,19 @@ function buildSubFilters(type){
   subFiltersEl.classList.add('visible');
 }
 
+// Exam-level filter: single select ("全部" clears). Re-renders the pinned card and the 2D map.
+document.querySelectorAll('.lv-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.lv-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    levelFilter = this.dataset.lv ? new Set([this.dataset.lv]) : new Set();
+    document.getElementById('m-nodes').textContent=visibleWordCount();
+    if(pinnedNode){ const n=pinnedWordNode||pinnedNode; if(pinnedWordNode) showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); else showTooltip(n, tooltip.offsetLeft, tooltip.offsetTop); tooltip.classList.add('pinned'); }
+    if(searchQuery){ searchResults=fuzzySearch(searchQuery); renderDropdown(searchResults); }
+    if(currentView==='2d'){ buildMindmap(); mmRequestRedraw(); }
+  });
+});
+
 document.querySelectorAll('.filter-btn').forEach(btn=>{
   btn.addEventListener('click',function(){
     document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -360,6 +373,28 @@ window.addEventListener('keydown',e=>{
     if(pinnedNode)unpinNode(); applyHighlight(); searchInput.blur();
   }
   if(e.key==='/'&&document.activeElement!==searchInput){ e.preventDefault(); searchInput.focus(); }
+  // Keyboard navigation of the 3D globe (ignored while typing)
+  const typing=document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA');
+  if(typing||currentView!=='3d'||appState!=='active') return;
+  const step=0.12;
+  if(e.key==='ArrowLeft'){ camT.theta-=step; markInteraction(); e.preventDefault(); }
+  else if(e.key==='ArrowRight'){ camT.theta+=step; markInteraction(); e.preventDefault(); }
+  else if(e.key==='ArrowUp'){ camT.phi=Math.max(0.1,camT.phi-step); markInteraction(); e.preventDefault(); }
+  else if(e.key==='ArrowDown'){ camT.phi=Math.min(Math.PI-0.1,camT.phi+step); markInteraction(); e.preventDefault(); }
+  else if(e.key==='+'||e.key==='='){ camT.dist=Math.max(50,camT.dist-20); markInteraction(); e.preventDefault(); }
+  else if(e.key==='-'||e.key==='_'){ camT.dist=Math.min(400,camT.dist+20); markInteraction(); e.preventDefault(); }
+  else if(e.key==='Enter'){
+    // Pin the bright node closest to the screen centre
+    mouse.x=window.innerWidth/2; mouse.y=window.innerHeight/2;
+    let best=null, bd=Infinity;
+    nodes.forEach(n=>{
+      if(highlightSet&&!highlightSet.has(n.id)) return;
+      projVec.set(n.x,n.y,n.z); projVec.project(camera); if(projVec.z>1) return;
+      const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
+      const d=Math.hypot(sx-mouse.x,sy-mouse.y); if(d<bd){bd=d;best=n;}
+    });
+    if(best){ pinNode(best); e.preventDefault(); }
+  }
 });
 
 // Resize
@@ -392,7 +427,7 @@ const instructions=document.getElementById('instructions');
 
 function startIntro(){
   appState='intro'; introStart=performance.now();
-  cam.dist=500; camT.dist=200;
+  cam.dist=500; camT.dist=175;
   document.getElementById('loading').classList.add('hide');
   setTimeout(()=>{document.getElementById('loading').style.display='none';},1000);
   // Start stats animation

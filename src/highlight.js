@@ -54,15 +54,17 @@ function computeHighlightSet(){
 
 function applyHighlight(){
   highlightSet=computeHighlightSet();
-  const dim=0.04;
+  const dim=0.06;
   nodes.forEach((n,i)=>{
     const c=n.color, bright=!highlightSet||highlightSet.has(n.id), a=bright?1:dim;
-    nodeColors[i*3]=c.r*a; nodeColors[i*3+1]=c.g*a; nodeColors[i*3+2]=c.b*a;
+    // planets keep their colour and fade via alpha; coronas fade via colour (additive)
+    nodeColors[i*3]=c.r; nodeColors[i*3+1]=c.g; nodeColors[i*3+2]=c.b;
+    nodeAlphas[i]=bright?1:0.18;
     glowColors[i*3]=c.r*a; glowColors[i*3+1]=c.g*a; glowColors[i*3+2]=c.b*a;
-    const bs=6.5, bg=16;
+    const bs=n.baseSize, bg=n.baseSize*2.6;
     const hov=(pinnedNode&&n.id===pinnedNode.id)||(hoveredNode&&n.id===hoveredNode.id);
-    nodeSizes[i]=bright?(hov?bs*2.2:bs):bs*0.3;
-    glowSizes[i]=bright?(hov?bg*1.8:bg):bg*0.15;
+    nodeSizes[i]=bright?(hov?bs*1.6:bs):bs*0.55;
+    glowSizes[i]=bright?(hov?bg*1.6:bg):bg*0.3;
   });
   edges.forEach((e,i)=>{
     const a=nodeMap[e.source],b=nodeMap[e.target];
@@ -71,7 +73,7 @@ function applyHighlight(){
     edgeColors[i6]=a.color.r*al;edgeColors[i6+1]=a.color.g*al;edgeColors[i6+2]=a.color.b*al;
     edgeColors[i6+3]=b.color.r*al;edgeColors[i6+4]=b.color.g*al;edgeColors[i6+5]=b.color.b*al;
   });
-  nodeGeom.attributes.color.needsUpdate=true; nodeGeom.attributes.size.needsUpdate=true;
+  nodeGeom.attributes.color.needsUpdate=true; nodeGeom.attributes.size.needsUpdate=true; nodeGeom.attributes.alpha.needsUpdate=true;
   glowGeom.attributes.color.needsUpdate=true; glowGeom.attributes.size.needsUpdate=true;
   edgeGeom.attributes.color.needsUpdate=true;
   edgeMesh.material.opacity=highlightSet?0.8:0.4;
