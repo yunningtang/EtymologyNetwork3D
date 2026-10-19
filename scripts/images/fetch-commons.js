@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+/**
+ * Fetches one illustrative photo per morpheme from Wikimedia Commons.
+ *
+ *   input   scripts/images/queries.tsv      id <TAB> search phrase   ("-" = no picture)
+ *   output  assets/morphemes/<id>.webp      480px wide (jpeg if ImageMagick is missing)
+ *           data/images.js                  window.MORPH_IMAGES = { id: {file, title, author, license, licenseUrl, url} }
+ *
+ * Only freely licensed files are accepted (public domain, CC0, CC BY, CC BY-SA); the credit
+ * line shown on the card comes from the same metadata. Re-running skips ids that already
+ * have a file unless --force is given. Usage: node scripts/images/fetch-commons.js [--force] [id ...]
+ */
+const fs = require('fs'), path = require('path'), https = require('https'), { execFileSync } = require('child_process');
+const ROOT = path.join(__dirname, '..', '..');
+const QUERIES = path.join(__dirname, 'queries.tsv');
+const OUT_DIR = path.join(ROOT, 'assets', 'morphemes');
+const DATA = path.join(ROOT, 'data', 'images.js');
+const UA = 'EtymologyNetwork3D/1.0 (https://github.com/yunningtang/EtymologyNetwork3D)';
+const FORCE = process.argv.includes('--force');
+const ONLY = new Set(process.argv.slice(2).filter(a => !a.startsWith('--')));
+const OK_LICENSE = /^(public domain|pd|cc0|cc[ -]by(?:[ -]sa)?[ -]?\d)/i;
+
+const get = (url, binary) => new Promise((resolve, reject) => {
+  const go = (u, n) => https.get(u, { headers: { 'User-Agent': UA } }, res => {
+    if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location && n < 5) return go(res.headers.location, n + 1);
+    if (res.statusCode !== 200) return reject(new Error(`${u}: HTTP ${res.statusCode}`));
+    const chunks = []; res.on('data', c => chunks.push(c)); res.on('end', () => resolve(binary ? Buffer.concat(chunks) : Buffer.concat(chunks).toString('utf8')));
+  }).on('error', reject);
+  go(url, 0);
+});
+const strip = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const hasMagick = (() => { try { execFileSync('convert', ['-version'], { stdio: 'ignore' }); return true; } catch { return false; } })();
+
+async function search(q) {
+  const api = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=8' +
+    '&gsrsearch=' + encodeURIComponent(q + ' filetype:bitmap') + '&prop=imageinfo&iiprop=url|extmetadata|mime|size&iiurlwidth=960';
+  const data = JSON.parse(await get(api));
+  const pages = Object.values((data.query || {}).pages || {});
+  const good = [];
+  for (const p of pages) {
+    const ii = (p.imageinfo || [])[0]; if (!ii) continue;
+    const m = ii.extmetadata || {};
+    const license = strip((m.LicenseShortName || {}).value);
+    if (!OK_LICENSE.test(license)) continue;
+    if (!/^image\/(jpeg|png)$/.test(ii.mime)) continue;
+    if ((ii.width || 0) < 600 || (ii.height || 0) < 300) continue;
+    if (ii.width / ii.height < 0.9) continue;            // prefer landscape-ish pictures for the 16:9 slot
+    good.push({ title: p.title, thumb: ii.thumburl, url: ii.descriptionurl, author: strip((m.Artist || {}).value).slice(0, 60), license, licenseUrl: strip((m.LicenseUrl || {}).value), index: p.index });
+  }
+  return good.sort((a, b) => a.index - b.index)[0];
+}
+
+async function main() {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  const existing = fs.existsSync(DATA) ? (eval(fs.readFileSync(DATA, 'utf8').replace(/^[\s\S]*?window\.MORPH_IMAGES\s*=/, '(').replace(/;\s*$/, ')'))) : {};
+  const images = { ...existing };
+  const rows = fs.readFileSync(QUERIES, 'utf8').split('\n').map(l => l.split('\t')).filter(r => r[0] && !r[0].startsWith('#'));
+  let done = 0, skipped = 0, failed = 0;
+  for (const [id, q] of rows) {
+    if (!q || q.trim() === '-' ) continue;
+    if (ONLY.size && !ONLY.has(id)) continue;
+    if (!FORCE && images[id] && fs.existsSync(path.join(OUT_DIR, images[id].file))) { skipped++; continue; }
+    try {
+      const hit = await search(q.trim());
+      if (!hit) { console.log(`✗ ${id}: no freely licensed result for "${q}"`); failed++; continue; }
+      const buf = await get(hit.thumb, true);
+      const raw = path.join(OUT_DIR, id + (hit.thumb.includes('.png') ? '.png' : '.jpg'));
+      fs.writeFileSync(raw, buf);
+      let file = path.basename(raw);
+      if (hasMagick) {
+        const webp = path.join(OUT_DIR, id + '.webp');
+        execFileSync('convert', [raw, '-resize', '480x', '-strip', '-quality', '72', webp]);
+        fs.unlinkSync(raw); file = id + '.webp';
+      }
+      images[id] = { file, title: hit.title.replace(/^File:/, ''), author: hit.author, license: hit.license, licenseUrl: hit.licenseUrl, url: hit.url };
+      console.log(`✓ ${id}: ${images[id].title} (${hit.license})`); done++;
+      await new Promise(r => setTimeout(r, 400));          // be polite to the API
+    } catch (e) { console.log(`✗ ${id}: ${e.message}`); failed++; }
+  }
+  const body = '// Generated by scripts/images/fetch-commons.js — do not edit by hand.\n' +
+    '// morphemeId → { file, title, author, license, licenseUrl, url } (Wikimedia Commons)\n' +
+    'window.MORPH_IMAGES = ' + JSON.stringify(images, null, 1) + ';\n';
+  fs.writeFileSync(DATA, body);
+  console.log(`\n${done} fetched, ${skipped} already present, ${failed} failed → ${Object.keys(images).length} morphemes with pictures`);
+}
+main().catch(e => { console.error(e); process.exit(1); });

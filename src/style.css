@@ -198,6 +198,33 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 #tooltip .tt-related{margin-top:10px;padding-top:10px;border-top:1px solid var(--glass-border)}
 #tooltip .tt-related-title{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 
+/* Learning aids: image, story, guess-first, same-root comparison */
+#tooltip .tt-image{margin:4px 0 10px;border-radius:14px;overflow:hidden;position:relative;aspect-ratio:16/9;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)}
+#tooltip .tt-image img{width:100%;height:100%;object-fit:cover;display:block}
+#tooltip .tt-image .tt-credit{position:absolute;right:6px;bottom:6px;font-size:9px;color:rgba(255,255,255,0.75);background:rgba(0,0,0,0.45);padding:2px 7px;border-radius:var(--pill);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tooltip .tt-image .tt-credit a{color:inherit;text-decoration:none}
+#tooltip .tt-story{font-size:13px;line-height:1.6;color:rgba(255,255,255,0.82);font-family:var(--font-cn);margin:0 0 10px;padding:9px 12px;border-radius:12px;background:rgba(255,255,255,0.05);border-left:2px solid var(--gold)}
+#tooltip .tt-story b{color:var(--gold);font-weight:600;margin-right:6px;font-size:11px;letter-spacing:1px}
+.tt-chip{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:var(--muted);font-size:11px;padding:0 10px;height:30px;border-radius:var(--pill);cursor:pointer;transition:all 0.2s;font-family:var(--font-ui);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
+.tt-chip:hover{color:var(--text);background:rgba(255,255,255,0.14)}
+.tt-chip.on{color:#0B1020;background:linear-gradient(135deg,rgba(255,215,64,0.95),rgba(255,171,64,0.85));border-color:transparent}
+#tooltip .tt-reveal{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(255,215,64,0.08);border:1px dashed rgba(255,215,64,0.35);cursor:pointer;transition:background 0.2s;user-select:none}
+#tooltip .tt-reveal:hover{background:rgba(255,215,64,0.14)}
+#tooltip .tt-reveal .q{font-size:13px;color:var(--text);font-family:var(--font-cn)}
+#tooltip .tt-reveal .q small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+#tooltip .tt-reveal .go{font-size:11px;color:var(--gold);white-space:nowrap}
+#tooltip .tt-compare{margin:2px 0 10px}
+#tooltip .tt-compare-title{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+#tooltip .tt-compare-title b{color:var(--mint);text-transform:none;letter-spacing:0;font-family:var(--font-mono);font-size:11px;margin-left:4px}
+#tooltip .cmp-row{display:grid;grid-template-columns:78px 1fr;gap:8px;align-items:center;padding:4px 6px;border-radius:8px;cursor:pointer;transition:background 0.15s}
+#tooltip .cmp-row:hover{background:rgba(255,255,255,0.07)}
+#tooltip .cmp-row.cur{background:rgba(105,240,174,0.1)}
+#tooltip .cmp-pre{font-family:var(--font-mono);font-size:11px;padding:2px 8px;border-radius:var(--pill);border:1px solid;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tooltip .cmp-pre.none{color:var(--muted-2);border-color:rgba(255,255,255,0.1)}
+#tooltip .cmp-word{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tooltip .cmp-word b{font-family:var(--font-mono);font-weight:500;margin-right:6px}
+#tooltip .cmp-word span{color:var(--muted);font-family:var(--font-cn)}
+
 /* View Toggle (3D/2D) */
 #view-toggle{position:fixed;top:22px;right:28px;z-index:21;display:flex;gap:2px;padding:4px;border-radius:var(--pill)}
 .view-btn{padding:8px 16px;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.25s;border:none;background:none;font-family:var(--font-ui);letter-spacing:0.3px;border-radius:var(--pill)}

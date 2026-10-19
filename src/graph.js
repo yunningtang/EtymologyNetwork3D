@@ -13,7 +13,7 @@ function buildGraph() {
     // Word list from data/words.js — already in frequency order, every entry has a verified 中文释义
     const allWords = (MORPH_WORDS[m.id]||[]).map(w => ({en:w, cn:WORD_CN[w]||''}));
 
-    const node = { id:m.id, type:m.type, label:m.morph, origin:m.origin, meaning:m.meaning,
+    const node = { id:m.id, type:m.type, label:m.morph, origin:m.origin, meaning:m.meaning, story:m.story||'',
       wordList: allWords.slice(0, 300), wordCount: allWords.length,
       color: new THREE.Color(hex), colorHex: hex, catLabel: getCatLabel(m.id),
       x:0,y:0,z:0,vx:0,vy:0,vz:0 };

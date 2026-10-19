@@ -27,6 +27,7 @@ function animate(){
     positionTooltip(sx,sy);
   }
 
+  if(nodeMesh) nodeMesh.material.uniforms.uTime.value=performance.now()/1000;
   renderer.render(scene,camera);
   if(++_animLF%2===0||highlightSet) renderLabels();
 }

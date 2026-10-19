@@ -101,6 +101,7 @@
     <div class="tt-header">
       <div class="badge" id="tt-badge"></div>
       <div style="display:flex;gap:4px;align-items:center">
+        <button id="tt-guess" class="tt-chip" title="猜词模式：先看词素拆解，再揭晓释义" style="display:none">猜词模式</button>
         <button id="tt-back" title="Back 返回" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
@@ -116,9 +117,12 @@
       </button>
     </div>
     <div class="tt-ipa" id="tt-ipa" style="display:none"></div>
+    <div class="tt-image" id="tt-image" style="display:none"></div>
     <div class="origin" id="tt-origin"></div>
     <div class="meaning" id="tt-meaning"></div>
+    <div class="tt-story" id="tt-story" style="display:none"></div>
     <div class="tt-etymology" id="tt-etymology" style="display:none"></div>
+    <div class="tt-compare" id="tt-compare" style="display:none"></div>
     <div class="words-list" id="tt-words"></div>
     <div class="word-count" id="tt-count"></div>
     <div class="tt-related" id="tt-related" style="display:none"></div>
@@ -142,6 +146,7 @@
 
 <script src="vendor/three.min.js"></script>
 <script src="data/words.js"></script>
+<script src="data/images.js"></script>
 <script src="src/morphemes.js"></script>
 <script src="src/data.js"></script>
 <script src="src/search.js"></script>

@@ -26,6 +26,15 @@ const ttBadge=document.getElementById('tt-badge'),ttLabel=document.getElementByI
 const ttOrigin=document.getElementById('tt-origin'),ttMeaning=document.getElementById('tt-meaning');
 const ttWords=document.getElementById('tt-words'),ttCount=document.getElementById('tt-count');
 const TYPE_LABELS={p:'Prefix',r:'Root',s:'Suffix',w:'Word'};
+// Guess-first mode (generation effect): a word card shows the morpheme breakdown first and
+// hides the dictionary meaning behind a "揭晓" control until the learner has made a guess.
+let guessMode=(function(){ try{ return localStorage.getItem('etym_guess')!=='0'; }catch(e){ return true; } })();
+const ttGuess=document.getElementById('tt-guess');
+function setGuessMode(on){ guessMode=on; try{ localStorage.setItem('etym_guess',on?'1':'0'); }catch(e){} ttGuess.classList.toggle('on',on); }
+ttGuess.classList.toggle('on',guessMode);
+ttGuess.onclick=(e)=>{ e.stopPropagation(); setGuessMode(!guessMode); if(pinnedWordNode){ pinnedWordNode._revealed=false; showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); } };
+const ttStory=document.getElementById('tt-story'), ttImage=document.getElementById('tt-image'), ttCompare=document.getElementById('tt-compare');
+const ESC=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let tooltipHideTimer=null;
 
 function speakWord(word){
@@ -93,7 +102,14 @@ function showTooltip(node,x,y){
   if(!displayMeaning && isWordView){
     displayMeaning = WORD_CN[node.label.toLowerCase()] || '';
   }
-  if(displayMeaning){
+  ttGuess.style.display = isWordView ? 'inline-block' : 'none';
+  if(displayMeaning && isWordView && guessMode && !node._revealed){
+    ttMeaning.textContent=''; ttMeaning.style.cssText='';
+    const rv=document.createElement('div'); rv.className='tt-reveal';
+    rv.innerHTML='<div class="q">看下面的词素拆解，先猜猜这个词的意思<small>猜好了再点开，记得更牢</small></div><div class="go">揭晓释义 →</div>';
+    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; };
+    ttMeaning.appendChild(rv);
+  } else if(displayMeaning){
     ttMeaning.textContent = displayMeaning;
     ttMeaning.style.color = '';
     ttMeaning.style.fontStyle = '';
@@ -113,6 +129,7 @@ function showTooltip(node,x,y){
   ttIpa.style.display='none'; ttIpa.innerHTML='';
   ttEtymology.style.display='none'; ttEtymology.innerHTML='';
   ttRelated.style.display='none'; ttRelated.innerHTML='';
+  ttStory.style.display='none'; ttStory.innerHTML=''; ttImage.style.display='none'; ttImage.innerHTML=''; ttCompare.style.display='none'; ttCompare.innerHTML='';
 
   // Favorite button — works for both words and morphemes
   const ttFav=document.getElementById('tt-fav');
@@ -165,6 +182,39 @@ function showTooltip(node,x,y){
         result.textContent=constructed;
         result.title='词素拼接·非权威释义';
         ttEtymology.appendChild(arrow); ttEtymology.appendChild(result);
+      }
+    }
+    // Same-root comparison: other words built on this word's main root, one per prefix,
+    // so the learner sees how the prefix changes the meaning (import / export / transport …)
+    if(node.morphemes&&node.morphemes.length>0){
+      const ids=node.morphemes.map(m=>m.id);
+      const rootId=ids.find(id=>nodeMap[id]&&nodeMap[id].type==='r')||ids.find(id=>nodeMap[id]&&nodeMap[id].type==='p')||ids[0];
+      const me=node.label.toLowerCase();
+      if(rootId&&nodeMap[rootId]){
+        const rows=[], seenPre=new Set();
+        for(const w of (MORPH_WORDS[rootId]||[])){
+          if(!wordVisible(w)) continue;
+          const wm=WORD_DATA.get(w)||[]; const pre=wm.find(id=>nodeMap[id]&&nodeMap[id].type==='p'&&id!==rootId)||'';
+          const key=pre+'|'+(wm.length>2?w.slice(-3):'');
+          if(w!==me && seenPre.has(pre)) continue;   // one example per prefix, most frequent first
+          seenPre.add(pre); rows.push({w,pre});
+          if(rows.length>=8) break;
+        }
+        if(!rows.some(r=>r.w===me) && (WORD_DATA.has(me))){ const wm=WORD_DATA.get(me); rows.unshift({w:me,pre:wm.find(id=>nodeMap[id]&&nodeMap[id].type==='p'&&id!==rootId)||''}); }
+        if(rows.length>1){
+          ttCompare.style.display='block';
+          const title=document.createElement('div'); title.className='tt-compare-title'; title.innerHTML='同根对比 · 换个前缀 <b>'+ESC(nodeMap[rootId].label)+'</b>'; ttCompare.appendChild(title);
+          rows.forEach(r=>{
+            const row=document.createElement('div'); row.className='cmp-row'+(r.w===me?' cur':'');
+            const pn=r.pre?nodeMap[r.pre]:null;
+            const pre=document.createElement('span'); pre.className='cmp-pre'+(pn?'':' none');
+            if(pn){ pre.textContent=pn.label; pre.style.color=pn.colorHex; pre.style.borderColor=pn.colorHex+'66'; pre.title=pn.meaning; } else pre.textContent='—';
+            const wd=document.createElement('span'); wd.className='cmp-word'; wd.innerHTML='<b>'+ESC(r.w)+'</b><span>'+ESC(shortCN(WORD_CN[r.w]||''))+'</span>';
+            row.appendChild(pre); row.appendChild(wd);
+            if(r.w!==me) row.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(r.w, e.clientX, e.clientY); };
+            ttCompare.appendChild(row);
+          });
+        }
       }
     }
     // Related words (from same morphemes) — lightweight tags
@@ -238,6 +288,13 @@ function showTooltip(node,x,y){
       });
     }
   } else {
+    // Morpheme node: picture (Wikimedia Commons, with credit) and one-line origin story
+    const img=(window.MORPH_IMAGES||{})[node.id];
+    if(img&&img.file){
+      ttImage.style.display='block';
+      ttImage.innerHTML='<img loading="lazy" alt="" src="assets/morphemes/'+ESC(img.file)+'"><div class="tt-credit" title="'+ESC((img.author||'')+' · '+(img.license||''))+'"><a href="'+ESC(img.url||'#')+'" target="_blank" rel="noopener">'+ESC((img.author||'Wikimedia Commons')+' · '+(img.license||''))+'</a></div>';
+    }
+    if(node.story){ ttStory.style.display='block'; ttStory.innerHTML='<b>词源</b>'+ESC(node.story); }
     // Morpheme node: show expanded word list + pronounce first word
     if(node.wordList && node.wordList.length>0){
       const firstWord=node.wordList[0].en;

@@ -86,34 +86,88 @@ function buildGlow(){
 }
 
 function buildNodes(){
-  const pos=new Float32Array(nodes.length*3),col=new Float32Array(nodes.length*3),siz=new Float32Array(nodes.length),alp=new Float32Array(nodes.length);
+  const pos=new Float32Array(nodes.length*3),col=new Float32Array(nodes.length*3),siz=new Float32Array(nodes.length),alp=new Float32Array(nodes.length),kind=new Float32Array(nodes.length),seed=new Float32Array(nodes.length);
   nodeColors=col; nodeSizes=siz; nodeAlphas=alp;
+  const KIND={p:0,r:1,s:2};
   nodes.forEach((n,i)=>{
     pos[i*3]=n.x;pos[i*3+1]=n.y;pos[i*3+2]=n.z;
     col[i*3]=n.color.r;col[i*3+1]=n.color.g;col[i*3+2]=n.color.b;
-    siz[i]=n.baseSize; alp[i]=1.0;
+    siz[i]=n.baseSize; alp[i]=1.0; kind[i]=KIND[n.type]||0;
+    // deterministic per-morpheme seed so every planet keeps its own look between visits
+    let h=0; for(const ch of n.id) h=(h*31+ch.charCodeAt(0))>>>0; seed[i]=(h%1000)/1000;
   });
   nodeGeom=new THREE.BufferGeometry();
   nodeGeom.setAttribute('position',new THREE.BufferAttribute(pos,3));
   nodeGeom.setAttribute('color',new THREE.BufferAttribute(col,3));
   nodeGeom.setAttribute('size',new THREE.BufferAttribute(siz,1));
   nodeGeom.setAttribute('alpha',new THREE.BufferAttribute(alp,1));
-  // Each point is shaded as a small lit sphere: diffuse + specular highlight + rim light,
-  // so morphemes read as planets rather than flat dots.
+  nodeGeom.setAttribute('kind',new THREE.BufferAttribute(kind,1));
+  nodeGeom.setAttribute('seed',new THREE.BufferAttribute(seed,1));
+  // Every morpheme is a small procedural planet, shaded as a lit sphere (diffuse +
+  // specular + rim). The three morpheme types get three planet families:
+  //   prefixes  → ringed planets (a tilted ring, front half drawn over the sphere)
+  //   roots     → gas giants with slowly drifting cloud bands
+  //   suffixes  → cratered moons
+  // The sprite is 1.9× the sphere so rings have room; seed varies tilt/bands/craters.
   nodeMesh=new THREE.Points(nodeGeom,new THREE.ShaderMaterial({
-    vertexShader:`attribute float size;attribute float alpha;varying vec3 vColor;varying float vAlpha;
-      void main(){vColor=color;vAlpha=alpha;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=size*(200.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vColor;varying float vAlpha;
+    uniforms:{uTime:{value:0}},
+    vertexShader:`attribute float size;attribute float alpha;attribute float kind;attribute float seed;
+      varying vec3 vColor;varying float vAlpha;varying float vKind;varying float vSeed;
+      void main(){vColor=color;vAlpha=alpha;vKind=kind;vSeed=seed;vec4 mv=modelViewMatrix*vec4(position,1.0);
+        gl_PointSize=size*1.9*(200.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`uniform float uTime;varying vec3 vColor;varying float vAlpha;varying float vKind;varying float vSeed;
+      float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+        return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
       void main(){
-        vec2 uv=gl_PointCoord*2.0-1.0; float r2=dot(uv,uv); if(r2>1.0) discard;
-        float z=sqrt(1.0-r2); vec3 nrm=vec3(uv.x,-uv.y,z);
+        vec2 uv=gl_PointCoord*2.0-1.0;            // sprite space, [-1,1]
+        float R=0.53;                             // sphere radius inside the sprite
+        vec2 p=uv/R; float r2=dot(p,p);
+        float tilt=0.6+vSeed*1.2;                 // ring / band tilt
+        mat2 rot=mat2(cos(tilt),-sin(tilt),sin(tilt),cos(tilt));
         vec3 L=normalize(vec3(-0.55,0.65,0.75));
-        float diff=max(dot(nrm,L),0.0);
-        float spec=pow(max(dot(reflect(-L,nrm),vec3(0.0,0.0,1.0)),0.0),28.0);
-        float rim=pow(1.0-z,2.5);
-        vec3 col=vColor*(0.30+0.80*diff)+vec3(1.0)*spec*0.55+vColor*rim*1.1;
-        float edge=1.0-smoothstep(0.80,1.0,r2);
-        gl_FragColor=vec4(col,edge*vAlpha);
+        vec4 outc=vec4(0.0);
+        // ---- ring (prefixes): ellipse around the sphere, back half hidden behind it
+        float ringA=0.0; vec3 ringC=vec3(0.0);
+        if(vKind<0.5){
+          vec2 q=rot*uv; float e=sqrt(q.x*q.x/(0.95*0.95)+q.y*q.y/(0.36*0.36));
+          float band=smoothstep(0.68,0.74,e)*(1.0-smoothstep(0.96,1.0,e));
+          float grooves=0.75+0.25*sin(e*60.0+vSeed*20.0);
+          bool front=q.y>0.0;                     // lower half of the tilted ring is in front
+          float lit=0.55+0.45*max(dot(normalize(vec3(q.x,-q.y,0.4)),L),0.0);
+          ringA=band*grooves*(front||r2>1.0?1.0:0.0)*0.85;
+          ringC=mix(vColor,vec3(1.0),0.35)*lit;
+        }
+        // ---- sphere
+        if(r2<=1.0){
+          float z=sqrt(1.0-r2); vec3 nrm=vec3(p.x,-p.y,z);
+          float diff=max(dot(nrm,L),0.0);
+          float spec=pow(max(dot(reflect(-L,nrm),vec3(0.0,0.0,1.0)),0.0),30.0);
+          float rim=pow(1.0-z,2.5);
+          vec3 base=vColor;
+          if(vKind<0.5){                         // prefix: smooth planet with a soft equatorial haze
+            float lat=(rot*p).y; base*=0.9+0.1*sin(lat*4.0+vSeed*6.0);
+          } else if(vKind<1.5){                  // root: drifting cloud bands
+            float lat=(rot*p).y*1.0;
+            float bands=sin(lat*9.0+vSeed*12.0+uTime*0.15+noise(vec2(lat*3.0,p.x*1.5+uTime*0.05))*1.6);
+            base*=0.78+0.26*bands;
+            float storm=smoothstep(0.80,0.98,noise(p*2.5+vSeed*10.0+vec2(uTime*0.02,0.0)));
+            base=mix(base,mix(base,vec3(1.0),0.6),storm*0.5);
+          } else {                               // suffix: cratered moon, a little desaturated
+            float g=dot(base,vec3(0.33)); base=mix(base,vec3(g),0.25);
+            float cr=noise(p*5.0+vSeed*30.0); float crater=smoothstep(0.58,0.72,cr);
+            base*=1.0-0.35*crater; diff*=1.0-0.25*crater;
+          }
+          vec3 col=base*(0.28+0.82*diff)+vec3(1.0)*spec*0.5+vColor*rim*1.0;
+          float edge=1.0-smoothstep(0.84,1.0,r2);
+          outc=vec4(col,edge);
+        }
+        // composite ring over/under the sphere
+        vec3 c=mix(outc.rgb,ringC,ringA*(1.0-outc.a*0.0));
+        float a=max(outc.a,ringA);
+        if(ringA>0.0 && outc.a>0.0) c=mix(outc.rgb,ringC,ringA);
+        if(a<0.01) discard;
+        gl_FragColor=vec4(c,a*vAlpha);
       }`,
     transparent:true,depthWrite:false,blending:THREE.NormalBlending,vertexColors:true
   }));
