@@ -6,7 +6,7 @@
 
 [![在线体验](https://img.shields.io/badge/在线体验-Live_Demo-00E5FF?style=for-the-badge&logo=github&logoColor=white)](https://yunningtang.github.io/EtymologyNetwork3D/)
 [![版本](https://img.shields.io/badge/v3.0-正式版-69F0AE?style=for-the-badge)]()
-[![词汇量](https://img.shields.io/badge/30,000+-单词-FFD740?style=for-the-badge)]()
+[![词汇量](https://img.shields.io/badge/6,000+-考试核心词-FFD740?style=for-the-badge)]()
 [![词素](https://img.shields.io/badge/200+-词素-FF80AB?style=for-the-badge)]()
 
 <br/>
@@ -34,8 +34,8 @@
 |------|------|
 | **3D 星图** | 在 WebGL 驱动的星空中浏览词素之间的连接关系，支持旋转、缩放、平滑镜头 |
 | **2D 思维导图** | 层级辐射布局 — 逐层展开分组、词素、单词 |
-| **智能搜索** | 30,000+ 词汇即时搜索，支持中英双语，下拉实时匹配 |
-| **单词详情** | 点击任意单词查看词源拆解、词素构成、中文释义 |
+| **智能搜索** | 6,000+ 核心词汇即时搜索，支持中英双语，下拉实时匹配 |
+| **单词详情** | 点击任意单词查看词源拆解、词素构成、词典释义、音标与考试等级（中考/高考/四六级/考研/托福/雅思） |
 | **发音朗读** | 内置 Text-to-Speech，点击即可听到单词发音 |
 | **收藏夹** | 收藏感兴趣的单词，追踪学习进度 |
 | **分类筛选** | 按 Prefix / Root / Suffix 筛选，支持细分子类别（否定、方向、动作等） |
@@ -75,7 +75,7 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
 | 架构 | 纯静态页面 — CSS/JS 内嵌于 `index.html`，词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
 | 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
-| 数据 | 200+ 词素，30,000+ 单词及词源映射 |
+| 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
 
 ## 项目结构
@@ -84,24 +84,35 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 EtymologyNetwork3D/
 ├── index.html                # 主应用（页面 + 样式 + 全部逻辑）
 ├── data/
-│   └── words.js              # 单词 → 词素映射数据（由 embed-words.js 生成）
+│   └── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
 ├── vendor/
 │   └── three.min.js          # Three.js r128（自托管）
-├── scripts/
-│   ├── build-vocabulary.js   # 从公开词表生成候选词 → scripts/output/words.json
-│   ├── embed-words.js        # 筛选并写出 data/words.js
-│   └── scrape-words.js       # 实验性：抓取词典数据写入 SQLite
+├── scripts/vocab/
+│   ├── fetch.js              # 下载 ECDICT 词典与词根库到 scripts/output/（已 gitignore）
+│   ├── build.js              # 生成 data/words.js
+│   ├── rootmap.js            # 本项目词素 ↔ ECDICT 词根库条目的对应表
+│   ├── patterns.js           # 正则候选规则（只产生候选，不直接入库）
+│   └── review/reviewed.tsv   # 人工校验结果：单词 → 词素（覆盖其它来源）
 ├── docs/
 │   └── product-notes.md      # 产品方向笔记（SRS 复习、拍照识词等设想）
 └── package.json
 ```
 
-### 重新生成词汇数据
+### 词汇数据是怎么来的
 
 ```bash
-npm run data:build    # 下载公开词表并按词素规则匹配，输出 scripts/output/words.json
-npm run data:embed    # 每个词素最多取 200 词，写出 data/words.js
+npm run data:fetch    # 下载 ECDICT（约 66 MB）与 wordroot.txt
+npm run data:build    # 生成 data/words.js，并在 scripts/output/ 输出覆盖报告
 ```
+
+1. **选词**：取 ECDICT 中带 中考/高考/CET4/CET6/考研/TOEFL/IELTS 标签的单词（约 11,000 个），释义、音标、词频均来自词典。
+2. **词素映射，三层来源，精度优先**：
+   - *已核实*：ECDICT 词根库（611 个词根、9,000+ 人工例词）中的例词，经 `rootmap.js` 对应到本项目词素；
+   - *推导*：透明的词缀剥离，且剩余词干本身是词典词（happiness = happy + -ness，unpredictable 继承 predict 的词素）；
+   - *人工校验*：正则命中但以上两层都无法确认的候选（约 3,800 词）逐词审核，结果记录在 `review/reviewed.tsv`，拼写巧合一律剔除（uniform 不是 un-，ability 不是 ab-，mission 不是 mis-）。
+3. 只有至少映射到一个词素的单词才会进入 `data/words.js`（约 6,100 词）；例词极少的词素会从词根库补充少量非考纲例词（无等级标记）。
+
+音标缺失的少数单词会显示规则估算音标，并以 `≈` 标出。
 
 ## 17 大语义分类
 
