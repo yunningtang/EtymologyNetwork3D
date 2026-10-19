@@ -73,7 +73,7 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 |------|---------|
 | 3D 渲染 | **Three.js** r128（自托管于 `vendor/`）— 自定义 GLSL Shader、Point Sprites、Additive Blending |
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
-| 架构 | 纯静态页面 — CSS/JS 内嵌于 `index.html`，词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
+| 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
 | 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
@@ -82,7 +82,21 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 
 ```
 EtymologyNetwork3D/
-├── index.html                # 主应用（页面 + 样式 + 全部逻辑）
+├── index.html                # 页面骨架，按顺序加载 src/ 下的脚本
+├── src/
+│   ├── style.css             # 样式
+│   ├── morphemes.js          # 206 个词素：来源、双语释义、语义分类
+│   ├── data.js               # 读取 data/words.js；音标回退
+│   ├── search.js             # 搜索（前缀 / 包含 / 三元组模糊）
+│   ├── graph.js              # 词素节点、共现连线、力导向布局
+│   ├── scene3d.js            # Three.js 场景、标签层、相机
+│   ├── study.js              # 收藏与学习进度（localStorage）
+│   ├── highlight.js          # 高亮状态计算
+│   ├── tooltip.js            # 词素 / 单词详情卡
+│   ├── ui.js                 # 搜索框、筛选、学习面板、交互事件、开场动画
+│   ├── loop.js               # 3D 渲染主循环
+│   ├── mindmap.js            # 2D 思维导图
+│   └── main.js               # 启动流程
 ├── data/
 │   └── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
 ├── vendor/
