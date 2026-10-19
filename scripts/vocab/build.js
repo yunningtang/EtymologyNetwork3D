@@ -25,7 +25,7 @@ const rootmap = require('./rootmap.js');
 const { PREFIXES, ROOTS, SUFFIXES } = require('./patterns.js');
 const REVIEW_DIR = path.join(__dirname, 'review');
 const DATA_OUT = path.join(__dirname, '..', '..', 'data', 'words.js');
-const HTML = path.join(__dirname, '..', '..', 'index.html');
+const HTML = path.join(__dirname, '..', '..', 'src', 'morphemes.js');
 const REPORT = process.argv.includes('--report');
 
 // ---------- morpheme inventory (from index.html) ----------
