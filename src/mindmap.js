@@ -172,7 +172,7 @@ function expandNode(nodeId){
       mmNodes.push({
         id:n.id, type:n.type, label:n.label, meaning:n.meaning, color:n.colorHex,
         x:parent.tx, y:parent.ty, tx, ty,
-        r:8, isWord:false, isGroup:false, isCenter:false, parentId:nodeId, data:n,
+        r:11, isWord:false, isGroup:false, isCenter:false, parentId:nodeId, data:n,
         angle:a
       });
       mmEdges.push({from:nodeId, to:n.id});
@@ -298,8 +298,12 @@ function drawMindmap(){
     mmCtx.fill();
     if(isExp){ mmCtx.strokeStyle=n.color+'80'; mmCtx.lineWidth=1.5; mmCtx.stroke(); }
 
-    // "+" indicator for expandable nodes
-    if(!n.isWord && !n.isCenter && !isExp){
+    // morpheme icon (kid theme) or "+" indicator for expandable nodes
+    const kid=document.body.classList.contains('kid');
+    if(kid && !n.isWord && !n.isCenter && !n.isGroup){
+      mmCtx.font=Math.round(n.r*1.25)+"px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif"; mmCtx.textAlign='center'; mmCtx.textBaseline='middle';
+      mmCtx.fillText(morphIcon(n.id), n.x, n.y+1);
+    } else if(!n.isWord && !n.isCenter && !isExp){
       mmCtx.font="bold "+Math.round(n.r*0.9)+"px sans-serif"; mmCtx.fillStyle='rgba(255,255,255,0.6)';
       mmCtx.textAlign='center'; mmCtx.textBaseline='middle';
       mmCtx.fillText('+', n.x, n.y);

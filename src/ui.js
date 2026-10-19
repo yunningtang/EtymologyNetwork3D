@@ -167,12 +167,23 @@ function buildSubFilters(type){
   subFiltersEl.classList.add('visible');
 }
 
+// Theme: "探险" (kid, default) or "星空" (glass). Persisted.
+(function(){
+  let theme='kid'; try{ theme=localStorage.getItem('etym_theme')||'kid'; }catch(e){}
+  const apply=()=>{ document.body.classList.toggle('kid',theme==='kid'); const b=document.getElementById('theme-toggle'); if(b) b.textContent=theme==='kid'?'切换到星空':'切换到探险'; if(typeof nodeMesh!=='undefined'&&nodeMesh) nodeMesh.material.uniforms.uCartoon.value=theme==='kid'?1:0; };
+  apply();
+  window.applyTheme=apply;
+  document.getElementById('theme-toggle').onclick=()=>{ theme=theme==='kid'?'glass':'kid'; try{ localStorage.setItem('etym_theme',theme); }catch(e){} apply(); };
+})();
+// Default level: 初高中 (中考 + 高考) — the audience is school-age learners
+levelFilter = new Set(['z','g']);
+
 // Exam-level filter: single select ("全部" clears). Re-renders the pinned card and the 2D map.
 document.querySelectorAll('.lv-btn').forEach(btn=>{
   btn.addEventListener('click',function(){
     document.querySelectorAll('.lv-btn').forEach(b=>b.classList.remove('active'));
     this.classList.add('active');
-    levelFilter = this.dataset.lv ? new Set([this.dataset.lv]) : new Set();
+    levelFilter = this.dataset.lv ? new Set(this.dataset.lv.split('')) : new Set();
     document.getElementById('m-nodes').textContent=visibleWordCount();
     if(pinnedNode){ const n=pinnedWordNode||pinnedNode; if(pinnedWordNode) showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); else showTooltip(n, tooltip.offsetLeft, tooltip.offsetTop); tooltip.classList.add('pinned'); }
     if(searchQuery){ searchResults=fuzzySearch(searchQuery); renderDropdown(searchResults); }
@@ -199,9 +210,10 @@ function renderStudyPanel(){
   const pct=Math.round(prog.totalMorphemes/MORPHEMES.length*100);
   stats.innerHTML=
     '<div class="sp-progress-bar"><div class="sp-progress-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="sp-stat"><span>词素</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
-    '<div class="sp-stat"><span>单词</span><b>'+prog.totalWords+'</b></div>'+
-    '<div class="sp-stat"><span>收藏</span><b>'+favs.length+'</b></div>';
+    '<div class="sp-stat"><span>🪐 已登陆的星球</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
+    '<div class="sp-stat"><span>⭐ 看过的单词</span><b>'+prog.totalWords+'</b></div>'+
+    '<div class="sp-stat"><span>❤️ 收藏</span><b>'+favs.length+'</b></div>'+
+    '<div class="sp-stat"><span>🏆 闯关最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
   const favsEl=document.getElementById('sp-favs');
   favsEl.innerHTML='';
   if(!favs.length){
@@ -431,7 +443,7 @@ function startIntro(){
   document.getElementById('loading').classList.add('hide');
   setTimeout(()=>{document.getElementById('loading').style.display='none';},1000);
   // Start stats animation
-  animateCounter(document.getElementById('m-nodes'),WORD_DATA.size||MORPHEMES.length);
+  animateCounter(document.getElementById('m-nodes'),visibleWordCount()||MORPHEMES.length);
   animateCounter(document.getElementById('m-edges'),edges.length);
   animateCounter(document.getElementById('m-clusters'),MORPHEMES.length);
 }

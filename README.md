@@ -39,7 +39,11 @@
 | **发音朗读** | 内置 Text-to-Speech，点击即可听到单词发音 |
 | **收藏夹** | 收藏感兴趣的单词，追踪学习进度 |
 | **分类筛选** | 按 Prefix / Root / Suffix 筛选，支持细分子类别（否定、方向、动作等） |
-| **等级筛选** | 按 中考 / 高考 / CET4 / CET6 / 考研 / TOEFL / IELTS 只看对应考纲的单词 |
+| **等级筛选** | 默认只看初高中（中考+高考）单词，也可切到四六级 / 考研 / 托福雅思 / 全部 |
+| **今天探索** | 10 道小题闯关：猜释义、按顺序拼词素、找同根词；即时反馈、撒彩纸、记录最高分 |
+| **先猜后看** | 单词卡先给词素拆解，猜过再揭晓词典释义（可关闭） |
+| **词素故事** | 206 个词素各一句来历，例如 salary 本义是"买盐的钱" |
+| **同根对比** | 同一词根换前缀排成一列：import / export / transport / report |
 | **键盘操作** | 方向键旋转、+/− 缩放、Enter 固定屏幕中心的词素、/ 搜索、Esc 重置 |
 | **双语界面** | 全程中英文对照 |
 
@@ -76,7 +80,7 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 | 3D 渲染 | **Three.js** r128（自托管于 `vendor/`）— 自定义 GLSL Shader、Point Sprites、Additive Blending |
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
 | 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
-| 界面 | Liquid Glass 风格：半透明毛玻璃面板、高光描边、胶囊按钮；词素以带光照的星球渲染，大小随单词数变化 |
+| 界面 | 两套主题：默认「探险」（面向小学到初中：奶油色厚边面板、可按压按钮、卡通星球、词素表情图标）和「星空」（Liquid Glass 毛玻璃）；在学习面板里切换 |
 | 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
@@ -99,9 +103,14 @@ EtymologyNetwork3D/
 │   ├── ui.js                 # 搜索框、筛选、学习面板、交互事件、开场动画
 │   ├── loop.js               # 3D 渲染主循环
 │   ├── mindmap.js            # 2D 思维导图
+│   ├── quest.js              # 「今天探索」闯关小游戏 + 彩纸/提示
+│   ├── icons.js              # 词素表情图标
+│   ├── theme-kid.css         # 「探险」主题与闯关面板样式
 │   └── main.js               # 启动流程
 ├── data/
-│   └── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
+│   ├── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
+│   └── images.js             # 词素配图的文件名与署名（由 scripts/images/fetch-commons.js 生成）
+├── assets/morphemes/         # 词素配图（Wikimedia Commons，自由许可）
 ├── vendor/
 │   └── three.min.js          # Three.js r128（自托管）
 ├── scripts/vocab/
@@ -130,6 +139,14 @@ npm run data:build    # 生成 data/words.js，并在 scripts/output/ 输出覆�
 3. 只有至少映射到一个词素的单词才会进入 `data/words.js`（约 6,100 词）；例词极少的词素会从词根库补充少量非考纲例词（无等级标记）。
 
 音标缺失的少数单词会显示规则估算音标，并以 `≈` 标出。
+
+### 词素配图
+
+```bash
+node scripts/images/fetch-commons.js        # 按 scripts/images/queries.tsv 从 Wikimedia Commons 取图
+```
+
+只接受公有领域 / CC0 / CC BY / CC BY-SA 的照片，每张压成 480px 宽的 webp 放到 `assets/morphemes/`，作者与许可证写入 `data/images.js`，卡片上显示带链接的署名。
 
 ## 17 大语义分类
 

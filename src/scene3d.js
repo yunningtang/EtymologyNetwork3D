@@ -110,12 +110,12 @@ function buildNodes(){
   //   suffixes  → cratered moons
   // The sprite is 1.9× the sphere so rings have room; seed varies tilt/bands/craters.
   nodeMesh=new THREE.Points(nodeGeom,new THREE.ShaderMaterial({
-    uniforms:{uTime:{value:0}},
+    uniforms:{uTime:{value:0},uCartoon:{value:1}},
     vertexShader:`attribute float size;attribute float alpha;attribute float kind;attribute float seed;
       varying vec3 vColor;varying float vAlpha;varying float vKind;varying float vSeed;
       void main(){vColor=color;vAlpha=alpha;vKind=kind;vSeed=seed;vec4 mv=modelViewMatrix*vec4(position,1.0);
         gl_PointSize=size*1.9*(200.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`uniform float uTime;varying vec3 vColor;varying float vAlpha;varying float vKind;varying float vSeed;
+    fragmentShader:`uniform float uTime;uniform float uCartoon;varying vec3 vColor;varying float vAlpha;varying float vKind;varying float vSeed;
       float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
       float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
         return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
@@ -159,6 +159,13 @@ function buildNodes(){
             base*=1.0-0.35*crater; diff*=1.0-0.25*crater;
           }
           vec3 col=base*(0.28+0.82*diff)+vec3(1.0)*spec*0.5+vColor*rim*1.0;
+          if(uCartoon>0.5){                      // cel shading: 3 light steps, big soft highlight, ink outline
+            float steps=floor(diff*3.0+0.5)/3.0;
+            col=base*(0.45+0.65*steps)+vec3(1.0)*smoothstep(0.55,0.95,spec)*0.7;
+            float hl=smoothstep(0.30,0.0,length(p-vec2(-0.38,-0.38)));
+            col=mix(col,vec3(1.0),hl*0.35);
+            col=mix(col,vec3(0.10,0.11,0.25),smoothstep(0.80,0.98,r2)*0.85);
+          }
           float edge=1.0-smoothstep(0.84,1.0,r2);
           outc=vec4(col,edge);
         }

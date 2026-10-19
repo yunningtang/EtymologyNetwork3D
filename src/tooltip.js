@@ -92,6 +92,8 @@ function showTooltip(node,x,y){
   ttBadge.className='badge '+(node.type==='p'?'prefix':node.type==='r'?'root':node.type==='s'?'suffix':'word');
   ttBadge.style.background=(node.colorHex||'#999')+'26'; ttBadge.style.color=node.colorHex||'#999';
   ttLabel.textContent=node.label; ttOrigin.textContent=node.origin||'';
+  // icon badge (kid theme shows it large; glass theme keeps it subtle)
+  if(node.type!=='w' && !node.isVirtual){ const ic=document.createElement('span'); ic.className='tt-icon'; ic.textContent=morphIcon(node.id); ttLabel.prepend(ic); }
   ttOrigin.style.display=node.origin?'block':'none';
 
   // Primary meaning area: only show curated/verified translations.
@@ -107,7 +109,7 @@ function showTooltip(node,x,y){
     ttMeaning.textContent=''; ttMeaning.style.cssText='';
     const rv=document.createElement('div'); rv.className='tt-reveal';
     rv.innerHTML='<div class="q">看下面的词素拆解，先猜猜这个词的意思<small>猜好了再点开，记得更牢</small></div><div class="go">揭晓释义 →</div>';
-    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; };
+    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); };
     ttMeaning.appendChild(rv);
   } else if(displayMeaning){
     ttMeaning.textContent = displayMeaning;

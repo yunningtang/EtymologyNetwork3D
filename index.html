@@ -13,27 +13,28 @@
 <meta name="twitter:description" content="Explore English word origins through an interactive 3D network visualization.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
 <link rel="stylesheet" href="src/style.css">
+<link rel="stylesheet" href="src/theme-kid.css">
 </head>
-<body>
+<body class="kid">
 
 <!-- Loading -->
 <div id="loading">
   <div class="brand-load">Etymology Network</div>
   <div class="loader-ring"></div>
-  <div id="load-status">Mapping word roots...</div>
+  <div id="load-status">正在点亮词根星球…</div>
   <div id="load-progress"><div id="load-bar"></div></div>
 </div>
 
 <!-- Intro Overlay -->
 <div id="intro-overlay">
-  <div class="tagline">See how English words connect</div>
-  <div class="tagline-sub">200+ roots · 6,000+ words · One living network</div>
+  <div class="tagline">每个英语单词，都是拼出来的</div>
+  <div class="tagline-sub">206 个词根星球 · 6,000 多个单词 · 一张会动的星图</div>
 </div>
 
 <!-- Hint -->
 <div id="hint">
   <span class="pulse-dot"></span>
-  <span>Hover to explore · Click to pin 悬停探索 · 点击固定</span>
+  <span>点一颗星球，看看它藏着哪些单词</span>
 </div>
 
 <!-- Top Bar -->
@@ -47,7 +48,7 @@
 <!-- Search -->
 <div id="search-wrap">
   <svg id="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <input id="search" type="text" placeholder="Search words... 搜索单词 (try 'struct', 'biology')" autocomplete="off" spellcheck="false">
+  <input id="search" type="text" placeholder="搜一个单词或词根，比如 port、biology" autocomplete="off" spellcheck="false">
   <button id="search-clear" aria-label="Clear search">&times;</button>
   <span id="search-count"></span>
   <div id="search-dropdown"></div>
@@ -55,30 +56,29 @@
 
 <!-- Exam level filter -->
 <div id="level-filters" role="group" aria-label="考试等级筛选">
-  <button class="lv-btn active" data-lv="">全部</button>
+  <button class="lv-btn active" data-lv="zg">初高中</button>
   <button class="lv-btn" data-lv="z">中考</button>
   <button class="lv-btn" data-lv="g">高考</button>
-  <button class="lv-btn" data-lv="4">CET4</button>
-  <button class="lv-btn" data-lv="6">CET6</button>
+  <button class="lv-btn" data-lv="46">四六级</button>
   <button class="lv-btn" data-lv="k">考研</button>
-  <button class="lv-btn" data-lv="t">TOEFL</button>
-  <button class="lv-btn" data-lv="i">IELTS</button>
+  <button class="lv-btn" data-lv="ti">托福雅思</button>
+  <button class="lv-btn" data-lv="">全部</button>
 </div>
 
 <!-- Filters -->
 <div id="filters">
-  <button class="filter-btn active" data-type="all">All 全部</button>
-  <button class="filter-btn" data-type="p"><span class="dot" style="background:var(--cyan)"></span>Prefix 前缀</button>
-  <button class="filter-btn" data-type="r"><span class="dot" style="background:var(--mint)"></span>Root 词根</button>
-  <button class="filter-btn" data-type="s"><span class="dot" style="background:var(--pink)"></span>Suffix 后缀</button>
+  <button class="filter-btn active" data-type="all">全部</button>
+  <button class="filter-btn" data-type="p"><span class="dot" style="background:var(--cyan)"></span>前缀</button>
+  <button class="filter-btn" data-type="r"><span class="dot" style="background:var(--mint)"></span>词根</button>
+  <button class="filter-btn" data-type="s"><span class="dot" style="background:var(--pink)"></span>后缀</button>
 </div>
 <div id="sub-filters"></div>
 
 <!-- Instructions -->
 <div id="instructions">
-  Drag to rotate 拖拽旋转 · Scroll to zoom 滚轮缩放<br>
-  <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> Rotate 旋转 &nbsp; <kbd>+</kbd><kbd>−</kbd> Zoom 缩放 &nbsp; <kbd>Enter</kbd> Pin center 固定中心<br>
-  <kbd>/</kbd> Search 搜索 &nbsp; <kbd>Esc</kbd> Reset 重置
+  拖拽旋转 · 滚轮缩放<br>
+  <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 旋转 &nbsp; <kbd>+</kbd><kbd>−</kbd> 缩放 &nbsp; <kbd>Enter</kbd> 选中中间那颗<br>
+  <kbd>/</kbd> 搜索 &nbsp; <kbd>Esc</kbd> 回到全图
 </div>
 
 <!-- Study Toggle & Panel -->
@@ -86,11 +86,15 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
   <span id="study-badge"></span>
 </button>
+<button id="quest-btn" title="今天探索：10 道小题闯关">🚀 <span>今天探索</span></button>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
 <div id="study-panel">
   <div id="sp-header">
-    <h3>学习进度</h3>
+    <h3>我的探险</h3>
     <button id="sp-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
+  <div class="sp-theme">主题 <button class="tt-chip" id="theme-toggle">切换到星空</button></div>
   <div id="sp-stats"></div>
   <div id="sp-favs"></div>
 </div>
@@ -131,15 +135,15 @@
 
 <!-- View Toggle -->
 <div id="view-toggle">
-  <button class="view-btn active" data-view="3d">3D Globe</button>
-  <button class="view-btn" data-view="2d">2D Map</button>
+  <button class="view-btn active" data-view="3d">🪐 星图</button>
+  <button class="view-btn" data-view="2d">🗺️ 地图</button>
 </div>
 
 <!-- 2D Mindmap -->
 <div id="mindmap-container">
   <canvas id="mindmap-canvas"></canvas>
 </div>
-<div id="mindmap-hint">Click any morpheme to expand its word family</div>
+<div id="mindmap-hint">点一个词根，展开它的单词家族</div>
 
 <!-- Label canvas for morpheme names -->
 <canvas id="label-canvas"></canvas>
@@ -148,6 +152,7 @@
 <script src="data/words.js"></script>
 <script src="data/images.js"></script>
 <script src="src/morphemes.js"></script>
+<script src="src/icons.js"></script>
 <script src="src/data.js"></script>
 <script src="src/search.js"></script>
 <script src="src/graph.js"></script>
@@ -158,6 +163,7 @@
 <script src="src/ui.js"></script>
 <script src="src/loop.js"></script>
 <script src="src/mindmap.js"></script>
+<script src="src/quest.js"></script>
 <script src="src/main.js"></script>
 </body>
 </html>

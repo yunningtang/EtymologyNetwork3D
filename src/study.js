@@ -41,7 +41,8 @@ function trackExplore(type, id){
   if(!bucket[id]){
     bucket[id]=Date.now();
     prog['total'+(type==='morpheme'?'Morphemes':'Words')]=Object.keys(bucket).length;
-    localStorage.setItem(STORAGE_KEY_PROG, JSON.stringify(prog));
+    try{ localStorage.setItem(STORAGE_KEY_PROG, JSON.stringify(prog)); }catch(e){}
+    if(type==='morpheme' && typeof toast==='function' && appState==='active') toast('🪐 登陆新星球！已登陆 '+prog.totalMorphemes+' / '+MORPHEMES.length);
   }
   return prog;
 }
