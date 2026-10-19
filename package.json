@@ -3,8 +3,9 @@
   "version": "3.0.0",
   "description": "Etymology Network 词源星图 — 30k+ words, 200+ morphemes, 3D/2D visualization",
   "scripts": {
-    "build": "node scripts/build-html.js",
-    "preview": "python -m http.server 8000"
+    "preview": "python3 -m http.server 8000",
+    "data:build": "node scripts/build-vocabulary.js",
+    "data:embed": "node scripts/embed-words.js"
   },
   "license": "MIT"
 }

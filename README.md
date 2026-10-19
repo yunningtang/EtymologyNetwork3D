@@ -45,12 +45,12 @@
 
 **在线版**：[yunningtang.github.io/EtymologyNetwork3D](https://yunningtang.github.io/EtymologyNetwork3D/)
 
-**本地预览**：直接双击 [`index.html`](index.html) 用浏览器打开即可。需要本地静态服务器的话：
+**本地预览**：clone 后直接双击 [`index.html`](index.html) 用浏览器打开即可（three.js 与词汇数据都在仓库内，不依赖任何外部 CDN 或字体服务）。需要本地静态服务器的话：
 
 ```bash
 git clone https://github.com/yunningtang/EtymologyNetwork3D.git
 cd EtymologyNetwork3D
-python -m http.server 8000   # 然后访问 http://localhost:8000
+python3 -m http.server 8000   # 然后访问 http://localhost:8000
 ```
 
 ## 产品逻辑
@@ -71,9 +71,10 @@ python -m http.server 8000   # 然后访问 http://localhost:8000
 
 | 层级 | 技术方案 |
 |------|---------|
-| 3D 渲染 | **Three.js** r128 — 自定义 GLSL Shader、Point Sprites、Additive Blending |
+| 3D 渲染 | **Three.js** r128（自托管于 `vendor/`）— 自定义 GLSL Shader、Point Sprites、Additive Blending |
 | 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
-| 架构 | Single-file HTML — 所有 CSS/JS 内嵌，零依赖部署 |
+| 架构 | 纯静态页面 — CSS/JS 内嵌于 `index.html`，词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
+| 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 200+ 词素，30,000+ 单词及词源映射 |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
 
@@ -81,15 +82,25 @@ python -m http.server 8000   # 然后访问 http://localhost:8000
 
 ```
 EtymologyNetwork3D/
-├── public/
-│   └── index.html          # 主应用（单文件应用）
-├── index.html               # GitHub Pages 入口（构建产物）
-├── package.json
-└── scripts/
-    ├── build-html.js         # HTML 构建脚本（注入词汇数据）
-    ├── build-vocabulary.js   # 词汇处理脚本
-    ├── embed-words.js        # 单词数据嵌入
-    └── scrape-words.js       # 单词爬取脚本
+├── index.html                # 主应用（页面 + 样式 + 全部逻辑）
+├── data/
+│   └── words.js              # 单词 → 词素映射数据（由 embed-words.js 生成）
+├── vendor/
+│   └── three.min.js          # Three.js r128（自托管）
+├── scripts/
+│   ├── build-vocabulary.js   # 从公开词表生成候选词 → scripts/output/words.json
+│   ├── embed-words.js        # 筛选并写出 data/words.js
+│   └── scrape-words.js       # 实验性：抓取词典数据写入 SQLite
+├── docs/
+│   └── product-notes.md      # 产品方向笔记（SRS 复习、拍照识词等设想）
+└── package.json
+```
+
+### 重新生成词汇数据
+
+```bash
+npm run data:build    # 下载公开词表并按词素规则匹配，输出 scripts/output/words.json
+npm run data:embed    # 每个词素最多取 200 词，写出 data/words.js
 ```
 
 ## 17 大语义分类

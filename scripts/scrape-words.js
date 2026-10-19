@@ -126,7 +126,7 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 //  STEP 1: Parse existing morphemes from HTML
 // ============================================================
 function seedMorphemesFromHTML() {
-  const htmlPath = path.join(__dirname, '..', 'public', 'index.html');
+  const htmlPath = path.join(__dirname, '..', 'index.html');
   const html = fs.readFileSync(htmlPath, 'utf-8');
 
   // Extract MORPHEMES array
