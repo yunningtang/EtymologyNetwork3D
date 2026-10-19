@@ -28,6 +28,7 @@ document.querySelectorAll('.view-btn').forEach(btn=>{
     const view = btn.dataset.view;
     if(view === currentView) return;
     currentView = view;
+    document.body.classList.toggle('view-2d', view==='2d'); // lets CSS hide 3D-only chrome
     document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
 
     if(view==='2d'){
@@ -50,7 +51,7 @@ document.querySelectorAll('.view-btn').forEach(btn=>{
 
 function buildMindmap(){
   mmNodes = []; mmEdges = []; mmExpanded.clear();
-  const cx = window.innerWidth/2, cy = window.innerHeight/2;
+  const cx = window.innerWidth/2, cy = window.innerHeight/2 + 28; // leave room for the search + level bar
 
   // Hierarchical layout: center → category groups → morphemes
   // Groups arranged radially, morphemes branch out from their group
@@ -76,11 +77,11 @@ function buildMindmap(){
   // Center node
   mmNodes.push({
     id:'_center', type:'center', label:'Etymology\nNetwork', meaning:'', color:'#ffffff',
-    x:cx, y:cy, tx:cx, ty:cy, r:22, isWord:false, isGroup:false, isCenter:true, parentId:null, data:null
+    x:cx, y:cy, tx:cx, ty:cy, r:26, isWord:false, isGroup:false, isCenter:true, parentId:null, data:null
   });
 
   // Place groups radially around center
-  const groupR = Math.min(window.innerWidth, window.innerHeight) * 0.32;
+  const groupR = Math.min(window.innerWidth, window.innerHeight) * 0.30;
   groups.forEach((g, i) => {
     const a = (i / groups.length) * Math.PI * 2 - Math.PI/2;
     const gx = cx + Math.cos(a) * groupR;
@@ -89,7 +90,7 @@ function buildMindmap(){
     const morphsInCat = nodes.filter(n => n.type!=='w' && g.cats.includes(NODE_CAT[n.id]));
     mmNodes.push({
       id:g.id, type:'group', label:g.label, meaning:morphsInCat.length+' morphemes', color:g.color,
-      x:cx, y:cy, tx:gx, ty:gy, r:14, isWord:false, isGroup:true, isCenter:false,
+      x:cx, y:cy, tx:gx, ty:gy, r:17, isWord:false, isGroup:true, isCenter:false,
       parentId:'_center', data:null, cats:g.cats, angle:a
     });
     mmEdges.push({from:'_center', to:g.id});
@@ -192,7 +193,7 @@ function expandNode(nodeId){
     mmExpanded.add(nodeId);
     const morphNode = nodeMap[nodeId];
     // Show up to 12 words
-    const words = morphNode && morphNode.wordList ? morphNode.wordList.slice(0, 12) : [];
+    const words = morphNode && morphNode.wordList ? morphNode.wordList.filter(w=>wordVisible(w.en)).slice(0, 12) : [];
     const count = words.length;
     if(!count) return;
 
@@ -318,7 +319,8 @@ function drawMindmap(){
     } else if(n.isGroup){
       mmCtx.font="600 14px -apple-system,sans-serif"; mmCtx.fillStyle=isHov?'#fff':n.color;
       mmCtx.textAlign='center';
-      n.label.split('\n').forEach((line,li)=>mmCtx.fillText(line, n.x, n.y-n.r-6+li*16));
+      const lines=n.label.split('\n'); const top=n.y-n.r-10-(lines.length-1)*17;
+      lines.forEach((line,li)=>{ mmCtx.font=li===0?"600 15px -apple-system,sans-serif":"400 12px 'PingFang SC','Microsoft YaHei',sans-serif"; mmCtx.fillStyle=isHov?'#fff':(li===0?n.color:'rgba(255,255,255,0.55)'); mmCtx.fillText(line, n.x, top+li*17); });
     } else if(n.isWord){
       mmCtx.font="400 12px -apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',system-ui,sans-serif"; mmCtx.fillStyle=isHov?'#fff':'rgba(255,255,255,0.7)';
       mmCtx.textAlign='center'; mmCtx.fillText(n.label, n.x, n.y-n.r-4);

@@ -19,6 +19,9 @@ function buildGraph() {
       x:0,y:0,z:0,vx:0,vy:0,vz:0 };
     nodes.push(node); nodeMap[m.id]=node; adjacency[m.id]=new Set();
   });
+  // Planet size: morphemes with more words are bigger (sqrt scale, 9–20 px at reference distance)
+  const maxWc = Math.max(1, ...nodes.map(n => n.wordCount));
+  nodes.forEach(n => { n.baseSize = 9 + 11 * Math.sqrt(n.wordCount / maxWc); });
 
   // Build edges: connect morphemes that co-occur in words (all words)
   const cooccur = {};
@@ -33,11 +36,11 @@ function buildGraph() {
       }
     }
   }
-  // Top co-occurrences only, capped at 300 edges
+  // Top co-occurrences only, capped at 240 edges (denser than that reads as noise)
   Object.entries(cooccur)
-    .filter(([,c]) => c >= 4)
+    .filter(([,c]) => c >= 5)
     .sort((a,b) => b[1]-a[1])
-    .slice(0, 300)
+    .slice(0, 240)
     .forEach(([key, count]) => {
       const [a, b] = key.split('|');
       edges.push({source:a, target:b, weight:count});

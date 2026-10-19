@@ -7,13 +7,13 @@
 let scene, camera, renderer;
 let edgeGeom, glowGeom, nodeGeom;
 let edgeMesh, glowMesh, nodeMesh;
-let edgeColors, glowColors, glowSizes, nodeColors, nodeSizes;
+let edgeColors, glowColors, glowSizes, nodeColors, nodeSizes, nodeAlphas;
 
 // Colors are now per-node (assigned in buildGraph via CAT_META)
 
 // Camera system — lerp-based smooth motion
 let cam = { theta:0, phi:Math.PI/2, dist:500 }; // current
-let camT = { theta:0, phi:Math.PI/2, dist:200 }; // target
+let camT = { theta:0, phi:Math.PI/2, dist:175 }; // target
 const LERP_SPEED = 0.055;
 
 function lerp(a,b,t){ return a+(b-a)*t; }
@@ -34,17 +34,21 @@ function initThree(){
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
   renderer.setSize(window.innerWidth,window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setClearColor(0x06090F,1);
+  renderer.setClearColor(0x06090F,0); // transparent: the CSS nebula gradient on <body> shows through
   renderer.domElement.id='three-canvas';
   document.body.insertBefore(renderer.domElement,document.body.firstChild);
   buildStars(); buildEdges(); buildGlow(); buildNodes();
 }
 
 function buildStars(){
-  const n=800, pos=new Float32Array(n*3), sizes=new Float32Array(n);
-  for(let i=0;i<n;i++){pos[i*3]=(Math.random()-0.5)*800;pos[i*3+1]=(Math.random()-0.5)*800;pos[i*3+2]=(Math.random()-0.5)*800;sizes[i]=0.3+Math.random()*0.6;}
-  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:0.6,transparent:true,opacity:0.3,sizeAttenuation:true})));
+  // Two star layers: a dense faint field and a sparse brighter one
+  const layer=(n,spread,size,opacity)=>{
+    const pos=new Float32Array(n*3);
+    for(let i=0;i<n;i++){pos[i*3]=(Math.random()-0.5)*spread;pos[i*3+1]=(Math.random()-0.5)*spread;pos[i*3+2]=(Math.random()-0.5)*spread;}
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size,transparent:true,opacity,sizeAttenuation:true,depthWrite:false})));
+  };
+  layer(1600,900,0.55,0.28); layer(220,700,1.4,0.5);
 }
 
 function buildEdges(){
@@ -67,7 +71,7 @@ function buildGlow(){
   nodes.forEach((n,i)=>{
     pos[i*3]=n.x;pos[i*3+1]=n.y;pos[i*3+2]=n.z;
     col[i*3]=n.color.r;col[i*3+1]=n.color.g;col[i*3+2]=n.color.b;
-    siz[i]=16.0;
+    siz[i]=n.baseSize*2.6;
   });
   glowGeom=new THREE.BufferGeometry();
   glowGeom.setAttribute('position',new THREE.BufferAttribute(pos,3));
@@ -75,28 +79,43 @@ function buildGlow(){
   glowGeom.setAttribute('size',new THREE.BufferAttribute(siz,1));
   glowMesh=new THREE.Points(glowGeom,new THREE.ShaderMaterial({
     vertexShader:`attribute float size;varying vec3 vColor;void main(){vColor=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=size*(220.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vColor;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=0.35*smoothstep(0.5,0.0,d);gl_FragColor=vec4(vColor,a);}`,
+    fragmentShader:`varying vec3 vColor;void main(){float d=length(gl_PointCoord-vec2(0.5))*2.0;if(d>1.0)discard;float a=0.42*pow(1.0-d,2.2)+0.08*(1.0-d);gl_FragColor=vec4(vColor,a);}`,
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,vertexColors:true
   }));
   scene.add(glowMesh);
 }
 
 function buildNodes(){
-  const pos=new Float32Array(nodes.length*3),col=new Float32Array(nodes.length*3),siz=new Float32Array(nodes.length);
-  nodeColors=col; nodeSizes=siz;
+  const pos=new Float32Array(nodes.length*3),col=new Float32Array(nodes.length*3),siz=new Float32Array(nodes.length),alp=new Float32Array(nodes.length);
+  nodeColors=col; nodeSizes=siz; nodeAlphas=alp;
   nodes.forEach((n,i)=>{
     pos[i*3]=n.x;pos[i*3+1]=n.y;pos[i*3+2]=n.z;
     col[i*3]=n.color.r;col[i*3+1]=n.color.g;col[i*3+2]=n.color.b;
-    siz[i]=6.5;
+    siz[i]=n.baseSize; alp[i]=1.0;
   });
   nodeGeom=new THREE.BufferGeometry();
   nodeGeom.setAttribute('position',new THREE.BufferAttribute(pos,3));
   nodeGeom.setAttribute('color',new THREE.BufferAttribute(col,3));
   nodeGeom.setAttribute('size',new THREE.BufferAttribute(siz,1));
+  nodeGeom.setAttribute('alpha',new THREE.BufferAttribute(alp,1));
+  // Each point is shaded as a small lit sphere: diffuse + specular highlight + rim light,
+  // so morphemes read as planets rather than flat dots.
   nodeMesh=new THREE.Points(nodeGeom,new THREE.ShaderMaterial({
-    vertexShader:`attribute float size;varying vec3 vColor;void main(){vColor=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=size*(200.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vColor;void main(){float d=length(gl_PointCoord-vec2(0.5));if(d>0.5)discard;float a=smoothstep(0.5,0.3,d);gl_FragColor=vec4(vColor,a);}`,
-    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,vertexColors:true
+    vertexShader:`attribute float size;attribute float alpha;varying vec3 vColor;varying float vAlpha;
+      void main(){vColor=color;vAlpha=alpha;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=size*(200.0/-mv.z);gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`varying vec3 vColor;varying float vAlpha;
+      void main(){
+        vec2 uv=gl_PointCoord*2.0-1.0; float r2=dot(uv,uv); if(r2>1.0) discard;
+        float z=sqrt(1.0-r2); vec3 nrm=vec3(uv.x,-uv.y,z);
+        vec3 L=normalize(vec3(-0.55,0.65,0.75));
+        float diff=max(dot(nrm,L),0.0);
+        float spec=pow(max(dot(reflect(-L,nrm),vec3(0.0,0.0,1.0)),0.0),28.0);
+        float rim=pow(1.0-z,2.5);
+        vec3 col=vColor*(0.30+0.80*diff)+vec3(1.0)*spec*0.55+vColor*rim*1.1;
+        float edge=1.0-smoothstep(0.80,1.0,r2);
+        gl_FragColor=vec4(col,edge*vAlpha);
+      }`,
+    transparent:true,depthWrite:false,blending:THREE.NormalBlending,vertexColors:true
   }));
   scene.add(nodeMesh);
 }
@@ -127,10 +146,11 @@ function renderLabels(){
     const dx=n.x-cx,dy=n.y-cy,dz=n.z-cz, d=Math.sqrt(dx*dx+dy*dy+dz*dz);
     const alpha=Math.max(0,Math.min(1,1-(d-100)/150));
     if(alpha<0.05) return;
-    labelCtx.font="600 13px 'SF Mono',ui-monospace,Menlo,Consolas,monospace";
+    labelCtx.font="600 14px 'SF Mono',ui-monospace,Menlo,Consolas,monospace";
     labelCtx.fillStyle=n.colorHex; labelCtx.globalAlpha=alpha*0.85;
     labelCtx.textAlign='center'; labelCtx.lineJoin='round'; labelCtx.lineWidth=3; labelCtx.strokeStyle='rgba(6,9,15,0.85)';
-    labelCtx.strokeText(n.label,sx,sy-16); labelCtx.fillText(n.label,sx,sy-16);
+    const off=14+n.baseSize*0.9*(200/Math.max(40,d));
+    labelCtx.strokeText(n.label,sx,sy-off); labelCtx.fillText(n.label,sx,sy-off);
   });
   labelCtx.globalAlpha=1;
 }

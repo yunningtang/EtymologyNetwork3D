@@ -53,6 +53,18 @@
   <div id="search-dropdown"></div>
 </div>
 
+<!-- Exam level filter -->
+<div id="level-filters" role="group" aria-label="考试等级筛选">
+  <button class="lv-btn active" data-lv="">全部</button>
+  <button class="lv-btn" data-lv="z">中考</button>
+  <button class="lv-btn" data-lv="g">高考</button>
+  <button class="lv-btn" data-lv="4">CET4</button>
+  <button class="lv-btn" data-lv="6">CET6</button>
+  <button class="lv-btn" data-lv="k">考研</button>
+  <button class="lv-btn" data-lv="t">TOEFL</button>
+  <button class="lv-btn" data-lv="i">IELTS</button>
+</div>
+
 <!-- Filters -->
 <div id="filters">
   <button class="filter-btn active" data-type="all">All 全部</button>
@@ -65,11 +77,12 @@
 <!-- Instructions -->
 <div id="instructions">
   Drag to rotate 拖拽旋转 · Scroll to zoom 滚轮缩放<br>
+  <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> Rotate 旋转 &nbsp; <kbd>+</kbd><kbd>−</kbd> Zoom 缩放 &nbsp; <kbd>Enter</kbd> Pin center 固定中心<br>
   <kbd>/</kbd> Search 搜索 &nbsp; <kbd>Esc</kbd> Reset 重置
 </div>
 
 <!-- Study Toggle & Panel -->
-<button id="study-toggle" aria-label="Study progress 学习进度">
+<button id="study-toggle" aria-label="Study progress 学习进度" aria-haspopup="dialog">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
   <span id="study-badge"></span>
 </button>
