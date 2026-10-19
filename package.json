@@ -1,11 +1,11 @@
 {
   "name": "etymology-network-3d",
   "version": "3.0.0",
-  "description": "Etymology Network 词源星图 — 30k+ words, 200+ morphemes, 3D/2D visualization",
+  "description": "Etymology Network 词源星图 — exam vocabulary mapped to 200+ morphemes, 3D/2D visualization",
   "scripts": {
     "preview": "python3 -m http.server 8000",
-    "data:build": "node scripts/build-vocabulary.js",
-    "data:embed": "node scripts/embed-words.js"
+    "data:fetch": "node scripts/vocab/fetch.js",
+    "data:build": "node scripts/vocab/build.js --report"
   },
   "license": "MIT"
 }

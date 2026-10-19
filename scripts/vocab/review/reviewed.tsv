@@ -1,0 +1,3799 @@
+# Reviewed word → morpheme mappings (one word per line: word<TAB>ids). Generated from manual review
+# of regex candidates that neither wordroot.txt nor stem analysis could confirm; overrides other sources.
+abandon	
+abandoned	ed2
+abandonment	ment2
+abashed	ed2
+abate	
+abdomen	
+abide	
+abiding	ing2
+ability	ity
+ablaze	
+able	
+ablution	ab,tion
+abnormal	ab,norm,al
+aboard	
+abolition	tion
+abolitionist	tion,ist
+aboriginal	ab,al
+abort	ab
+abortion	ab,tion
+abortive	ab,ive
+abound	ab
+about	
+above	
+abridge	
+abroad	
+absent	ab
+absentee	ab
+absenteeism	ab,ism
+absolute	ab
+absolutely	ab,ly
+absolve	ab
+absorption	ab,tion
+abstinence	ab,ten,ance
+abstract	ab,tract
+abstraction	ab,tract,tion
+abstruse	ab
+absurd	ab
+abundance	ab,ance
+abundant	ab,ant
+abundantly	ab,ant,ly
+abyss	
+accent	ad
+accentuate	ate
+accompaniment	ad,com,ment2
+accomplish	ad,com
+accomplished	ad,com,ed2
+accomplishment	ad,com,ment2
+accord	ad,cord
+accordingly	ad,cord,ing2,ly
+accordion	ad,cord
+accurate	ad,ate
+achievement	ment2
+acquisition	ad,tion
+acquisitive	ad,ive
+acronym	nom
+act	act
+acting	act,ing2
+actions	act,tion
+activities	act,ive,ity
+actuate	act,ate
+adage	ad
+adamant	
+addition	ad,tion
+additional	ad,tion,al
+additive	ad,ive
+addle	
+address	ad
+adept	ad
+adhesive	ad,ive
+adjective	ad,ject,ive
+adjoin	ad,junct
+adjoining	ad,junct,ing2
+adjourn	ad
+adjustable	ad,able
+adjustment	ad,ment2
+administer	ad
+administrate	ad,ate
+administration	ad,min,ate,tion
+administrative	ad,ate,ive
+administrator	ad,ate,er
+admirable	ad,able
+admiration	ad,tion
+admire	ad
+admonish	ad
+adobe	
+adolescence	ad,ance
+adolescent	ad,ant
+adore	ad
+adorn	ad
+adornment	ad,ment2
+adroit	
+adult	ad
+adulteration	ad,tion
+adulthood	hood
+adults	ad
+advance	
+advanced	ed2
+advancement	ment2
+advantage	age
+advantageous	age,ous
+advantages	
+advent	ad,ven
+adventitious	ad,ven,ous
+advertisement	ad,vert,ment2
+advertisements	ad,vert,ment2
+advertising	ad,vert,ing2
+advice	
+advisable	ad,vis,able
+advise	ad,vis
+affable	ad,able
+affinity	ad,fin,ity
+affluence	ad,flu,ance
+affluent	ad,flu,ant
+afford	
+age	
+aggregate	ad,ate
+aggregation	ad,ate,tion
+aggressiveness	ad,gress,ive,ness
+agonize	ize
+agreement	ment2
+ailment	ment2
+airport	
+alignment	ment2
+alive	
+allege	
+alleged	ed2
+allegiance	ance
+allergic	ic
+alleviate	ate
+alliteration	ad,liter,tion
+allure	ad
+allusion	ad,tion
+alternation	ate,tion
+alternative	ate,ive
+altruism	ism
+aluminium	
+aluminum	
+amazement	ment2
+ambivalence	val,ance
+ambivalent	val,ant
+ambulance	
+amenable	able
+amendment	ment2
+amenity	ity
+ammunition	tion
+amnesty	
+amplification	ify,tion
+amplifier	ify,er
+amplify	ify
+amplitude	
+amusement	ment2
+anarchist	ist
+ancient	
+anesthetic	ic
+animals	anim,al
+animated	anim,ate,ed2
+animosity	anim,ity
+anniversary	vert,ary
+announcement	ad,ment2
+anonymous	nom,ous
+ant	
+antagonism	anti,ism
+antagonist	anti,ist
+antagonize	anti,ize
+antarctic	anti,ic
+antedate	
+antibiotic	anti,bio,ic
+antibiotics	anti,bio,ic
+anticipate	cap,ate
+anticipation	cap,ate,tion
+antidote	anti
+antiquate	ate
+antiquated	ate,ed2
+antique	
+antiquity	ity
+antiseptic	anti,ic
+antisocial	anti,al
+antonym	anti,nom
+anxiety	ity
+anxious	ous
+apartment	ment2
+apathetic	path,ic
+apathy	path
+aperture	ure
+apologetic	log,ic
+apologise	log,ize
+apologize	log,ize
+appal	ad
+apparent	ad,ant
+appeal	ad
+applicable	ad,plex,able
+application	ad,plex,tion
+appointment	ad,ment2
+apportion	ad
+appreciable	ad,able
+appreciate	ad,ate
+apprehension	ad,tion
+apprehensive	ad,ive
+appropriate	ad,ate
+approval	ad,prob,al
+approximate	ate
+arable	able
+arbitrary	ary
+archaeological	log,ic,al
+archaeology	log
+archaic	ic
+archetype	typ
+arctic	ic
+ardent	ant
+arduous	ous
+argument	ment2
+arithmetic	ic
+armament	ment2
+armory	ary
+aromatic	ic
+arrangement	ment2
+arrival	ad,al
+arrive	
+arsenal	
+articulate	ate
+artifact	fac
+ascent	ad
+ascertain	
+ascetic	ic
+aspersion	ad,tion
+aspirin	
+assassination	ate,tion
+assessment	ad,ment2
+assiduous	ad,ous
+assign	ad,sign
+assignment	ad,sign,ment2
+assignments	ad,sign,ment2
+assimilate	ad,simil,ate
+assimilation	ad,simil,ate,tion
+assist	ad,stat
+assortment	ad,ment2
+assuage	ad
+assumption	ad,tion
+assure	ad
+astonishment	ment2
+astronomer	astro,er
+astronomical	astro,ic,al
+atheism	theo,ism
+atheist	theo,ist
+attachment	ment2
+attainment	ad,ment2
+attent	ad
+attract	ad,tract
+attraction	ad,tract,tion
+attractive	tract,ive
+attrition	tion
+auction	tion
+audacious	ous
+augment	ment2
+aural	al
+authentic	ic
+authoritative	ity,ive
+auto	auto
+autobiographical	auto,bio,graph,ic,al
+autocrat	auto
+automate	auto
+automated	auto,ed2
+automatically	auto,ic,al,ly
+automation	auto,tion
+automotive	auto,mob,ive
+autonomous	auto,ous
+auxiliary	ary
+average	
+aviation	tion
+avid	
+avocation	ab,voc,tion
+axial	al
+azure	
+baggage	age
+balance	
+balanced	ed2
+bankruptcy	rupt
+basement	ment2
+beauty	ity
+beehive	
+belligerent	ant
+beneficiary	fac,ary
+bent	
+bequest	
+berate	
+beverage	age
+biased	ed2
+bible	
+bibliography	graph
+bibliophile	phil
+bicameral	bi,al
+bicker	
+bicycles	bi
+bidding	ing2
+bigoted	ed2
+bigotry	
+bilateral	bi,al
+bingo	
+biochemistry	bio
+biodiversity	bio,dis,vert,ity
+biographer	bio,graph,er
+biography	bio,graph
+biological	bio,log,ic,al
+biologist	bio,log,ist
+biology	bio,log
+biosphere	bio,spher
+biotech	bio
+bipedal	bi,ped,al
+birdcage	
+birds	
+birth	
+birthday	
+birthplace	
+biscuit	
+bishop	
+bison	
+bitter	
+bitterly	ly
+bitterness	ness
+bitumen	
+bizarre	
+blacksmith	
+booklist	
+border	
+bounty	ity
+bourgeois	
+brighten	en2
+brilliance	ance
+brilliant	ant
+brochure	ure
+buoyant	ant
+burgeon	
+byword	
+cabal	
+cabbage	
+cable	
+cacti	
+cage	
+calamity	ity
+calculate	ate
+caliber	
+camouflage	age
+cance	
+cap	
+capacious	cap,ous
+capacitance	cap,ance
+capacitor	cap,er
+capacity	cap,ity
+capillary	ary
+capsize	
+captain	cap
+caption	cap,tion
+captious	cap,ous
+carbohydrate	
+cardiac	cord,ic
+cardinal	al
+caricature	ure
+carnival	
+castigate	ate
+catalog	log
+catastrophe	
+category	
+cathedral	al
+catholic	ic
+caustic	ic
+caution	tion
+cautious	ous
+cedar	
+celebrate	ate
+celebrity	ity
+cement	
+censure	ure
+cent	
+centenary	ary
+centennial	al
+ceramic	ic
+cereal	al
+certain	
+certainly	ly
+certainty	ity
+certificate	ate
+certify	ify
+cession	cede,tion
+chance	
+chant	
+chaotic	ic
+chapel	
+characteristic	ic
+charcoal	
+charitable	able
+chary	
+cheque	
+chic	
+chocolate	
+chord	
+choreograph	graph
+choreographer	graph,er
+choreographic	graph,ic
+chronic	chron,ic
+chronological	chron,log,ic,al
+circumference	circum,fer,ance
+circumstance	circum,stat,ance
+circumvent	circum,ven
+city	
+claim	claim
+clam	
+clamour	claim
+clamp	
+clarification	clar,ify,tion
+clarify	clar,ify
+clarity	clar,ity
+classification	ify,tion
+classmate	
+client	
+clog	
+coach	
+coal	
+coarse	
+coast	
+coastal	al
+coat	
+coax	
+coerce	co
+coexist	co,ex,stat
+coffin	
+cogent	co,ant
+cognizance	ance
+cohesion	co,tion
+cohesive	co,ive
+coil	
+coin	
+coinage	age
+collaborate	com,ate
+collaboration	com,ate,tion
+collapse	com
+collar	
+collate	com,ate
+collateral	com,al
+colleague	com
+colleagues	com
+collect	com,lect
+collection	com,lect,tion
+collective	com,lect,ive
+college	com,lect
+colleges	com,lect
+collide	com
+collision	com,tion
+colloquial	com,al
+colloquialism	com,al,ism
+collusion	com,tion
+colonel	
+colonial	al
+colonist	ist
+colonize	ize
+colony	
+colorful	ful
+colossal	al
+colour	
+column	
+combination	com,tion
+combustible	com,able
+combustion	com,tion
+comedy	
+cometary	ary
+comfort	com
+comfortable	com,able
+comical	ic,al
+comity	ity
+commence	com
+commend	com
+comment	com
+commentary	com,ary
+commentator	com,ment,ate,er
+commercials	com,al
+commiserate	com,ate
+commitment	com,mit,ment2
+committee	com,mit
+commodious	com,ous
+commodity	com,ity
+common	com
+commonly	com,ly
+commonplace	com
+commonsense	com,sens
+commonwealth	com
+commotion	com,mob,tion
+communal	com,al
+communicate	com,ate
+communication	com,tion
+communism	com,ism
+communist	com,ist
+community	com,ity
+compact	com
+compaction	com,tion
+companies	com
+companion	com
+company	com
+comparative	com,ive
+comparatively	com,ive,ly
+compartment	com,ment2
+compass	com
+compassion	com,tion
+compatibility	com,able,ity
+compatible	com,able
+compatriot	com,pater
+compensate	com,pend,ate
+compensation	com,pend,tion
+compensatory	com,pend,ary
+compete	com
+competence	com,ance
+competent	com,ant
+competing	com,ing2
+competition	com,tion
+competitive	com,ive
+competitiveness	com,ive,ness
+competitor	com,er
+compile	com
+complacence	com,ance
+complain	com
+complaint	com
+complement	com,ment2
+compliance	com,ance
+complicity	com,plex,ity
+compliment	com,ment2
+complimentary	com,ment2,ary
+comply	com
+component	com,pos,ant
+comport	com,port
+compose	com,pos
+composer	com,pos,er
+composite	com,pos
+composition	com,pos,tion
+comprehensible	com,able
+comprehension	com,tion
+comprehensive	com,ive
+compress	com,press
+compressed	com,press,ed2
+compression	com,press,tion
+comprise	com
+compromise	com,pro,mit
+compulsive	com,pel,ive
+computers	com,er
+comrade	
+concave	com
+conceal	com
+concede	com,cede
+conceit	com
+conceive	com,cept
+concentric	com,ic
+concept	com,cept
+conception	com,cept,tion
+conceptual	com,cept,al
+concern	com
+concerned	com,ed2
+concerning	com,ing2
+concert	com
+concerted	com,ed2
+concerto	com
+concession	com,cede,tion
+concessions	com,cede,tion
+conciliatory	com,ary
+concise	com
+conciseness	com,ness
+conclusive	com,ive
+concoct	com
+concomitant	com,ant
+concrete	com
+concur	com,cur
+concurrence	com,cur,ance
+concurrent	com,cur,ant
+condemn	com
+condemnation	com,tion
+condensation	com,tion
+condense	com
+condenser	com,er
+condiment	ment2
+condition	com,tion
+conditioning	com,tion,ing2
+conditions	com,dict,tion
+condolence	com,ance
+condor	
+conducive	com,duct,ive
+confederacy	com
+confederate	com,ate
+confess	com
+confession	com,tion
+configuration	com,tion
+confinement	com,fin,ment2
+confiscate	com,ate
+confluence	com,flu,ance
+conformity	com,form,ity
+confound	com
+confront	com
+confrontation	com,tion
+congenial	com,gen,al
+congenital	com,gen,al
+congest	com
+congested	com,ed2
+congestion	com,tion
+conglomerate	com,ate
+congratulate	com,ate
+congregate	com,ate
+congressional	com,gress,tion,al
+congressman	com,gress
+congruent	com,ant
+congruity	com,ity
+conifer	fer
+conjunction	com,junct,tion
+conjure	com
+connivance	com,ance
+connive	com
+connoisseur	com,er
+conquer	com
+conqueror	com,er
+conquest	com
+conscience	com,sci,ance
+conscientious	com,sci,ous
+conscious	com,sci,ous
+consciously	com,sci,ous,ly
+consciousness	com,sci,ous,ness
+consecrate	com,ate
+consecutive	com,ive
+consensus	com,sens
+consent	com,sens
+consequence	com,ance
+consequent	com,ant
+consequently	com,ant,ly
+conservation	com,tion
+conservationist	com,tion,ist
+conservatism	com,ism
+conservatory	com,ary
+conserve	com
+consider	com
+considerable	com,able
+considerably	com,able,ly
+considerate	com,ate
+consideration	com,tion
+consign	com,sign
+consist	com,stat
+consistency	com,stat,ance
+consistent	com,stat,ant
+consistently	com,stat,ant,ly
+console	com
+consolidate	com,ate
+consonant	com,ant
+consort	com
+consortium	com
+conspicuous	com,spect,ous
+conspire	com,spir
+constant	com,stat,ant
+constellation	com,stell,tion
+consternation	com,tion
+constituent	com,stat,ant
+constitute	com,stat
+constitution	com,stat,tion
+constitutional	com,tion,al
+constraint	com
+constrict	com
+constricted	com,ed2
+construe	com,struct
+consul	
+consult	com
+consultancy	com,ance
+consultant	com,ant
+consume	com
+consumer	com,er
+consumption	com,tion
+contact	com,tang
+contacts	com,tang
+contagious	com,tang,ous
+contaminants	com,ant
+contaminate	com,ate
+contamination	com,ate,tion
+contemn	com
+contemplate	com,ate
+contemporary	com,temp,ary
+contempt	com
+contemptible	com,able
+contemptuous	com,ous
+contend	com
+contender	com,er
+content	com,ten
+contented	com,ten,ed2
+contention	com,tion
+contents	com,ten
+contest	com,test
+contiguous	com,tang,ous
+continence	com,ten,ance
+continent	com,ten,ant
+continental	com,ten,ant,al
+contingency	com,tang,ance
+contingent	com,tang,ant
+continuum	com,ten
+contort	com,tort
+contour	com
+contract	com,tract
+contraction	com,tract,tion
+contractor	com,tract,er
+contracts	com,tract
+contradict	counter,dict
+contradiction	counter,dict,tion
+contradictory	counter,dict,ary
+contrary	counter,ary
+contrast	counter,stat
+contravene	counter,ven
+contribute	com
+contribution	com,tion
+contrite	com
+contrive	
+contrived	ed2
+control	
+controversial	vert,al
+controversy	counter,vert
+controvert	counter,vert
+convection	com,tion
+convene	com,ven
+convenience	com,ven,ance
+convenient	com,ven,ant
+convention	com,ven,tion
+conventional	com,ven,tion,al
+conventionally	com,ven,tion,al,ly
+converge	com
+conversation	com,vert,tion
+conversational	com,vert,tion,al
+converse	com,vert
+conversely	com,vert,ly
+conversion	com,vert,tion
+convert	com,vert
+converter	com,vert,er
+convex	com
+convey	com
+conveyance	com,ance
+convinced	com,ed2
+convivial	com,vita,al
+convoy	com
+cook	
+cooker	er
+cookie	
+cooking	ing2
+cool	
+coop	
+cooperate	co,oper,ate
+cooperation	co,oper,ate,tion
+cooperative	co,oper,ate,ive
+coordinated	co,ord,ate,ed2
+coordination	co,ord,tion
+coral	
+cord	
+cordial	cord,al
+cordless	less
+corner	
+cornet	
+corporate	corp,ate
+corporation	corp,tion
+corpse	corp
+corpulent	corp
+correct	com,reg
+correction	com,reg,tion
+correctly	com,reg,ly
+correlate	com,re,ate
+correlated	com,re,ed2
+correlation	com,re,tion
+correspond	com,re
+correspondence	com,re,ance
+correspondent	com,re,ant
+corresponding	com,re,ing2
+corridor	cur
+corroborate	com,ate
+corrode	com
+corrosion	com,tion
+corrosive	com,ive
+corrupt	com,rupt
+corruption	com,rupt,tion
+cosmetic	cosm,ic
+cosmic	cosm,ic
+cottage	age
+couch	
+cough	
+could	
+council	
+counsel	
+counseling	ing2
+counselor	er
+count	
+counter	er
+counteract	counter,act
+counterattack	counter
+counterbalance	counter
+counterclockwise	counter
+counterfeit	counter
+counterpart	counter
+countless	less
+countries	
+country	
+countryside	
+county	
+couple	
+courage	cord,age
+courageous	age,ous
+courier	cur
+course	cur
+court	
+courteous	ous
+courteously	ous,ly
+courtesy	
+courthouse	
+courtly	ly
+courtship	ship
+courtyard	
+cousin	
+crafty	
+cramped	ed2
+create	ate
+credence	cred,ance
+credential	cred,al
+credentials	cred,ant,al
+credulous	cred,ous
+crippling	ing2
+crystal	
+culinary	ary
+culminate	ate
+culmination	tion
+culpable	able
+cultivate	ate
+curb	
+cure	
+curiosity	ity
+curse	
+cursor	cur,er
+curtain	
+curtains	
+damage	age
+dance	
+date	
+deadline	
+deadlock	
+deadly	ly
+deafen	en2
+deal	
+dealer	er
+dearth	
+death	
+debate	de
+debauch	de
+debilitate	de,ate
+debris	de
+debtor	er
+decade	
+decadence	de,ance
+decadent	de,ant
+deceit	de
+deceitful	de,ful
+deceive	de,cept
+decent	ant
+deception	de,cept,tion
+deceptive	de,cept,ive
+deciduous	de,ous
+decimal	al
+decision	de,tion
+decisive	de,ive
+declaration	de,clar,tion
+declare	de,clar
+declivity	de,ity
+decomposition	de,com,pos,tion
+decorate	ate
+decoration	tion
+decorations	ate,tion
+decorative	ate,ive
+decorum	
+decree	de
+decrepit	de
+decry	de
+dedicate	de,dict,ate
+dedicated	de,dict,ate,ed2
+dedication	de,dict,ate,tion
+deduce	de,duct
+deepen	en2
+deeply	ly
+defecate	de,ate
+defect	de,fac
+defection	de,fac,tion
+defective	de,fac,ive
+defence	de
+defense	de
+defensive	de,ive
+deferential	de,fer,ant,al
+deficiency	de,fac,ance
+deficient	de,fac,ant
+deficit	de,fac
+definition	de,fin,tion
+deflate	de
+deflect	de,flex
+deflection	de,flex,tion
+defunct	de,func
+degree	
+deign	
+deity	ity
+dejected	de,ject,ed2
+delay	
+delectable	de,able
+delegate	de,ate
+deleterious	ous
+deliberate	de,ate
+deliberately	de,ate,ly
+delicacy	
+delicate	ate
+delicious	ous
+delineate	de,ate
+delineation	de,tion
+delinquency	de,ance
+delirium	de
+delta	
+delude	de
+deluge	
+delusion	de,tion
+demand	de
+demise	mit
+demobilize	de,mob,ize
+democracy	dem
+democrat	dem
+democratic	dem,ic
+demographic	dem,graph,ic
+demography	dem,graph
+demolish	de
+demolition	de,tion
+demonstrate	de,ate
+demonstration	de,tion
+demur	de
+denial	de,al
+denomination	de,nom,ate,tion
+denounce	de
+dense	
+density	ity
+dent	
+dental	al
+dentist	ist
+dentistry	ist
+deodorizer	de,ize,er
+department	de,ment2
+departmental	de,ment2,al
+depict	de
+deplore	de
+deploy	
+deposit	de,pos
+depot	
+deprecate	de,ate
+depreciate	de,ate
+depreciation	de,tion
+depress	de,press
+depressed	de,press,ed2
+depression	de,press,tion
+deprivation	de,priv,tion
+deprive	de,priv
+depth	
+deputy	de
+derivation	de,tion
+derivative	de,ive
+derive	de
+dermatology	derm,log
+desalination	de,ate,tion
+descent	de
+description	de,scrib,tion
+desert	de
+deserted	de,ed2
+design	de,sign
+designate	de,sign,ate
+designer	de,sign,er
+designing	de,sign,ing2
+desirable	de,able
+desire	de
+desirous	de,ous
+desolate	de,sol,ate
+despair	de
+despatch	
+desperate	de,ate
+desperately	de,ly
+dessert	
+destination	de,tion
+destine	de
+destiny	de
+destroy	de,struct
+destruct	de,struct
+destruction	de,struct,tion
+destructive	de,struct,ive
+details	de
+detain	de,ten
+deter	de
+detergent	de,ant
+deteriorate	ate
+determinant	de,ant
+determination	de,tion
+determine	de
+deterrent	de,ant
+detest	de,test
+detract	de,tract
+detraction	de,tract,tion
+detriment	de,ment2
+detrimental	de,ment2,al
+devastate	de,ate
+devastating	de,ate,ing2
+devastation	de,tion
+develop	
+development	de,ment2
+deviate	de,ate
+deviation	de,tion
+devil	
+devious	de,ous
+devise	
+devour	de
+devout	de
+dexterous	ous
+diagnostic	dia,ic
+diagonal	dia,al
+dial	
+dialect	dia,lect
+dialog	dia,log
+diamond	
+diary	ary
+differentiate	dis,fer,ant,ate
+difficulty	dis,fac,ity
+dilate	ate
+diligence	dis,lect,ance
+diligent	dis,ant
+dimension	dis,tion
+diminutive	min,ive
+dirty	
+disability	dis,able,ity
+disable	dis
+disagreement	dis,ment2
+disappointment	dis,ad,ment2
+disapproval	dis,ad,prob,al
+disastrous	dis,astro,ous
+disburse	dis
+disc	
+discern	dis
+discernible	dis,able
+discerning	dis,ing2
+disciple	
+discipline	
+disciplined	ed2
+disclaim	dis,claim
+disco	
+discomfit	dis,com,fac
+discord	dis,cord
+discovery	dis
+discreet	dis
+discrepancy	dis,ance
+discriminate	dis,ate
+discrimination	dis,ate,tion
+discuss	dis
+discussion	dis,tion
+diseases	dis
+dish	
+dishes	
+disk	
+dismal	
+dismay	
+disobedience	dis,ance
+disorient	dis
+disparage	dis
+dispel	dis,pel
+dispensable	dis,pend,able
+dispense	dis,pend
+dispersal	dis,al
+disperse	dis
+displacement	dis,ment2
+dispute	dis
+disputes	dis
+disregard	dis,re
+dissatisfaction	dis,fac,tion
+dissemble	dis
+disseminate	dis,ate
+dissension	dis,sens,tion
+dissenter	dis,sens,er
+dissenting	dis,sens,ing2
+dissertation	dis,tion
+dissimilar	dis,simil
+dissimulate	dis,simil,ate
+dissipate	dis,ate
+dissipated	dis,ate,ed2
+dissolve	dis
+dissonance	dis,ance
+distance	dis,stat,ance
+distant	dis,stat,ant
+distent	dis
+distil	de
+distinct	dis
+distinction	dis,tion
+distinctive	dis,ive
+distinctively	dis,ive,ly
+distinctly	dis,ly
+distinguish	dis
+distinguished	dis,ed2
+distract	dis,tract
+distraction	dis,tract,tion
+district	dis
+disturb	dis
+disturbance	dis,ance
+disturbing	dis,ing2
+dive	
+diversification	vert,ify,tion
+diversified	dis,vert,ify,ed2
+divide	dis
+dividend	
+division	dis,tion
+document	ment2
+dogmatic	ic
+dominion	domin
+donation	ate,tion
+donations	tion
+dormitory	ary
+dorsal	al
+dramatize	ize
+drastic	ic
+dreary	
+drive	
+dubious	ous
+dumpling	ling
+dungeon	
+duration	tion
+dusty	
+duty	ity
+dynamic	ic
+dynasty	
+dysfunction	func,tion
+eclecticism	ic,ism
+ecological	log,ic,al
+ecologist	log,ist
+economic	ic
+economical	ic,al
+economically	ic,al,ly
+economics	ic
+economize	ize
+edentate	ate
+edible	able
+edifice	
+edify	ify
+effects	ex,fac
+efficiency	ex,fac,ance
+effluent	ex,flu,ant
+eggplant	
+egoism	ism
+eighty	
+elastic	ic
+electric	ic
+electrical	ic,al
+electrician	ic
+electricity	ic,ity
+electrode	
+electromagnetic	ic
+electron	
+electronic	ic
+electronics	ic
+elegance	ex,ance
+elegant	ex,lect,ant
+element	
+elemental	al
+elephant	
+eleven	
+eliminate	ex,ate
+elimination	ex,tion
+elusive	ex,ive
+emaciate	ate
+emaciated	ex,ate,ed2
+email	
+emanate	ex,ate
+emancipate	ex,man,cap,ate
+emancipation	man,cap,tion
+embalm	en
+embargo	en
+embassy	
+embellish	en
+embellishment	en,ment2
+embezzle	en
+emblem	
+embroidery	en
+embryological	log,ic,al
+embryonic	ic
+emend	ex
+emerge	ex
+emergence	ance
+emergencies	ex,ance
+emergency	ex,ance
+emerging	ing2
+emigrant	ex,ant
+emigrate	ex,ate
+eminence	ex,ance
+eminent	ex,ant
+emission	mit,tion
+emolument	ment2
+emotion	mob,tion
+emotional	ex,mob,tion,al
+empathy	en,path
+emperor	
+emphasis	
+emphasize	ize
+emphatic	ic
+empire	
+empirical	ic,al
+employee	en
+employees	en
+employment	en,ment2
+empty	
+emulate	ate
+enable	en,able
+enactment	en,act,ment2
+enchant	en
+encouragement	en,age,ment2
+encroach	en
+encyclopedia	en
+endeavor	en
+endeavour	en
+endemic	en,dem,ic
+ending	ing2
+endless	less
+endlessly	less,ly
+endorse	en
+endotherm	therm
+endotoxin	
+endow	en
+endowment	en,ment2
+endue	en
+endure	en
+enemy	
+energetic	ic
+energies	
+energize	ize
+enervate	ex,ate
+engage	en
+engagement	en,ment2
+engine	
+engineer	er
+engineering	er,ing2
+engineers	
+enhance	en
+enigma	
+enigmatic	ic
+enlighten	en,en2
+enlightenment	en,en2,ment2
+enlist	en
+enmity	ity
+ennui	
+enormity	ex,norm,ity
+enormous	ex,norm,ous
+enough	
+enquiry	en
+enrage	en
+enrollment	en,ment2
+enrolment	en,ment2
+ensemble	
+ensue	en
+ensure	en
+entangle	en
+entanglement	en,ment2
+enter	
+enterprise	
+enterprising	ing2
+entertain	inter,ten
+entertainer	inter,ten,er
+entertainment	inter,ten,ment2
+enthral	en
+enthusiasm	
+enthusiastic	ic
+enthusiastically	ic,al,ly
+entice	
+entity	ity
+entrance	ance
+entrepreneur	
+entry	
+enumerate	ex,ate
+enunciate	ate
+envelope	en
+envious	ous
+environment	en,ment2
+environmental	en,ment2,al
+envisage	en,vis,age
+envision	en,vis,tion
+envoy	
+enzyme	
+ephemeral	al
+epic	ic
+epidemic	dem,ic
+equestrian	
+equip	
+equipe	
+equipment	ment2
+equitable	equ,able
+equity	equ,ity
+equivalent	equ,val,ant
+equivocal	equ,voc,al
+erosion	ex,tion
+erroneous	ous
+escalate	ate
+escapist	ist
+especially	spec2,al,ly
+essence	ance
+essential	al
+establishment	ment2
+estate	stat
+esthetic	ic
+estimable	able
+estimate	ate
+eternal	al
+ethic	ic
+ethnic	ic
+evaluate	ex,val,ate
+evaporate	ex,ate
+evasion	ex,tion
+evasive	ex,ive
+even	
+evening	
+event	ex,ven
+evidence	ex,vis,ance
+evident	vis,ant
+eviscerate	ate
+evolution	ex,tion
+evolutionary	tion,ary
+evolve	ex
+exacerbate	ex,ate
+exact	ex,act
+exacting	ex,act,ing2
+exactly	ex,act,ly
+exaggerate	ex,ate
+exaggeration	ex,tion
+examination	ex,tion
+examples	ex
+exams	
+exasperate	ex,ate
+excavate	ex,ate
+excavation	ex,tion
+exceedingly	ex,cede,ing2,ly
+except	ex,cept
+exception	ex,cept,tion
+exceptional	ex,cept,tion,al
+exceptionally	ex,cept,tion,al,ly
+excerpt	ex
+excess	ex,cede
+excessive	ex,cede,ive
+excessively	ex,cede,ive,ly
+excitement	ex,ment2
+exclamation	ex,claim,tion
+exclusive	ex,ive
+exclusively	ex,ive,ly
+excrement	ex,ment2
+exculpate	ex,ate
+excursion	ex,cur,tion
+excuse	ex
+execute	ex
+execution	ex,tion
+executive	ex,ive
+exemplary	ex,ary
+exemplify	ex,ify
+exempt	ex
+exemption	ex,tion
+exercise	ex
+exert	ex
+exertion	ex,tion
+exhale	ex
+exhibit	ex,hab
+exhibition	ex,hab,tion
+exhilarate	ex,ate
+exhilarating	ex,ate,ing2
+exhort	ex
+exhume	ex
+exile	ex
+exist	ex,stat
+existence	ex,stat,ance
+existent	ex,stat,ant
+existing	ex,stat,ing2
+exocrine	
+exodus	ex
+exotic	ic
+expand	ex
+expanding	ex,ing2
+expanse	ex
+expansion	ex,tion
+expansive	ex,ive
+expect	ex,spect
+expectancy	ex,spect,ance
+expectation	ex,spect,tion
+expedient	ex,ped,ant
+expedite	ex,ped
+expeditious	ex,ped,ous
+expend	ex,pend
+expenditure	ex,pend,ure
+expense	ex,pend
+expenses	ex,pend
+experience	ex,ance
+experienced	ex,ance,ed2
+experiment	ex,ment2
+experimental	ex,ment2,al
+experimentally	ex,ment2,al,ly
+experimentation	ex,ment2,tion
+experiments	ex,ment2
+expert	ex
+expertise	ex
+expire	ex,spir
+explanation	ex,tion
+explicit	ex,plex
+explode	ex
+exploit	ex
+exploitation	ex,tion
+exploration	ex,tion
+explore	ex
+explorer	ex,er
+explosion	ex,tion
+explosive	ex,ive
+exponent	ex,pos,ant
+exponential	ex,pos,ant,al
+express	ex,press
+expression	ex,press,tion
+expressive	ex,press,ive
+expressly	ex,press,ly
+expulsion	ex,pel,tion
+exquisite	ex
+extant	ex,ant
+extensive	ex,ive
+extent	ex
+extenuate	ex,ate
+exterior	ex
+external	extra,al
+extinct	ex
+extinction	ex,tion
+extinguish	ex
+extol	ex
+extort	ex,tort
+extra	extra
+extract	ex,tract
+extraction	ex,tract,tion
+extracurricular	extra,cur,ular
+extraneous	extra,ous
+extraordinarily	extra,ord,ary,ly
+extraordinary	extra,ord,ary
+extraterrestrial	extra,terr,al
+extravagant	extra,ant
+extreme	extra
+extremely	ly
+extremity	extra,ity
+extricate	ex,ate
+extrude	ex
+exuberant	ex,ant
+exude	ex
+exultant	ex,sal,ant
+fable	
+fabric	
+fabulous	ous
+facial	al
+facile	fac
+facilitate	fac,ate
+facilitation	fac,tion
+facilities	fac,ity
+facility	fac,ity
+facsimile	fac,simil
+fact	fac
+faction	fac,tion
+factious	fac,ous
+factitious	fac,ous
+factories	fac,ary
+factors	fac,er
+factual	fac,al
+faculty	fac,ity
+fanatic	ic
+fanatical	ic,al
+fanaticism	ic,ism
+fascinate	ate
+fascinating	ing2
+fascination	tion
+fasten	en2
+fastidious	ous
+fate	
+fatuous	ous
+faulty	
+feasible	able
+feminine	
+feminism	ism
+feminist	ist
+fence	
+ferment	ment2
+ferret	
+ferries	
+ferromagnetic	ic
+ferrous	ous
+fertile	fer
+fertilize	fer,ize
+fertilizer	fer,ize,er
+fervent	ant
+fervid	
+festival	al
+festive	ive
+fiction	tion
+fictitious	ous
+fifty	
+figment	ment2
+filament	ment2
+finally	fin,al,ly
+fine	fin
+finely	ly
+finesse	
+fission	tion
+fist	
+five	
+flamboyant	ant
+flatten	en2
+flexibility	flex,able,ity
+flighty	
+flourishment	ment2
+fluctuate	flu,ate
+fluctuation	flu,ate,tion
+fluency	flu,ance
+fluent	flu,ant
+fluid	flu
+flux	flu
+foist	
+foment	
+footpath	
+ford	
+foreground	fore
+foreign	
+foreigner	er
+forest	
+forestry	
+forever	
+formidable	able
+forms	form
+fountain	
+fraction	frag,tion
+fractious	frag,ous
+fracture	frag,ure
+fragment	frag,ment2
+fragrance	ance
+fragrant	ant
+frantic	ic
+fraternal	al
+fraudulent	
+frenetic	ic
+frequency	ance
+frequent	
+frequently	ly
+friction	tion
+frighten	en2
+frightening	en2,ing2
+frivolity	ity
+frugal	al
+frustrate	ate
+fulminate	ate
+fumigate	ate
+function	func,tion
+fundamental	ment2,al
+funeral	al
+funereal	al
+furniture	ure
+furthermore	
+future	
+gage	
+galvanize	ize
+garage	age
+garlic	
+garment	
+garrulity	ity
+garrulous	ous
+gaseous	ous
+gasoline	
+gate	
+genealogist	gen,log,ist
+generic	gen,ic
+generosity	gen,ity
+genetically	gen,ic,al,ly
+genetics	gen,ic
+geographic	geo,graph,ic
+geographical	geo,graph,ic,al
+geologic	geo,log,ic
+geomagnetic	geo,ic
+geometric	geo,ic
+geometrical	geo,ic,al
+geopolitics	geo
+geothermal	geo,therm,al
+germinate	ate
+giant	
+gigantic	ic
+gist	
+give	
+glacial	al
+glance	
+glorify	ify
+glory	
+goal	
+gorgeous	
+gospel	
+government	ment2
+graduates	gress,ate
+gram	
+grammatical	graph,ic,al
+gramme	
+gramophone	graph,phon
+granary	ary
+grandmother	
+grandparent	
+grant	
+grate	
+gratuitous	ous
+gratuity	ity
+gravitation	ate,tion
+gravitational	ate,tion,al
+gregarious	ous
+gusty	
+habits	hab
+handicap	
+harassment	ment2
+hasten	en2
+hasty	
+hate	
+haughty	
+haven	
+havoc	
+heal	
+heaven	
+hectic	ic
+heighten	en2
+helpline	
+hence	
+hereditary	ary
+heredity	ity
+heritage	age
+hermit	
+hesitate	ate
+heterogeneous	gen,ous
+hibernate	ate
+hibernation	tion
+hindrance	ance
+historic	ic
+history	
+hive	
+hoist	
+holocaust	
+hominid	
+homogeneous	gen,ous
+homogenize	gen,ize
+honesty	ity
+horde	
+horizontal	al
+horrible	able
+horticulture	ure
+hospitable	able
+hospital	al
+humanist	ist
+humanistic	ist,ic
+humanitarian	ity,ary
+humanity	ity
+humiliate	ate
+hydraulic	ic
+hyperactive	hyper,act,ive
+hyperbole	hyper
+hyperlink	hyper
+hypersensitive	hyper,sens,ive
+hypocrisy	hypo
+hypocrite	hypo
+hypodermic	hypo,derm,ic
+hypotheses	hypo
+hypothesize	hypo,ize
+hypothetical	hypo,ic,al
+iconographic	graph,ic
+ideal	al
+identical	ic,al
+identification	ify,tion
+identify	ify
+identity	ity
+ideological	log,ic,al
+idiomatic	ic
+igneous	ous
+ignominious	in1,nom,ous
+illegal	in1,al
+illegible	in1,lect,able
+illegitimate	in1,ate
+illicit	in1
+illiterate	in1,liter,ate
+illness	ness
+illuminate	in2,luc,ate
+illumination	in2,luc,tion
+illusion	in2,tion
+illusive	in2,ive
+illustrate	in2,ate
+illustrated	in2,ate,ed2
+illustration	in2,ate,tion
+illustrious	in2,ous
+image	
+imagery	
+imaginary	ary
+imagination	tion
+imaginative	ive
+imagine	
+imbalance	in1
+imbibe	in2
+imbue	in2
+imitate	ate
+imitation	ate,tion
+immediate	in1,med,ate
+immediately	in1,med,ate,ly
+immense	in1
+immerse	in2
+immigrant	in2,ant
+immigrate	in2,ate
+immigration	in2,tion
+imminent	in2,ant
+immobile	in1,mob
+immobility	in1,mob,ity
+immobilize	in1,mob,ize
+immodesty	in1
+immolate	in2,ate
+immortal	in1,mort,al
+immune	in1
+immunity	in1,ity
+impact	in2
+impair	
+impale	in2
+impart	in2
+impartial	in1,al
+impartially	in1,al,ly
+impassible	in1,able
+impassioned	in2,ed2
+impassive	in1,ive
+impatient	in1,ant
+impeach	
+impeccable	in1,able
+impede	in2,ped
+impediment	in2,ped,ment2
+impel	in2,pel
+impending	in2,pend,ing2
+imperative	ive
+imperial	al
+impermeable	in1,able
+impersonal	in1,al
+impersonate	in2,ate
+impersonation	in2,ate,tion
+impertinent	in1,ten,ant
+impervious	in1,ous
+impetuous	in2,ous
+impetus	in2
+impious	in1,ous
+implement	in2,ment2
+implicate	in2,plex,ate
+implication	in2,plex,ate,tion
+implicit	in2,plex
+implore	in2
+imply	in2,plex
+import	in2,port
+importance	in2,port,ance
+important	in2,port,ant
+imports	in2,port
+importune	in1
+impose	in2,pos
+imposing	in2,pos,ing2
+impossible	in1,able
+impotence	in1,ance
+impoverish	in2
+impracticality	in1,ic,al,ity
+imprecate	in2,ate
+impress	in2,press
+impression	in2,press,tion
+impressive	in2,press,ive
+imprint	in2
+imprison	in2
+imprisonment	in2,ment2
+improbable	in1,prob,able
+impromptu	in2
+improper	in1
+impropriety	in1,ity
+improve	
+improvement	ment2
+improvident	in1,pro,vis,ant
+improvise	in1,pro,vis
+improviser	in1,pro,vis,er
+imprudent	in1,ant
+impudent	in1,ant
+impulse	in2,pel
+impulsive	in2,pel,ive
+impunity	in1,ity
+impure	in1
+impurity	in1,ity
+impute	in2
+inability	in1,able,ity
+inaccessible	in1,ad,cede,able
+inaccurate	in1,ad,ate
+inactivate	in1,act,ive,ate
+inadequate	in1,ad,equ,ate
+inanimate	in1,anim,ate
+inappropriate	in1,ad,ate
+inapt	in1
+inasmuch	
+inaugurate	in2,ate
+inborn	in2
+incandescent	in2,ant
+incapable	in1,cap,able
+incapacitate	in1,cap,ate
+incarcerate	in2,ate
+incense	in2
+incentive	in2,ive
+incessant	in1,cede,ant
+incidence	in2,ance
+incident	in2,ant
+incidentally	in2,ant,al,ly
+incipient	in2,cap,ant
+incise	in2
+incisive	in2,ive
+incite	in2
+inclination	in2,tion
+incline	in2
+inclined	in2,ed2
+include	in2
+inclusive	in2,ive
+incoherent	in1,co,ant
+income	in2
+incoming	ing2
+incompatible	in1,com,able
+incompetent	in1,com,ant
+incomplete	in1,com
+incomprehensible	in1,com,able
+inconceivable	in1,com,cept,able
+inconclusive	in1,com,ive
+incongruity	in1,com,ity
+incongruous	in1,ous
+inconvenient	in1,com,ven,ant
+incorporate	in2,corp,ate
+incorporation	in2,corp,tion
+incorrect	in1,com,reg
+incorruptible	in1,com,rupt,able
+increase	in2
+increasingly	in2,ing2,ly
+incredible	in1,cred,able
+incredulity	in1,cred,ity
+increment	in2,ment2
+incriminate	in2,ate
+incubate	in2,ate
+inculcate	in2,ate
+incur	in2,cur
+indecent	in1,ant
+indeed	
+indefatigable	in1,de,able
+indefinite	in1,de,fin
+indefinitely	in1,de,fin,ly
+indelible	in1,able
+indemnify	in1,ify
+indemnity	in1,ity
+indent	in2
+indented	in2,ed2
+indenture	in2,ure
+independence	in1,de,pend,ance
+independent	in1,de,pend,ant
+index	in2
+indicate	in2,dict,ate
+indication	in2,dict,ate,tion
+indicative	in2,dict,ive
+indicator	in2,dict,er
+indictment	in2,dict,ment2
+indifference	in1,dis,fer,ance
+indifferent	in1,dis,fer,ant
+indigenous	gen,ous
+indigent	ant
+indigestion	in1,tion
+indignant	in1,ant
+indignation	in1,tion
+indignity	in1,ity
+indirect	in1,reg
+indiscriminately	in1,dis,ate,ly
+indiscrimination	in1,dis,tion
+indispensable	in1,dis,pend,able
+indite	in2
+individual	in1,al
+individualism	in1,al,ism
+indolent	in1,ant
+indomitable	in1,domin,able
+indoor	
+indoors	
+induce	in2,duct
+inducible	in2,duct,able
+induction	in2,duct,tion
+indulge	
+industrial	al
+industrialization	al,ize,tion
+industrialize	al,ize
+industrialized	al,ize,ed2
+industrious	ous
+industry	
+inefficient	in1,ex,fac,ant
+inelastic	in1,ic
+ineligible	in1,ex,lect,able
+inept	in1
+inert	in1
+inertia	in1
+inevitable	in1,able
+inevitably	in1,able,ly
+inexpensive	in1,ex,pend,ive
+inextricably	in1,ex,able,ly
+infallible	in1,able
+infamous	in1,ous
+infancy	in1,ance
+infant	in1,ant
+infect	in2,fac
+infection	in2,fac,tion
+infectious	in2,fac,ous
+infer	in2,fer
+inference	in2,fer,ance
+inferior	
+inferiority	ity
+infertile	in1,fer
+infest	in2
+infidel	in1,fid
+infiltrate	in2,ate
+infinite	in1,fin
+infinitely	in1,fin,ly
+infinity	in1,fin,ity
+infirmary	in1,ary
+infirmity	in1,ity
+inflate	in2,ate
+inflation	in2,tion
+inflect	in2,flex
+inflexible	in1,flex,able
+inflict	in2
+influence	in2,flu,ance
+influential	in2,flu,ant,al
+influenza	in2,flu
+influx	in2,flu
+inform	in2,form
+informal	in1,form,al
+information	in2,form,tion
+informative	in2,form,ive
+informed	in2,form,ed2
+infrared	infra
+infrastructure	infra,struct,ure
+infringe	in2
+infuse	in2
+infusion	in2,tion
+ingenious	in2,gen,ous
+ingeniously	in2,gen,ous,ly
+ingenuity	in2,gen,ity
+ingredient	in2,gress,ant
+inhabit	in2,hab
+inhabitant	in2,hab,ant
+inhale	in2
+inherent	in2,ant
+inherit	in2
+inheritance	in2,ance
+inhibit	in2,hab
+initial	in2,al
+initially	in2,al,ly
+initiate	in2,ate
+initiative	in2,ive
+inject	in2,ject
+injection	in2,ject,tion
+injunction	in2,junct,tion
+injure	in1
+injurious	in1,ous
+injury	in1
+injustice	in1
+inkling	
+inland	
+inlet	
+innate	in2,nat
+inner	
+innermost	
+innocent	in1,ant
+innovate	in2,nov,ate
+innovation	in2,nov,tion
+innovative	in2,nov,ate,ive
+innuendo	in2
+innumerable	in1,able
+inoffensive	in1,ive
+inordinate	in1,ord,ate
+inorganic	in1,ic
+input	
+inquire	in2
+inquiries	in2
+inquiry	in2
+inquisitive	in2,ive
+insane	in1
+insanity	in1,ity
+inscription	in2,scrib,tion
+insect	in2,sect
+insects	in2,sect
+insert	in2
+inside	
+insidious	in2,ous
+insight	
+insightful	ful
+insignificant	in1,sign,fac,ant
+insinuate	in2,ate
+insipid	in1
+insist	in2,stat
+insistence	in2,stat,ance
+insistent	in2,stat,ant
+insolent	in1,ant
+insolvent	in1,ant
+insomnia	in1
+inspect	in2,spect
+inspection	in2,spect,tion
+inspector	in2,spect,er
+inspiration	in2,spir,tion
+inspire	in2,spir
+inspiring	in2,spir,ing2
+instability	in1,stat,ity
+install	in2
+installation	in2,tion
+installment	in2,ment2
+instalment	in2,ment2
+instance	in2,stat,ance
+instant	in2,stat,ant
+instantaneous	in2,stat,ant,ous
+instantly	in2,stat,ant,ly
+instead	
+instigate	in2,ate
+instill	in2
+instinct	in2
+instinctive	in2,ive
+instinctively	in2,ive,ly
+institute	in2,stat
+institutes	in2,stat
+institution	in2,stat,tion
+institutionalize	in2,stat,tion,al,ize
+institutions	in2,stat,tion
+instruct	in2,struct
+instruction	in2,struct,tion
+instructive	in2,struct,ive
+instructor	in2,struct,er
+instructors	in2,struct,er
+instrument	in2,struct,ment2
+instrumental	in2,ment2,al
+instrumentalist	in2,struct,ment2,al,ist
+instruments	in2,struct,ment2
+insubordinate	in1,sub,ord,ate
+insufferable	in1,sub,fer,able
+insufficient	in1,sub,fac,ant
+insular	
+insulate	ate
+insulation	ate,tion
+insulator	ate,er
+insulin	
+insult	in2,sal
+insulting	in2,sal,ing2
+insurance	ance
+insure	
+insurmountable	in1,sur,able
+intact	in1,tang
+intake	
+integral	in1,al
+integrate	in1,ate
+integrated	in1,ate,ed2
+integrity	in1,ity
+intellect	inter,lect
+intellectual	inter,lect,al
+intellectually	inter,lect,al,ly
+intelligence	ance
+intelligent	inter,lect,ant
+intelligible	inter,lect,able
+intend	in2
+intense	in2
+intensify	in2,ify
+intensity	in2,ity
+intensive	in2,ive
+intent	in2
+intention	in2,tion
+intentional	in2,tion,al
+intentionally	in2,tion,al,ly
+interact	inter,act
+interaction	inter,act,tion
+interactive	inter,act,ive
+intercede	inter,cede
+intercept	inter,cept
+interconnect	inter,com
+interconnected	inter,com,ed2
+interconnecting	inter,com,ing2
+intercourse	inter,cur
+interdependence	inter,de,pend,ance
+interdependent	inter,de,pend,ant
+interest	inter
+interested	inter,ed2
+interesting	inter,ing2
+interface	inter
+interfere	inter
+interference	inter,fer,ance
+interim	inter
+interior	inter
+interlocking	inter,ing2
+interlude	inter
+intermediary	inter,med,ary
+intermediate	inter,med,ate
+intermittent	inter,mit,ant
+intern	inter
+internal	inter,al
+international	inter,nat,tion,al
+internet	inter
+interpersonal	inter,al
+interpret	inter
+interpretation	inter,tion
+interpreter	inter,er
+interrogate	inter,ate
+interrupt	inter,rupt
+interruption	inter,rupt,tion
+intersect	inter,sect
+intersected	inter,sect,ed2
+intersection	inter,sect,tion
+interstellar	inter,stell
+interval	inter
+intervene	inter,ven
+intervention	inter,ven,tion
+interview	inter
+interviewee	inter
+interviewer	inter,er
+interviews	inter
+intestine	
+intimacy	
+intimate	ate
+intimidate	in2,ate
+intimidation	in2,tion
+intonation	in2,tion
+intoxicate	in2,ate
+intoxication	in2,ate,tion
+intramural	intra,al
+intranet	intra
+intravenous	intra,ous
+intrepid	in1
+intricacy	in2
+intricate	in2,ate
+intricately	in2,ate,ly
+intrigue	in2
+intriguing	in2,ing2
+intrinsic	
+introduce	duct
+introduction	duct,tion
+introductory	duct,ary
+introspective	spect,ive
+intrude	in2
+intruder	in2,er
+intruding	in2,ing2
+intrusion	in2,tion
+intrusive	in2,ive
+intuition	in2,tion
+inundate	in2,ate
+inure	in2
+invade	in2
+invader	in2,er
+invalid	in1,val
+invalidate	in1,val,ate
+invaluable	in1,val,able
+invariable	in1,able
+invariably	in1,able,ly
+invasion	in2,tion
+invent	in2,ven
+invention	in2,ven,tion
+inventor	in2,ven,er
+inventory	in2,ven,ary
+inverse	in2,vert
+inversely	in2,vert,ly
+invert	in2,vert
+invertebrate	in1,vert,ate
+invest	in2
+investigate	in2,ate
+investigation	in2,tion
+investigators	in2,er
+investment	in2,ment2
+investor	in2,er
+invigilate	in2,ate
+invincible	in1,able
+invisible	in1,vis,able
+invitation	tion
+invite	
+inviting	ing2
+invocation	in2,voc,tion
+invoice	
+invoke	in2,voc
+involuntary	in1,vol,ary
+involve	in2
+involved	in2,ed2
+inward	ward
+ironic	ic
+ironically	ic,al,ly
+irony	
+irradiate	in2,ate
+irreconcilable	in1,re,com,able
+irregular	in1,reg
+irregularity	in1,reg,ular,ity
+irregularly	in1,reg,ly
+irrelevant	in1,re,ant
+irreparable	in1,re,able
+irrepressible	in1,re,press,able
+irreproachable	in1,re,able
+irresistible	in1,re,stat,able
+irresolute	in1,re
+irrespective	in1,re,spect,ive
+irresponsible	in1,re,able
+irreverence	in1,re,ance
+irreverent	in1,re,ant
+irreversible	in1,re,vert,able
+irrevocable	in1,re,voc,able
+irrigate	in2,ate
+irrigation	in2,ate,tion
+irritable	able
+irritate	ate
+irritating	ate,ing2
+isolate	ate
+isolated	ate,ed2
+isolation	ate,tion
+iterate	ate
+itinerary	ary
+ivory	
+jealous	ous
+jeopardize	ize
+join	junct
+joint	junct
+journal	
+jovial	al
+jubilant	ant
+judgement	ment2
+judgment	ment2
+judicial	al
+junction	junct,tion
+jurisdiction	dict,tion
+justification	ify,tion
+juvenile	
+kilogram	
+kilograms	
+kindergarten	
+kinetic	ic
+kymograph	graph
+laboratory	ary
+lament	ment2
+landlord	
+late	
+latest	
+lavatory	ary
+legion	lect,tion
+legislate	ate
+legislation	tion
+legislature	ure
+legitimate	ate
+leisure	
+lenient	ant
+lethal	al
+lethargic	ic
+liability	ity
+liable	able
+liberally	liber,al,ly
+liberation	liber,tion
+licence	ance
+lieutenant	ten,ant
+lighten	en2
+limit	
+limitation	tion
+limited	ed2
+list	
+listen	
+liter	
+literacy	liter
+literal	liter,al
+literally	liter,al,ly
+literary	liter,ary
+literate	liter,ate
+literature	liter,ure
+lithograph	graph
+live	
+locations	loc,ate,tion
+locomote	loc,mob
+locomotion	loc,mob,tion
+locomotive	loc,mob,ive
+locoweed	
+lofty	
+log	
+logic	log,ic
+logistics	
+longevity	ity
+lord	
+loyal	al
+lubricate	ate
+luck	
+lucky	
+lucrative	ive
+luggage	age
+luminosity	luc,ous,ity
+luminous	luc,ous
+lure	
+lusty	
+lyric	ic
+macroeconomics	macro,ic
+macroscopic	macro,scope,ic
+magistrate	
+magnanimous	anim,ous
+magnate	
+magnificence	fac,ance
+magnificent	fac,ant
+maintenance	man,ten,ance
+maize	
+majestic	ic
+majesty	ity
+malcontent	com,ten,ant
+malediction	dict,tion
+malfunction	func,tion
+malleability	able,ity
+malleable	able
+malnutrition	tion
+malpractice	
+mammal	al
+mammoth	
+manage	man,age
+management	man,ment2
+mandate	man
+mania	
+maniac	
+manifestation	man,tion
+manifold	
+manipulate	man,ate
+manufacture	man,fac,ure
+manufacturer	man,fac,ure,er
+manure	man
+marital	al
+mate	
+material	al
+materialism	al,ism
+materials	al
+maternal	mater,al
+maternity	mater,ity
+mathematic	ic
+maximize	ize
+meal	
+measure	ure
+measurement	ment2
+mechanic	ic
+medal	
+medical	med,ic,al
+medicine	med
+medieval	med,al
+meditate	ate
+meditation	ate,tion
+megacity	mega
+melodic	ic
+memo	mem
+memoir	mem
+memorable	mem,able
+memorise	mem,ize
+memorize	mem,ize
+memory	mem
+menial	al
+mention	ment,tion
+mentor	
+mercenary	ary
+merchant	ant
+mesmerize	ize
+metabolic	meta,ic
+metadata	meta
+metal	
+metallic	ic
+metallurgy	
+meteorologist	log,ist
+meteorology	log
+meticulous	ous
+mighty	
+migrant	ant
+migrate	ate
+militant	ant
+military	ary
+mimetic	ic
+miniature	ure
+minibus	mini
+minimal	min,al
+minimalist	min,al,ist
+minimize	min,ize
+minimum	min
+mining	ing2
+miniskirt	mini
+minister	min
+ministry	min
+minutes	min
+miraculous	ous
+mischance	mis
+misconceive	mis,com,cept
+miserable	able
+miserly	ly
+misery	
+mishap	mis
+misrepresent	mis,re
+missile	mit
+missing	ing2
+mission	mit,tion
+missionary	mit,tion,ary
+mist	
+mitigate	ate
+mitten	
+mixture	ure
+mob	mob
+mobility	mob,ity
+mobilize	mob,ize
+modem	
+moderate	ate
+modesty	
+modification	ify,tion
+moiety	
+moist	
+moisten	en2
+mollify	ify
+molten	
+moment	ment2
+monochromatic	mono,ic
+monopolize	mono,ize
+monstrous	ous
+monument	ment2
+mortar	
+mortgage	mort
+mortify	mort,ify
+mosaic	
+mote	
+motel	
+moth	
+mother	
+motherhood	hood
+motherland	
+motif	mob
+motion	mob,tion
+motionless	mob,tion,less
+motivated	mob,ive,ate,ed2
+motorbike	mob
+motorcycle	mob
+motorway	mob
+motto	
+mountain	
+mountainous	ous
+move	mob
+movement	mob,ment2
+movie	mob
+movies	mob
+mucous	ous
+multiplication	multi,plex,tion
+multistory	multi
+multitude	multi
+municipal	cap,al
+munificent	fac,ant
+mural	al
+naive	
+narcotic	ic
+nasty	
+natal	nat,al
+nationalities	nat,tion,al,ity
+nationwide	nat,tion
+natural	nat,ure,al
+naturalist	nat,ure,al,ist
+naturalistic	nat,ure,al,ist,ic
+naturally	nat,ure,al,ly
+nature	nat,ure
+naughty	
+naval	nav,al
+nave	nav
+necessarily	ary,ly
+necessary	ary
+necessitate	ate
+necessity	cede,ity
+negligence	ance
+negligent	ant
+negligible	lect,able
+negotiable	able
+negotiate	ate
+neoclassical	neo,ic,al
+neurotic	ic
+neurotransmitter	trans,mit,er
+nevertheless	
+nitrogen	gen
+nobility	ity
+nominal	nom,al
+nominee	nom
+nonconformity	non,com,form,ity
+none	
+nonetheless	
+nonfiction	non,tion
+nonsense	non,sens
+nonviolence	non,ance
+norm	norm
+normal	norm,al
+normalization	norm,al,ize,tion
+normally	norm,al,ly
+notification	ify,tion
+notorious	ous
+nourishment	ment2
+noxious	ous
+nuance	ance
+nuisance	ance
+numerous	ous
+nurture	ure
+nutrient	ant
+nutriment	ment2
+nutrition	tion
+nutritious	ous
+obedience	ance
+obedient	ant
+objectives	ject,ive
+obliterate	liter,ate
+oblivious	ous
+obnoxious	ous
+obscure	
+observatory	ary
+obstinate	ate
+obviate	ate
+obvious	ous
+occasion	tion
+occupant	cap,ant
+occupation	tion
+offence	
+office	
+officer	er
+official	al
+often	
+olfactory	fac,ary
+olive	
+ominous	ous
+omniscient	sci,ant
+opera	oper
+operate	oper,ate
+operation	oper,ate,tion
+operational	oper,tion,al
+operator	oper,ate,er
+opponent	pos,ant
+opportunities	ity
+opportunity	ity
+oppress	press
+opt	opt
+optic	ic
+optical	ic,al
+optics	ic
+optimal	opt,al
+optimism	opt,ism
+optimist	opt,ist
+optimize	opt,ize
+option	opt,tion
+options	opt,tion
+optometrist	ist
+opulence	ance
+oral	al
+oration	tion
+ordeal	
+ordinance	ord,ance
+ordinary	ord,ary
+orient	
+ornament	ment2
+ornamental	ment2,al
+oscillate	ate
+ostensible	able
+ostentation	tion
+outcry	out
+outermost	out
+outfit	out
+outing	out,ing2
+outlet	out
+outmoded	out,ed2
+outrage	age
+outrageous	age,ous
+outset	out
+outskirts	out
+outwards	out,ward
+outwit	out
+oval	al
+ovation	tion
+oven	
+overall	over
+overbalance	over
+overdue	over
+overestimate	over,ate
+overrun	over
+overseas	over
+oversecretion	over,tion
+oversee	over
+oversight	over
+overt	
+overtake	over
+overtax	over
+overtaxed	over,ed2
+overthrow	over
+overtime	over
+overtire	over
+overture	ure
+overturn	over
+pacific	ic
+pact	
+page	
+pal	
+paleontologist	log,ist
+palpitate	ate
+pandemic	dem,ic
+pant	
+parachute	
+parade	
+paradise	
+paralyse	para
+paralyze	para
+paramount	
+parliament	ment2
+participant	cap,ant
+participants	cap,ant
+participate	cap,ate
+particulate	ate
+party	
+passport	
+patent	
+paternal	pater,al
+paternity	pater,ity
+path	
+pathetic	path,ic
+pathogen	path,gen
+pathway	
+patience	ance
+patrol	
+patroller	er
+paucity	ity
+pavement	ment2
+payable	able
+payment	ment2
+peculate	ate
+pedagogic	ic
+pedal	ped,al
+penal	al
+pence	
+penchant	ant
+pendant	pend,ant
+pending	pend
+penetrate	ate
+pension	pend,tion
+pensive	pend,ive
+perceive	cept
+percent	
+perceptible	cept,able
+perception	cept,tion
+perceptual	cept,al
+percolate	ate
+percussion	tion
+perennial	al
+perfect	fac
+perfection	fac,tion
+perfectly	fac,ly
+perform	
+performance	ance
+performer	er
+peril	
+perilous	ous
+peripheral	peri,al
+perish	
+perishable	able
+permanent	ant
+permeable	able
+permeate	ate
+perpendicular	pend,ular
+perpetuate	ate
+persist	stat
+perspective	spect,ive
+persuasion	tion
+persuasive	ive
+pertinent	ten,ant
+perturb	
+pervasive	ive
+pessimism	ism
+pessimist	ist
+pestilence	ance
+petal	
+petrifaction	fac,tion
+petty	
+pharmaceutical	ic,al
+phenomenal	al
+philanthropic	phil,ic
+philharmonic	phil,ic
+phlegmatic	ic
+phonetic	phon,ic
+photo	photo
+photocopies	photo
+photocopy	photo
+photoelectric	photo,ic
+photographs	photo,graph
+photojournalism	photo,ism
+photos	photo
+photosensitive	photo,sens,ive
+physiological	log,ic,al
+pianist	ist
+picnic	
+piecemeal	
+piety	ity
+pigeon	
+pigment	ment2
+pious	ous
+pirate	
+pity	
+placement	ment2
+plagiarize	ize
+plant	
+plastic	ic
+plate	
+platform	form
+platitudinous	ous
+plausible	able
+playmate	
+pliable	able
+pliant	plex,ant
+plight	
+pluck	
+ply	plex
+pneumatic	ic
+pollinate	ate
+pollination	tion
+polymorphism	poly,morph,ism
+polynomial	poly,nom,al
+pompous	ous
+pond	
+ponder	
+ponderous	ous
+populous	pop,ous
+portend	
+portrait	
+portraitist	ist
+portraiture	ure
+portray	
+portrayal	al
+positions	pos,tion
+positively	pos,ive,ly
+post	
+postage	age
+postal	al
+postbox	
+postdate	post
+poster	er
+posthumous	post,ous
+postman	
+postoperative	post,oper,ate,ive
+postulate	ate
+posture	pos,ure
+postwar	post
+potent	
+potion	tion
+poverty	ity
+practicable	able
+practical	ic,al
+practicality	ic,al,ity
+practically	ic,al,ly
+practice	
+practise	
+practitioner	er
+pragmatic	ic
+prate	
+preach	
+precarious	ous
+precaution	pre,tion
+precautions	pre,tion
+precious	ous
+precipice	pre,cap
+precipitate	pre,cap,ate
+precipitation	pre,cap,tion
+precipitous	pre,cap,ous
+precise	pre
+precision	pre,tion
+predecessor	pre,de,cede,er
+predominantly	pre,domin,ant,ly
+preeminent	pre,ant
+pregnancy	pre,ance
+pregnant	pre,ant
+prehistoric	pre,ic
+preliminary	pre,ary
+prelude	pre
+premier	prim
+premise	pre,mit
+premium	pre
+prenatal	pre,nat,al
+preoccupation	pre,tion
+preparation	pre,tion
+prepare	pre
+preponderance	pre,ance
+prerequisite	pre,re
+prerogative	pre,ive
+presage	pre
+prescribed	pre,scrib,ed2
+prescription	pre,scrib,tion
+presence	pre,ance
+present	pre
+presentation	pre,tion
+presently	pre,ly
+preservative	pre,ive
+preset	pre
+press	press
+pressure	press,ure
+prestige	
+prestigious	ous
+presumably	pre,able,ly
+presume	pre
+presumption	pre,tion
+presumptuous	pre,ous
+pretentious	pre,ous
+pretty	
+prevail	pre
+prevailing	pre,val,ing2
+prevalence	pre,val,ance
+prevalent	pre,val,ant
+prevaricate	pre,ate
+prevent	pre,ven
+prevention	pre,ven,tion
+previous	pre,ous
+previously	pre,ous,ly
+prey	
+primarily	prim,ary,ly
+primate	prim,ate
+prime	prim
+primitive	prim,ive
+primordial	prim,al
+princess	prim
+principal	prim,cap,al
+principally	prim,cap,al,ly
+principle	prim,cap
+prioritize	ity,ize
+prism	
+privacy	priv
+private	priv,ate
+privilege	priv
+prize	
+probability	prob,able,ity
+probable	prob,able
+probably	prob,able,ly
+probation	prob,tion
+probe	prob
+probity	prob,ity
+problem	pro
+problems	pro
+proceeds	pro,cede
+process	pro,cede
+processing	pro,cede,ing2
+procession	pro,cede,tion
+proclivity	pro,ity
+procure	pro
+prodigal	pro,al
+prodigious	ous
+prodigy	
+product	pro,duct
+productive	pro,duct,ive
+productivity	pro,duct,ive,ity
+products	pro,duct
+professions	pro,tion
+proficiency	pro,ance
+proficient	pro,fac,ant
+profile	pro
+profit	pro
+profitable	pro,able
+profitless	pro,less
+profits	pro
+progenitor	pro,gen,er
+prognostic	pro,ic
+programme	pro,graph
+prohibit	pro,hab
+prohibition	pro,hab,tion
+prohibitive	pro,hab,ive
+prohibitively	pro,hab,ive,ly
+proliferate	fer,ate
+proliferation	fer,tion
+prolific	fac,ic
+prolong	pro
+prominence	pro,ance
+prominent	pro,ant
+promote	pro,mob
+promoter	pro,mob,er
+promotion	pro,mob,tion
+prompt	pro
+promptly	ly
+promulgate	pro,ate
+pronghorn	
+pronounce	pro
+pronounced	pro,ed2
+pronunciation	pro,tion
+proofread	
+propaganda	pro
+propagate	pro,ate
+propensity	pro,pend,ity
+proper	
+properly	ly
+property	ity
+prophecy	pro
+propitiate	pro,ate
+proponent	pro,pos,ant
+proportion	pro,tion
+proportional	pro,al
+proposal	pro,pos,al
+propose	pro,pos
+proposition	pro,pos,tion
+proprietor	er
+proprietorship	er,ship
+propriety	ity
+propulsion	pro,pel,tion
+prosper	
+prosperity	ity
+prosperous	ous
+protagonist	proto,ist
+protein	proto
+protend	pro
+protest	pro,test
+protocol	proto
+proton	proto
+prototype	proto,typ
+prototypical	proto,typ,ic,al
+protract	pro,tract
+prove	prob
+proverb	pro
+provide	pro,vis
+provided	pro,vis,ed2
+provident	pro,vis,ant
+province	
+provincialism	al,ism
+provision	pro,vis,tion
+provisional	pro,vis,tion,al
+provocation	pro,voc,tion
+provocative	pro,voc,ive
+provoke	pro,voc
+provost	pro
+proximity	ity
+pseudonym	nom
+psychiatric	psych,ic
+psychological	psych,log,ic,al
+psychologist	psych,log,ist
+psychopath	psych,path
+public	ic
+pulsate	pel,ate
+pulse	pel
+punctuate	ate
+puncture	ure
+punishment	ment2
+pure	
+purification	ify,tion
+purport	port
+quadrilateral	al
+qualification	ify,tion
+qualitative	ity,ive
+quandary	
+quiescent	ant
+radial	al
+radiant	ant
+radical	al
+radioactive	act,ive
+rage	
+rant	
+rapacious	ous
+rascal	
+rate	
+raucous	ous
+raven	
+reach	
+reader	er
+readers	er
+readily	ly
+readiness	ness
+reading	ing2
+ready	
+real	al
+realise	ize
+realism	ism
+realistic	ist,ic
+reality	ity
+realization	ize,tion
+realize	ize
+really	ly
+realm	
+reason	
+reasonable	able
+reasoning	ing2
+reasons	
+reassure	re
+rebate	re
+rebuke	
+rebut	re
+recant	re
+recapitulate	re,cap,ate
+receipt	re,cept
+receive	re,cept
+receiver	re,cept,er
+recent	
+receptacle	re,cept
+reception	re,cept,tion
+receptionist	re,cept,tion,ist
+receptive	re,cept,ive
+receptor	re,cept,er
+recession	re,cede,tion
+recipe	re,cap
+recipient	re,cept,ant
+reciprocal	al
+reckless	less
+reckon	
+reclaim	re,claim
+reclamation	re,claim,tion
+recluse	re
+recognise	re
+recognition	re,tion
+recognize	re,ize
+recompose	re,com,pos
+reconcile	re,com
+record	re,cord
+recorder	re,cord,er
+recording	re,cord,ing2
+records	re,cord
+recovery	re
+recruit	re
+recruitment	re,ment2
+rectangle	reg
+rectangular	reg,ular
+rectify	reg,ify
+recur	re,cur
+recurrence	re,cur,ance
+recurrent	re,cur,ant
+recurring	re,cur,ing2
+reddish	
+reduce	re,duct
+reduction	re,duct,tion
+redundancy	re,ance
+redundant	re,ant
+refer	re,fer
+referee	re,fer
+referees	re,fer
+reference	re,fer,ance
+referendum	re,fer
+refine	re
+refined	re,fin,ed2
+refinement	re,fin,ment2
+refinery	re,fin
+reflect	re,flex
+reflectance	re,flex,ance
+reflection	re,flex,tion
+reflexion	re,flex,tion
+refract	re,frag
+refraction	re,frag,tion
+refrain	re
+refreshment	re,ment2
+refreshments	re,ment2
+refrigerant	re,ant
+refrigerate	re,ate
+refrigeration	re,tion
+refrigerator	re,ate,er
+refuge	re
+refugee	re
+refurbish	re
+refute	re
+regard	re
+regarding	re,ing2
+regardless	re,less
+regards	re
+regenerate	re,gen,ate
+regeneration	re,gen,ate,tion
+regenerative	re,gen,ate,ive
+regime	reg
+regimen	reg
+regiment	reg,ment2
+regimentation	reg,ment2,tion
+region	reg
+regional	reg,al
+register	re
+registrar	re
+registration	tion
+regret	re
+regular	reg,ular
+regularity	reg,ular,ity
+regularly	reg,ular,ly
+regulate	reg,ate
+regulation	reg,tion
+regulations	reg,ate,tion
+regulatory	reg,ate,ary
+rehabilitate	re,hab,ate
+rehabilitation	re,hab,ate,tion
+reign	
+reigning	ing2
+reimburse	re,in2
+reinforce	re,en
+reinforced	re,en,ed2
+reiterate	re,ate
+reject	re,ject
+rejection	re,ject,tion
+rejoice	re
+rejuvenate	re,ate
+relate	re,ate
+relations	re,tion
+relax	re
+relaxation	re,tion
+relaxed	re,ed2
+relay	re
+relegate	re,ate
+relentless	re,less
+relevance	re,ance
+relevant	re,ant
+reliability	re,able,ity
+reliable	re,able
+reliance	re,ance
+reliant	re,ant
+relic	re
+relief	re
+relieve	re
+relieved	re,ed2
+religion	re
+religious	ous
+relinquish	re
+relish	
+reluctant	re,ant
+remainder	re
+remarkably	re,able,ly
+remedy	re,med
+remnant	re,ant
+removal	re,mob,al
+renaissance	re,nat,ance
+render	re
+rendering	re,ing2
+rendezvous	
+rendition	tion
+renounce	re
+renovate	re,nov,ate
+renovation	re,nov,ate,tion
+renowned	re,ed2
+rent	
+rentable	able
+rental	al
+renunciation	re,tion
+reorient	re
+repairs	re
+repatriate	re,pater,ate
+repeal	re
+repeat	re
+repeatedly	re,ed2,ly
+repel	re,pel
+repent	re
+repertoire	
+repertory	re,ary
+repetitive	re,ive
+replacement	re,ment2
+replenish	re
+replica	re,plex
+replicate	re,plex,ate
+reply	re
+reports	re,port
+represent	re,pre
+representation	re,pre,tion
+representative	re,ive
+repress	re,press
+repression	re,press,tion
+repressive	re,press,ive
+reproach	re
+reproductive	re,pro,duct,ive
+reptile	
+republic	ic
+repudiate	re,ate
+repulsive	re,pel,ive
+reputation	re,tion
+repute	re
+reputed	re,ed2
+request	re
+require	re
+requirement	re,ment2
+requisite	re
+requital	re,al
+rescue	re
+resemblance	re,ance
+resemble	re
+resent	re,sens
+resentful	re,sens,ful
+resentment	re,sens,ment2
+reservior	re
+reservoir	re
+residents	re,ant
+residue	re
+resign	re,sign
+resignation	re,sign,tion
+resilience	re,ance
+resin	
+resist	re,stat
+resistance	re,stat,ance
+resistant	re,stat,ant
+resolute	re
+resolution	re,tion
+resolve	re
+resonance	re,ance
+resonant	re,ant
+respiratory	re,spir,ary
+respond	re
+respondents	re,ant
+response	re
+responsibility	re,able,ity
+responsible	re,able
+responsive	re,ive
+restaurant	re,ant
+restaurants	re,ant
+restless	less
+restraint	re
+result	re,sal
+resultant	re,sal,ant
+results	re,sal
+resume	re
+retails	re
+retain	re,ten
+retard	re
+retention	re,ten,tion
+retentive	re,ten,ive
+reticence	re,ance
+reticent	re,ant
+retirement	re,ment2
+retort	re,tort
+retract	re,tract
+retribution	re,tion
+retrieve	re
+retriever	re,er
+retroactive	retro,act,ive
+retrofit	retro
+retrograde	retro,gress
+retrospect	retro,spect
+retrospection	retro,spect,tion
+retrospective	retro,spect,ive
+reuse	re
+reveal	re
+revelation	re,tion
+revenge	re
+reverberate	re,ate
+revere	re
+revered	re,ed2
+reverence	re,ance
+reverent	re,ant
+reverently	re,ant,ly
+revile	re
+revision	re,vis,tion
+revival	re,vita,al
+revive	re,vita
+revoke	re,voc
+revolution	re,tion
+revolutionary	re,tion,ary
+revolutionize	re,tion,ize
+revolve	re
+rhetoric	ic
+rival	al
+rivers	
+rodent	ant
+romance	
+romantic	ic
+rotten	
+royal	al
+ruminate	ate
+rural	al
+rusty	
+sacred	
+sagacious	ous
+salient	sal,ant
+saline	
+salinity	ity
+saliva	
+salt	
+saltiness	ness
+salty	
+sanction	tion
+sanctuary	ary
+sanitation	tion
+sapience	ance
+sarcastic	ic
+sardonic	ic
+satiate	ate
+satisfaction	fac,tion
+saturate	ate
+sausage	
+scalpel	
+scandal	
+scant	
+scent	sens
+sceptical	ic,al
+schism	
+schoolmate	
+scientific	sci,ic
+scientist	sci,ist
+scientists	sci,ist
+scope	scope
+scrupulous	ous
+scrutinize	ize
+scurry	
+seal	
+seaport	
+seclusion	tion
+sect	
+sectional	sect,tion,al
+secure	
+sedate	ate
+sediment	ment2
+segment	ment2
+segregate	ate
+seismic	ic
+seize	
+semblance	ance
+semifinal	semi,fin,al
+semiliterate	semi,liter,ate
+semimolten	semi
+seminar	
+seminate	ate
+senate	
+sensational	sens,tion,al
+sense	sens
+sensitive	sens,ive
+sensor	sens,er
+sensuous	sens,ous
+sentence	sens,ance
+sentiment	sens,ment2
+sentimental	sens,ment2,al
+sentimentalism	sens,ment2,al,ism
+sentimentalize	sens,ment2,al,ize
+sentry	
+separate	ate
+septic	ic
+sequence	ance
+sequester	
+serpent	ant
+settlement	ment2
+seven	
+seventeen	
+seventh	
+seventy	
+sewage	age
+sharply	ly
+shipment	ment2
+shorten	en2
+sign	sign
+signal	sign,al
+signature	sign,ure
+significance	sign,fac,ance
+significant	sign,fac,ant
+significantly	sign,fac,ant,ly
+signify	sign,ify
+silence	ance
+silent	ant
+silicate	
+silversmith	
+similar	simil
+similarity	simil,ity
+similarly	simil,ly
+simplicity	plex,ity
+simplify	plex,ify
+simply	ly
+simulate	simil,ate
+simultaneous	ous
+simultaneously	ous,ly
+sinuous	ous
+sister	
+sixty	
+size	
+skate	
+skeptic	ic
+slant	
+slate	
+smother	
+sociable	able
+social	al
+society	ity
+soften	en2
+solicit	
+solicitor	er
+solicitous	ous
+solid	
+solidarity	ity
+solidify	ify
+soluble	able
+solution	tion
+solvable	able
+solve	
+solvent	ant
+sophisticate	ate
+souvenir	ven
+souvenirs	sub,ven
+special	spec2,al
+specialist	spec2,al,ist
+speciality	spec2,al,ity
+specialize	spec2,al,ize
+specialized	spec2,al,ize,ed2
+specially	spec2,al,ly
+specialty	spec2,al,ity
+species	spec2
+specific	spec2,ic
+specifically	spec2,al,ly
+specification	spec2,ify,tion
+specified	spec2,ify,ed2
+specify	spect,ify
+specimen	spect
+spectra	spect
+speculate	spect,ate
+spell	
+spelling	ing2
+spend	
+spending	pend,ing2
+sphere	spher
+spherical	spher,ic,al
+split	
+spontaneity	ity
+spontaneous	ous
+sporadic	ic
+sport	
+sports	port
+sportsman	
+sportswear	
+stab	
+stability	stat,ity
+stable	stat
+stage	
+stagnant	ant
+stain	
+stained	ed2
+stainless	less
+state	stat
+stately	stat,ly
+statement	stat,ment2
+statesman	stat
+stationery	stat,tion,er
+stations	stat,tion
+statistic	stat,ic
+statistical	stat,ist,ic,al
+statistics	stat,ist,ic
+stature	stat,ure
+statute	stat
+steal	
+stereophotograph	photo,graph
+stereotype	typ
+stereotyped	typ,ed2
+stimulant	ant
+stimulate	ate
+stipend	pend
+stipulate	ate
+story	
+straighten	en2
+strategic	ic
+strenuous	ous
+strive	
+subdiscipline	sub
+subdivide	sub
+subdivision	sub,tion
+subduct	sub,duct
+subdue	sub
+subjects	sub,ject
+subjugation	sub,ate,tion
+submit	sub,mit
+subordinate	sub,ord,ate
+subsection	sub,sect,tion
+subsequent	sub,ant
+subsequently	sub,ant,ly
+subsidiary	sub,ary
+subsidy	sub
+subsist	sub,stat
+subsistence	sub,stat,ance
+subspecies	sub,spec2
+substance	sub,stat,ance
+substantial	sub,stat,al
+substantially	sub,stat,ant,al,ly
+substantiate	sub,stat,ate
+substantive	sub,stat,ive
+substitute	sub
+subtitles	sub
+subtle	
+subtract	sub,tract
+subtraction	sub,tract,tion
+subtractive	sub,tract,ive
+suburb	sub,urb
+suburbanite	sub,urb
+subversive	sub,vert,ive
+subvert	sub,vert
+suffice	sub,fac
+sufficiency	sub,ance
+sufficient	sub,fac,ant
+suffrage	
+sultry	
+summarize	ize
+summary	ary
+summit	
+sumptuous	ous
+sundial	
+super	super
+superb	super
+superficial	super,al
+superficially	super,al,ly
+superfluous	super,flu,ous
+superintend	super,in2
+superintendent	super,in2,ant
+superior	super
+superiority	super,ity
+superman	super
+supernatural	super,nat,al
+supersonic	super,ic
+superstition	super,tion
+superstitious	super,ous
+supervision	super,vis,tion
+supplement	sub,ment2
+supply	sub
+suppress	sub,press
+surcharge	sur
+sure	
+surely	ly
+surface	sur
+surgeon	
+surgery	
+surging	ing2
+surmise	sur,mit
+surname	sur
+surpass	sur
+surpassingly	sur,ing2,ly
+surrender	sur
+surround	sur
+surrounding	sur,ing2
+surroundings	sur,ing2
+survival	sur,vita,al
+survive	sur,vita
+suspicious	spect,ous
+sustenance	sub,ten,ance
+sweeten	en2
+sword	
+syllable	
+symbiotic	bio,ic
+sympathetic	path,ic
+sympathize	path,ize
+synchronize	chron,ize
+syndicate	dict,ate
+synonym	nom
+synonymous	nom,ous
+synthesize	ize
+synthetic	ic
+systematic	ic
+systematize	ize
+table	
+tabulate	ate
+tact	tang
+tactic	ic
+tactics	ic
+tactile	tang
+taint	
+tangle	
+tantalize	ize
+tasty	
+taxation	tion
+tedious	ous
+temper	
+temperament	ment2
+temperamental	ment2,al
+temperance	ance
+temperate	ate
+temperature	ure
+temporal	temp,al
+temporize	temp,ize
+ten	
+tenacious	ten,ous
+tenancy	ten,ance
+tenement	ten,ment2
+tent	
+tentative	ive
+tenuous	ous
+terminal	al
+termination	ate,tion
+termite	
+terrestrial	terr,al
+terrible	able
+terribly	able,ly
+terrific	ic
+terrify	ify
+terrifying	ify,ing2
+territory	terr,ary
+terror	
+terrorism	ism
+terrorist	ist
+tertiary	ary
+test	
+testify	test,ify
+testimony	test
+their	
+theirs	
+theist	theo,ist
+theological	theo,log,ic,al
+theorem	
+theoretical	ic,al
+theory	
+therapeutic	ic
+therapist	ist
+thermostat	therm,stat
+thirsty	
+thirty	
+threaten	en2
+threateningly	en2,ing2,ly
+thrifty	
+thrive	
+tighten	en2
+timetable	
+tinplate	
+tolerance	ance
+tolerant	ant
+tolerate	ate
+topic	ic
+topographical	graph,ic,al
+torment	tort,ment2
+torque	tort
+torrent	
+tortuous	tort,ous
+total	al
+tournament	ment2
+toxic	ic
+tract	tract
+traction	tract,tion
+traffic	
+tragic	ic
+trajectory	trans,ject,ary
+transient	trans,ant
+transistor	trans
+translate	trans
+translucent	trans,luc,ant
+transplant	trans
+travesty	
+treacherous	ous
+treasure	
+treatment	ment2
+treaty	
+tremendous	ous
+trepidation	tion
+trial	al
+triangular	tri
+tribal	al
+tribe	
+tribulation	tion
+tributary	ary
+tribute	
+tributes	
+trick	
+trickle	
+trifle	
+trifling	ing2
+trigger	
+trim	
+trinity	tri,ity
+trip	
+triumph	
+triumphant	ant
+trivial	tri,al
+tuition	tion
+turbine	
+turbulence	ance
+turbulent	
+turnover	
+twenty	
+twist	
+type	typ
+types	typ
+typewriter	typ,er
+typhoon	
+typical	typ,ic,al
+typify	typ,ify
+typist	typ,ist
+typography	typ,graph
+tyrannical	ic,al
+ultimate	ate
+ultrasonic	ultra,ic
+ultrasonics	ultra,ic
+unable	un,able
+unadorned	un,ad,ed2
+unanimity	uni,anim,ity
+unanimous	uni,anim,ous
+unavoidable	un,able
+unbridgeable	un,able
+unbridled	un,ed2
+uncertain	un
+uncle	
+unconscious	un,com,sci,ous
+uncouth	un
+undaunted	un,ed2
+under	
+underdeveloped	under,ed2
+underestimate	under,ate
+undergo	under
+undergraduate	under,gress,ate
+underground	under
+underlie	under
+underline	under
+underlying	under,ing2
+undermine	under
+underneath	under
+underscore	under
+understand	under
+understanding	under,ing2
+undertake	under
+undertaking	under,ing2
+underwater	under
+underwear	under
+underwrite	under
+undifferentiated	un,dis,fer,ant,ate,ed2
+undisturbed	un,dis,ed2
+undivided	un,ed2
+undoubtedly	un,ed2,ly
+unemployment	un,en,ment2
+uneven	un
+unexplored	un,ex,ed2
+unfertilized	un,fer,ize,ed2
+unfit	un
+ungainly	un,ly
+uniform	uni,form
+uniformity	uni,form,ity
+uniformly	uni,form,ly
+unify	uni,ify
+unilateral	uni,al
+unimaginable	un,able
+unimportant	un,in2,port,ant
+uninhabited	un,in2,hab,ed2
+union	uni
+unique	uni
+uniqueness	uni,ness
+unite	uni
+united	uni,ed2
+unity	uni,ity
+universal	uni,vert,al
+universally	uni,vert,al,ly
+universe	uni,vert
+universities	uni,vert,ity
+university	uni,vert,ity
+unlimited	un,ed2
+unlucky	un
+unnecessary	un,ary
+unpaid	un
+unparalleled	un,para,ed2
+unprecedented	un,pre,cede,ant,ed2
+unruly	un
+unscrupulous	un,ous
+unseasonably	un,able,ly
+unsocial	un,al
+unstable	un,stat,able
+untapped	un,ed2
+untie	un
+until	
+untold	un
+unwieldy	un
+update	
+upheaval	al
+uptodate	
+urbane	urb
+urbanite	urb
+usage	age
+utility	ity
+utilize	ize
+valiant	val,ant
+vanity	ity
+vantage	age
+variety	ity
+vary	
+veal	
+vegetable	able
+vehement	
+velocity	ity
+venerable	able
+venerate	ate
+vengeance	ance
+venom	
+vent	
+ventilate	ate
+ventilation	ate,tion
+venture	ven,ure
+venturesome	ven,ure
+veracity	ity
+vertebrate	vert,ate
+vertical	vert,al
+vertigo	vert
+viability	able,ity
+vibrant	ant
+vibrate	ate
+vice	
+viceroy	vice
+vicinity	ity
+victory	
+videocassette	vis
+videophone	vis,phon
+videos	vis
+videotape	vis
+vindicate	ate
+violate	ate
+violence	ance
+violent	
+viral	al
+virtuosity	ity
+viscous	ous
+visibility	vis,able,ity
+vision	vis,tion
+visit	vis
+visitor	vis,er
+visitors	vis,er
+vital	vita,al
+vitamine	vita
+vivacity	vita,ity
+vivid	vita
+vividly	vita,ly
+vocation	voc,tion
+volcanic	ic
+volume	
+volunteers	vol
+vomit	
+voracious	ous
+vulnerable	able
+wage	
+waist	
+waive	
+want	
+warrant	
+warranty	
+wary	
+weary	
+weatherman	
+witty	
+word	
+wording	ing2
+workmate	
+wrist	
+written	
+zeal	
+technical	ic,al

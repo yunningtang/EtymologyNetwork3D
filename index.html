@@ -173,7 +173,8 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 .sd-section{padding:6px 16px 4px;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:600}
 
 /* Enhanced Tooltip */
-#tooltip .tt-ipa{font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+#tooltip .tt-ipa{font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#tooltip .tt-lv{font-size:10px;color:var(--muted);opacity:0.8;font-family:var(--font-ui);letter-spacing:0.3px}
 #tooltip .tt-speak{background:none;border:1px solid rgba(255,255,255,0.12);border-radius:50%;width:28px;height:28px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;padding:0}
 #tooltip .tt-speak:hover{color:var(--text);border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.05)}
 #tooltip .tt-speak svg{width:14px;height:14px}
@@ -250,7 +251,7 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 <!-- Intro Overlay -->
 <div id="intro-overlay">
   <div class="tagline">See how English words connect</div>
-  <div class="tagline-sub">200+ roots · 30,000+ words · One living network</div>
+  <div class="tagline-sub">200+ roots · 6,000+ words · One living network</div>
 </div>
 
 <!-- Hint -->
@@ -358,213 +359,214 @@ canvas#three-canvas{display:block;position:fixed;top:0;left:0;z-index:1}
 // ============================================================
 const MORPHEMES = [
 // --- PREFIXES ---
-{id:'pre',type:'p',morph:'pre-',origin:'Latin: prae',meaning:'before 在…之前',words:['predict 预测','prevent 预防','prepare 准备','precede 先于','premise 前提','preserve 保存','preside 主持','preview 预览','previous 之前的','preface 前言','precaution 预防措施','predominant 占主导的']},
-{id:'post',type:'p',morph:'post-',origin:'Latin: post',meaning:'after 在…之后',words:['postpone 推迟','postwar 战后的','posterior 后面的','postscript 附言','postgraduate 研究生','postmodern 后现代的']},
-{id:'re',type:'p',morph:'re-',origin:'Latin: re',meaning:'again/back 再/回',words:['return 返回','review 复习','recall 召回','reflect 反映','reform 改革','remove 移除','repeat 重复','replace 替换','represent 代表','reproduce 再生','resolve 解决','restore 恢复','retain 保留','reveal 揭示','reverse 颠倒','revive 复兴','revolve 旋转']},
-{id:'un',type:'p',morph:'un-',origin:'Old English: un',meaning:'not/reverse 不/逆',words:['unable 不能的','uncertain 不确定的','uncomfortable 不舒服的','understand 理解','unfair 不公平的','unfortunate 不幸的','unhappy 不高兴的','uniform 统一的','unique 独特的','unite 联合','universal 普遍的','unknown 未知的','unlikely 不太可能的','unusual 不寻常的']},
-{id:'dis',type:'p',morph:'dis-',origin:'Latin: dis',meaning:'apart/not 分开/不',words:['discover 发现','discuss 讨论','disease 疾病','display 展示','dispose 处置','distance 距离','distinct 不同的','distribute 分配','disturb 打扰','disappear 消失','disagree 不同意','discount 折扣','disorder 混乱']},
-{id:'in1',type:'p',morph:'in-/im-',origin:'Latin: in',meaning:'not 不/非',words:['impossible 不可能的','important 重要的','improve 改善','include 包括','increase 增加','independent 独立的','indicate 表明','individual 个人的','influence 影响','innocent 无辜的','invisible 看不见的','incredible 不可思议的','inadequate 不充分的']},
-{id:'en',type:'p',morph:'en-/em-',origin:'Latin: in',meaning:'cause to/put in 使…/放入',words:['enable 使能够','encourage 鼓励','endanger 使危险','enforce 执行','engage 参与','enjoy 享受','enormous 巨大的','ensure 确保','embrace 拥抱','employ 雇用','empower 赋权']},
-{id:'non',type:'p',morph:'non-',origin:'Latin: non',meaning:'not 非/不',words:['nonsense 胡说','nonprofit 非营利的','nonetheless 然而','nonverbal 非语言的','nonfiction 非虚构','nonexistent 不存在的']},
-{id:'anti',type:'p',morph:'anti-',origin:'Greek: anti',meaning:'against 反对/抗',words:['antibody 抗体','anticipate 预期','antique 古老的','antisocial 反社会的','antibiotic 抗生素','antidote 解毒剂','antipathy 反感']},
-{id:'over',type:'p',morph:'over-',origin:'Old English: ofer',meaning:'above/excess 过度/在上',words:['overcome 克服','overlook 忽视','overseas 海外的','overtime 加班','overwhelm 压倒','overlap 重叠','overdue 逾期的','overflow 溢出']},
-{id:'under',type:'p',morph:'under-',origin:'Old English: under',meaning:'below/less 在下/不足',words:['understand 理解','undergo 经历','underline 下划线','undermine 破坏','undertake 承担','underestimate 低估','undergraduate 本科生']},
-{id:'out',type:'p',morph:'out-',origin:'Old English: ut',meaning:'beyond/outside 超过/外',words:['outcome 结果','outdoor 户外的','outline 轮廓','output 产出','outstanding 杰出的','outward 向外的','outbreak 爆发','outrage 愤怒']},
-{id:'mis',type:'p',morph:'mis-',origin:'Old English: mis',meaning:'wrong/bad 错误/不当',words:['mistake 错误','mislead 误导','misunderstand 误解','misfortune 不幸','misuse 滥用','mismatch 不匹配','misjudge 判断错误']},
-{id:'de',type:'p',morph:'de-',origin:'Latin: de',meaning:'down/remove 向下/去除',words:['debate 辩论','decade 十年','decline 下降','decrease 减少','define 定义','deliver 递送','demand 要求','democracy 民主','demonstrate 展示','depart 离开','depend 依赖','describe 描述','design 设计','desire 渴望','destroy 摧毁','detect 检测','determine 决定','develop 发展']},
-{id:'trans',type:'p',morph:'trans-',origin:'Latin: trans',meaning:'across 跨越/穿过',words:['transfer 转移','transform 变换','translate 翻译','transmit 传输','transparent 透明的','transport 运输','transplant 移植','transaction 交易','transcend 超越','transition 过渡']},
-{id:'inter',type:'p',morph:'inter-',origin:'Latin: inter',meaning:'between 在…之间',words:['interact 互动','interest 兴趣','internal 内部的','international 国际的','internet 互联网','interpret 解释','interrupt 中断','interview 面试','intervene 干预','interface 接口']},
-{id:'intra',type:'p',morph:'intra-',origin:'Latin: intra',meaning:'within 在…内部',words:['intranet 内网','intravenous 静脉内的','intramural 校内的']},
-{id:'extra',type:'p',morph:'extra-',origin:'Latin: extra',meaning:'beyond/outside 超出/额外',words:['extraordinary 非凡的','extravagant 奢侈的','extracurricular 课外的','extraterrestrial 外星的','extract 提取','extreme 极端的']},
-{id:'super',type:'p',morph:'super-',origin:'Latin: super',meaning:'above/beyond 超级/在上',words:['superb 极好的','superficial 表面的','superior 优越的','supernatural 超自然的','supervise 监督','supplement 补充','supreme 最高的']},
-{id:'sub',type:'p',morph:'sub-',origin:'Latin: sub',meaning:'under/below 在下/次',words:['subject 主题','submit 提交','subsequent 随后的','substance 物质','substitute 替代','subtle 微妙的','suburb 郊区','subway 地铁','succeed 成功','sufficient 充分的','suggest 建议','submarine 潜艇']},
-{id:'com',type:'p',morph:'com-/con-',origin:'Latin: cum',meaning:'together/with 共同/一起',words:['combine 结合','comfort 安慰','command 命令','commit 承诺','common 共同的','communicate 沟通','community 社区','compare 比较','compete 竞争','complain 抱怨','complete 完成','compose 组成','concept 概念','concern 关心','conclude 结论','condition 条件','conduct 指导','conference 会议','confident 自信的','confirm 确认','conflict 冲突','connect 连接','conscious 有意识的','consent 同意','consider 考虑','consist 组成','constant 不变的','constitute 构成','construct 建造','consult 咨询','consume 消费','contain 包含','content 内容','context 上下文','continue 继续','contract 合同','contribute 贡献','control 控制','conversation 对话','convert 转换','convince 说服','cooperate 合作']},
-{id:'co',type:'p',morph:'co-',origin:'Latin: co',meaning:'together 共同',words:['coexist 共存','coordinate 协调','coauthor 合著者','coincide 巧合']},
-{id:'pro',type:'p',morph:'pro-',origin:'Latin: pro',meaning:'forward/for 向前/支持',words:['problem 问题','procedure 程序','proceed 进行','process 过程','produce 生产','profession 职业','professor 教授','profit 利润','program 程序','progress 进步','project 项目','promise 承诺','promote 促进','proper 适当的','propose 提议','protect 保护','protest 抗议','prove 证明','provide 提供','provoke 激怒']},
-{id:'fore',type:'p',morph:'fore-',origin:'Old English: fore',meaning:'before 在前/预先',words:['forecast 预报','foreign 外国的','foresee 预见','forest 森林','forever 永远','foreground 前景','forehead 前额']},
-{id:'auto',type:'p',morph:'auto-',origin:'Greek: autos',meaning:'self 自动/自身',words:['automatic 自动的','automobile 汽车','autonomy 自治','autobiography 自传','autograph 签名']},
-{id:'bi',type:'p',morph:'bi-',origin:'Latin: bi',meaning:'two 二/双',words:['bicycle 自行车','bilateral 双边的','bilingual 双语的','biweekly 两周一次的']},
-{id:'tri',type:'p',morph:'tri-',origin:'Latin/Greek: tri',meaning:'three 三',words:['triangle 三角形','tribe 部落','triple 三倍的','triumph 胜利','trivial 琐碎的']},
-{id:'multi',type:'p',morph:'multi-',origin:'Latin: multus',meaning:'many 多',words:['multiply 乘/繁殖','multiple 多重的','multimedia 多媒体','multinational 跨国的','multitude 大量']},
-{id:'poly',type:'p',morph:'poly-',origin:'Greek: polys',meaning:'many 多',words:['polygon 多边形','polyglot 通晓多种语言者','polymer 聚合物','polynomial 多项式']},
-{id:'mono',type:'p',morph:'mono-',origin:'Greek: monos',meaning:'one/single 单一',words:['monopoly 垄断','monotone 单调','monologue 独白','monograph 专著']},
-{id:'uni',type:'p',morph:'uni-',origin:'Latin: unus',meaning:'one 一/单',words:['uniform 统一的','unique 独特的','unite 联合','universal 普遍的','universe 宇宙','university 大学']},
-{id:'semi',type:'p',morph:'semi-',origin:'Latin: semi',meaning:'half 半',words:['semicircle 半圆','semiconductor 半导体','semifinal 半决赛','seminar 研讨会']},
-{id:'micro',type:'p',morph:'micro-',origin:'Greek: mikros',meaning:'small 微小',words:['microphone 麦克风','microscope 显微镜','microwave 微波','microchip 微芯片','microorganism 微生物']},
-{id:'macro',type:'p',morph:'macro-',origin:'Greek: makros',meaning:'large 宏大',words:['macroeconomics 宏观经济学','macroscopic 宏观的']},
-{id:'mega',type:'p',morph:'mega-',origin:'Greek: megas',meaning:'great/million 巨大/百万',words:['megabyte 兆字节','megacity 特大城市','megaphone 扩音器']},
-{id:'mini',type:'p',morph:'mini-',origin:'Latin: minimus',meaning:'small 最小',words:['minimum 最小值','miniature 微型的','minimize 最小化','ministry 部门','minor 次要的','minority 少数']},
-{id:'neo',type:'p',morph:'neo-',origin:'Greek: neos',meaning:'new 新',words:['neonatal 新生儿的','neoclassical 新古典的','neologism 新词']},
-{id:'proto',type:'p',morph:'proto-',origin:'Greek: protos',meaning:'first/original 原始/最初',words:['prototype 原型','protocol 协议','proton 质子']},
-{id:'counter',type:'p',morph:'counter-',origin:'Latin: contra',meaning:'against/opposite 相反/对抗',words:['counterpart 对应物','counterattack 反击','counterfeit 伪造','counterbalance 抗衡','counterclockwise 逆时针']},
-{id:'sur',type:'p',morph:'sur-',origin:'Latin: super',meaning:'over/above 超过/在上',words:['surface 表面','surplus 剩余','surprise 惊讶','surround 包围','survey 调查','survive 生存','surrender 投降']},
-{id:'ab',type:'p',morph:'ab-',origin:'Latin: ab',meaning:'away from 远离',words:['abandon 放弃','abnormal 异常的','absent 缺席的','absolute 绝对的','absorb 吸收','abstract 抽象的','abuse 滥用']},
-{id:'ad',type:'p',morph:'ad-',origin:'Latin: ad',meaning:'toward/to 朝向',words:['adapt 适应','adequate 充足的','adjust 调整','admire 钦佩','admit 承认','adopt 采纳','advance 前进','adventure 冒险','advertise 广告','advocate 倡导']},
-{id:'circum',type:'p',morph:'circum-',origin:'Latin: circum',meaning:'around 围绕',words:['circumstance 情况','circumference 周长','circumvent 规避']},
-{id:'dia',type:'p',morph:'dia-',origin:'Greek: dia',meaning:'through/across 穿过',words:['diagnose 诊断','dialogue 对话','diameter 直径','diagram 图表']},
-{id:'ex',type:'p',morph:'ex-',origin:'Latin: ex',meaning:'out of/former 出/前',words:['examine 检查','example 例子','exceed 超过','excellent 优秀的','except 除了','exchange 交换','excite 激动','exclude 排除','execute 执行','exercise 练习','exhibit 展览','exist 存在','expand 扩展','expect 期望','experience 经验','experiment 实验','expert 专家','explain 解释','explode 爆炸','exploit 利用','explore 探索','export 出口','expose 暴露','express 表达','extend 延伸','external 外部的','extreme 极端的']},
-{id:'hyper',type:'p',morph:'hyper-',origin:'Greek: hyper',meaning:'excessive/above 超过/过度',words:['hyperactive 过于活跃的','hyperlink 超链接','hyperbole 夸张']},
-{id:'hypo',type:'p',morph:'hypo-',origin:'Greek: hypo',meaning:'under/below 低于/不足',words:['hypothesis 假设','hypocrite 伪君子','hypothetical 假设的']},
-{id:'meta',type:'p',morph:'meta-',origin:'Greek: meta',meaning:'beyond/change 超越/变化',words:['metabolism 新陈代谢','metaphor 隐喻','method 方法','metadata 元数据']},
-{id:'para',type:'p',morph:'para-',origin:'Greek: para',meaning:'beside/beyond 旁边/超越',words:['paragraph 段落','parallel 平行的','parameter 参数','parasite 寄生虫','paradox 悖论','parachute 降落伞']},
-{id:'peri',type:'p',morph:'peri-',origin:'Greek: peri',meaning:'around 周围',words:['period 时期','peripheral 外围的','perimeter 周长','periscope 潜望镜']},
-{id:'retro',type:'p',morph:'retro-',origin:'Latin: retro',meaning:'backward 向后/回溯',words:['retrospect 回顾','retroactive 有追溯力的','retrofit 改造']},
-{id:'ultra',type:'p',morph:'ultra-',origin:'Latin: ultra',meaning:'beyond/extreme 超/极',words:['ultimate 最终的','ultraviolet 紫外线','ultrasound 超声波']},
-{id:'vice',type:'p',morph:'vice-',origin:'Latin: vice',meaning:'in place of 代替/副',words:['vicepresident 副总统','viceroy 总督']},
-{id:'infra',type:'p',morph:'infra-',origin:'Latin: infra',meaning:'below 下/基础',words:['infrastructure 基础设施','infrared 红外线']},
+{id:'pre',type:'p',morph:'pre-',origin:'Latin: prae',meaning:'before 在…之前'},
+{id:'post',type:'p',morph:'post-',origin:'Latin: post',meaning:'after 在…之后'},
+{id:'re',type:'p',morph:'re-',origin:'Latin: re',meaning:'again/back 再/回'},
+{id:'un',type:'p',morph:'un-',origin:'Old English: un',meaning:'not/reverse 不/逆'},
+{id:'dis',type:'p',morph:'dis-',origin:'Latin: dis',meaning:'apart/not 分开/不'},
+{id:'in1',type:'p',morph:'in-/im- (不)',origin:'Latin: in',meaning:'not 不/非'},
+{id:'in2',type:'p',morph:'in-/im- (入)',origin:'Latin: in',meaning:'in/into/on 进入/在内'},
+{id:'en',type:'p',morph:'en-/em-',origin:'Latin: in',meaning:'cause to/put in 使…/放入'},
+{id:'non',type:'p',morph:'non-',origin:'Latin: non',meaning:'not 非/不'},
+{id:'anti',type:'p',morph:'anti-',origin:'Greek: anti',meaning:'against 反对/抗'},
+{id:'over',type:'p',morph:'over-',origin:'Old English: ofer',meaning:'above/excess 过度/在上'},
+{id:'under',type:'p',morph:'under-',origin:'Old English: under',meaning:'below/less 在下/不足'},
+{id:'out',type:'p',morph:'out-',origin:'Old English: ut',meaning:'beyond/outside 超过/外'},
+{id:'mis',type:'p',morph:'mis-',origin:'Old English: mis',meaning:'wrong/bad 错误/不当'},
+{id:'de',type:'p',morph:'de-',origin:'Latin: de',meaning:'down/remove 向下/去除'},
+{id:'trans',type:'p',morph:'trans-',origin:'Latin: trans',meaning:'across 跨越/穿过'},
+{id:'inter',type:'p',morph:'inter-',origin:'Latin: inter',meaning:'between 在…之间'},
+{id:'intra',type:'p',morph:'intra-',origin:'Latin: intra',meaning:'within 在…内部'},
+{id:'extra',type:'p',morph:'extra-',origin:'Latin: extra',meaning:'beyond/outside 超出/额外'},
+{id:'super',type:'p',morph:'super-',origin:'Latin: super',meaning:'above/beyond 超级/在上'},
+{id:'sub',type:'p',morph:'sub-',origin:'Latin: sub',meaning:'under/below 在下/次'},
+{id:'com',type:'p',morph:'com-/con-',origin:'Latin: cum',meaning:'together/with 共同/一起'},
+{id:'co',type:'p',morph:'co-',origin:'Latin: co',meaning:'together 共同'},
+{id:'pro',type:'p',morph:'pro-',origin:'Latin: pro',meaning:'forward/for 向前/支持'},
+{id:'fore',type:'p',morph:'fore-',origin:'Old English: fore',meaning:'before 在前/预先'},
+{id:'auto',type:'p',morph:'auto-',origin:'Greek: autos',meaning:'self 自动/自身'},
+{id:'bi',type:'p',morph:'bi-',origin:'Latin: bi',meaning:'two 二/双'},
+{id:'tri',type:'p',morph:'tri-',origin:'Latin/Greek: tri',meaning:'three 三'},
+{id:'multi',type:'p',morph:'multi-',origin:'Latin: multus',meaning:'many 多'},
+{id:'poly',type:'p',morph:'poly-',origin:'Greek: polys',meaning:'many 多'},
+{id:'mono',type:'p',morph:'mono-',origin:'Greek: monos',meaning:'one/single 单一'},
+{id:'uni',type:'p',morph:'uni-',origin:'Latin: unus',meaning:'one 一/单'},
+{id:'semi',type:'p',morph:'semi-',origin:'Latin: semi',meaning:'half 半'},
+{id:'micro',type:'p',morph:'micro-',origin:'Greek: mikros',meaning:'small 微小'},
+{id:'macro',type:'p',morph:'macro-',origin:'Greek: makros',meaning:'large 宏大'},
+{id:'mega',type:'p',morph:'mega-',origin:'Greek: megas',meaning:'great/million 巨大/百万'},
+{id:'mini',type:'p',morph:'mini-',origin:'Latin: minimus',meaning:'small 最小'},
+{id:'neo',type:'p',morph:'neo-',origin:'Greek: neos',meaning:'new 新'},
+{id:'proto',type:'p',morph:'proto-',origin:'Greek: protos',meaning:'first/original 原始/最初'},
+{id:'counter',type:'p',morph:'counter-',origin:'Latin: contra',meaning:'against/opposite 相反/对抗'},
+{id:'sur',type:'p',morph:'sur-',origin:'Latin: super',meaning:'over/above 超过/在上'},
+{id:'ab',type:'p',morph:'ab-',origin:'Latin: ab',meaning:'away from 远离'},
+{id:'ad',type:'p',morph:'ad-',origin:'Latin: ad',meaning:'toward/to 朝向'},
+{id:'circum',type:'p',morph:'circum-',origin:'Latin: circum',meaning:'around 围绕'},
+{id:'dia',type:'p',morph:'dia-',origin:'Greek: dia',meaning:'through/across 穿过'},
+{id:'ex',type:'p',morph:'ex-',origin:'Latin: ex',meaning:'out of/former 出/前'},
+{id:'hyper',type:'p',morph:'hyper-',origin:'Greek: hyper',meaning:'excessive/above 超过/过度'},
+{id:'hypo',type:'p',morph:'hypo-',origin:'Greek: hypo',meaning:'under/below 低于/不足'},
+{id:'meta',type:'p',morph:'meta-',origin:'Greek: meta',meaning:'beyond/change 超越/变化'},
+{id:'para',type:'p',morph:'para-',origin:'Greek: para',meaning:'beside/beyond 旁边/超越'},
+{id:'peri',type:'p',morph:'peri-',origin:'Greek: peri',meaning:'around 周围'},
+{id:'retro',type:'p',morph:'retro-',origin:'Latin: retro',meaning:'backward 向后/回溯'},
+{id:'ultra',type:'p',morph:'ultra-',origin:'Latin: ultra',meaning:'beyond/extreme 超/极'},
+{id:'vice',type:'p',morph:'vice-',origin:'Latin: vice',meaning:'in place of 代替/副'},
+{id:'infra',type:'p',morph:'infra-',origin:'Latin: infra',meaning:'below 下/基础'},
 // --- ROOTS ---
-{id:'struct',type:'r',morph:'struct',origin:'Latin: struere',meaning:'build 建造',words:['structure 结构','construct 建造','instruct 指导','destruct 破坏','obstruct 阻碍','infrastructure 基础设施','restructure 重组']},
-{id:'duct',type:'r',morph:'duct/duc',origin:'Latin: ducere',meaning:'lead 引导',words:['conduct 指导','produce 生产','reduce 减少','introduce 介绍','educate 教育','deduce 推断','induce 引起','reproduce 再生','semiconductor 半导体']},
-{id:'spect',type:'r',morph:'spect/spec',origin:'Latin: specere',meaning:'look 看',words:['inspect 检查','respect 尊重','expect 期望','prospect 前景','suspect 怀疑','spectacle 壮观','spectrum 光谱','perspective 视角','retrospect 回顾','speculate 推测']},
-{id:'port',type:'r',morph:'port',origin:'Latin: portare',meaning:'carry 携带/搬运',words:['transport 运输','import 进口','export 出口','report 报告','support 支持','opportunity 机会','portable 便携的','portfolio 作品集','airport 机场']},
-{id:'ject',type:'r',morph:'ject',origin:'Latin: jacere',meaning:'throw 投掷',words:['project 项目','inject 注射','reject 拒绝','object 对象','subject 主题','eject 弹出','trajectory 轨迹','objective 客观的']},
-{id:'dict',type:'r',morph:'dict',origin:'Latin: dicere',meaning:'say/speak 说/讲',words:['predict 预测','dictate 口述','dictionary 词典','contradict 矛盾','indicate 表明','dedicate 奉献','verdict 裁决','addict 上瘾']},
-{id:'scrib',type:'r',morph:'scrib/script',origin:'Latin: scribere',meaning:'write 写',words:['describe 描述','prescribe 开处方','subscribe 订阅','transcript 抄本','manuscript 手稿','scripture 经文','inscription 铭文','script 脚本']},
-{id:'vert',type:'r',morph:'vert/vers',origin:'Latin: vertere',meaning:'turn 转',words:['convert 转换','reverse 颠倒','diverse 多样的','universe 宇宙','advertise 广告','controversy 争论','versatile 多才多艺的','version 版本','vertical 垂直的']},
-{id:'mit',type:'r',morph:'mit/mis',origin:'Latin: mittere',meaning:'send 发送',words:['transmit 传输','submit 提交','admit 承认','commit 承诺','permit 允许','dismiss 解散','missile 导弹','mission 使命','emission 排放','promise 承诺']},
-{id:'cred',type:'r',morph:'cred',origin:'Latin: credere',meaning:'believe 相信',words:['credit 信用','incredible 不可思议的','credential 证书','credible 可信的','creed 信条']},
-{id:'aud',type:'r',morph:'aud',origin:'Latin: audire',meaning:'hear 听',words:['audience 观众','audio 音频','audit 审计','auditorium 礼堂','audible 听得见的']},
-{id:'vis',type:'r',morph:'vis/vid',origin:'Latin: videre',meaning:'see 看',words:['visible 可见的','vision 视野','visit 访问','visual 视觉的','video 视频','evidence 证据','provide 提供','revise 修改','supervise 监督','television 电视','invisible 看不见的']},
-{id:'tract',type:'r',morph:'tract',origin:'Latin: trahere',meaning:'pull/draw 拉/拖',words:['attract 吸引','contract 合同','distract 分散','extract 提取','subtract 减去','abstract 抽象的','tractor 拖拉机','retract 收回']},
-{id:'rupt',type:'r',morph:'rupt',origin:'Latin: rumpere',meaning:'break 打破',words:['interrupt 中断','corrupt 腐败','disrupt 扰乱','erupt 爆发','bankrupt 破产','abrupt 突然的','rupture 破裂']},
-{id:'cept',type:'r',morph:'cept/ceiv',origin:'Latin: capere',meaning:'take/seize 拿/抓',words:['accept 接受','concept 概念','perceive 感知','receive 接收','deceive 欺骗','exception 例外','intercept 拦截','reception 接待','susceptible 易受影响的']},
-{id:'pos',type:'r',morph:'pos/pon',origin:'Latin: ponere',meaning:'put/place 放置',words:['position 位置','compose 组成','dispose 处置','expose 暴露','impose 强加','oppose 反对','postpone 推迟','propose 提议','purpose 目的','suppose 假设','deposit 存款','component 组件']},
-{id:'form',type:'r',morph:'form',origin:'Latin: forma',meaning:'shape 形状',words:['transform 变换','inform 通知','perform 执行','reform 改革','uniform 统一的','format 格式','formula 公式','formal 正式的','formation 形成','platform 平台','conform 顺从']},
-{id:'gen',type:'r',morph:'gen',origin:'Latin/Greek: genus',meaning:'birth/produce 产生/种类',words:['generate 产生','general 一般的','generation 一代','genetic 遗传的','genius 天才','gentle 温和的','genuine 真正的','genre 类型','gene 基因','gender 性别','generous 慷慨的','hydrogen 氢','oxygen 氧','genocide 种族灭绝']},
-{id:'graph',type:'r',morph:'graph/gram',origin:'Greek: graphein',meaning:'write/draw 书写/画',words:['photograph 照片','biography 传记','geography 地理','autograph 签名','paragraph 段落','diagram 图表','program 程序','grammar 语法','telegraph 电报','monograph 专著']},
-{id:'log',type:'r',morph:'log/logy',origin:'Greek: logos',meaning:'word/study 话语/学科',words:['technology 技术','biology 生物学','psychology 心理学','apology 道歉','catalog 目录','dialogue 对话','ecology 生态学','ideology 意识形态','logic 逻辑','monologue 独白','sociology 社会学','zoology 动物学','theology 神学','analogy 类比']},
-{id:'path',type:'r',morph:'path',origin:'Greek: pathos',meaning:'feeling/suffering 感情/痛苦',words:['sympathy 同情','empathy 共情','pathetic 可悲的','pathology 病理学','antipathy 反感','apathy 冷漠','psychopath 精神病患者']},
-{id:'phil',type:'r',morph:'phil',origin:'Greek: philos',meaning:'love 爱/喜好',words:['philosophy 哲学','philanthropy 慈善','bibliophile 爱书人']},
-{id:'phon',type:'r',morph:'phon',origin:'Greek: phone',meaning:'sound/voice 声音',words:['telephone 电话','microphone 麦克风','symphony 交响乐','phonetic 语音的','megaphone 扩音器','euphony 悦耳']},
-{id:'photo',type:'r',morph:'photo',origin:'Greek: phos',meaning:'light 光',words:['photograph 照片','photosynthesis 光合作用','photon 光子','photocopy 复印']},
-{id:'psych',type:'r',morph:'psych',origin:'Greek: psyche',meaning:'mind/soul 心灵/灵魂',words:['psychology 心理学','psychiatry 精神病学','psychopath 精神病患者','psychic 心灵感应的']},
-{id:'scope',type:'r',morph:'scope',origin:'Greek: skopein',meaning:'watch/observe 观察',words:['microscope 显微镜','telescope 望远镜','periscope 潜望镜','horoscope 星座运势','stethoscope 听诊器','kaleidoscope 万花筒']},
-{id:'sect',type:'r',morph:'sect',origin:'Latin: secare',meaning:'cut 切割',words:['section 部分','insect 昆虫','intersection 交叉','bisect 平分','dissect 解剖','sector 部门']},
-{id:'sens',type:'r',morph:'sens/sent',origin:'Latin: sentire',meaning:'feel 感觉',words:['sense 感觉','sensitive 敏感的','sentence 句子','sentiment 情感','consent 同意','consensus 共识','resent 怨恨','sensation 感觉','nonsense 胡说']},
-{id:'voc',type:'r',morph:'voc/vok',origin:'Latin: vocare',meaning:'call/voice 叫/声音',words:['vocabulary 词汇','advocate 倡导','provoke 激怒','revoke 撤销','invoke 调用','evoke 唤起','vocal 声音的','vocation 职业']},
-{id:'act',type:'r',morph:'act',origin:'Latin: agere',meaning:'do/drive 做/驱动',words:['action 行动','active 活跃的','actual 实际的','react 反应','interact 互动','exact 精确的','transaction 交易','enact 颁布']},
-{id:'anim',type:'r',morph:'anim',origin:'Latin: anima',meaning:'life/spirit 生命/精神',words:['animal 动物','animate 赋予生命','unanimous 一致的','animation 动画']},
-{id:'aqua',type:'r',morph:'aqua',origin:'Latin: aqua',meaning:'water 水',words:['aquarium 水族馆','aquatic 水生的','aqueduct 引水渠']},
-{id:'astro',type:'r',morph:'aster/astro',origin:'Greek: astron',meaning:'star 星',words:['astronomy 天文学','astronaut 宇航员','asteroid 小行星','astrology 占星术','disaster 灾难']},
-{id:'bio',type:'r',morph:'bio',origin:'Greek: bios',meaning:'life 生命',words:['biology 生物学','biography 传记','antibiotic 抗生素','autobiography 自传','biodiversity 生物多样性','biochemistry 生物化学']},
-{id:'cap',type:'r',morph:'cap/cip',origin:'Latin: capere',meaning:'take/head 拿/头',words:['capital 首都','captain 队长','capture 捕获','capable 有能力的','capacity 能力','participate 参与','anticipate 预期','principle 原则','recipe 食谱','occupy 占领']},
-{id:'cede',type:'r',morph:'cede/cess',origin:'Latin: cedere',meaning:'go/yield 走/让步',words:['precede 先于','proceed 进行','succeed 成功','access 进入','exceed 超过','process 过程','necessary 必要的','recession 衰退','concede 承认','ancestor 祖先']},
-{id:'chron',type:'r',morph:'chron',origin:'Greek: chronos',meaning:'time 时间',words:['chronic 慢性的','chronicle 编年史','chronological 按时间顺序的','synchronize 同步']},
-{id:'civ',type:'r',morph:'civ',origin:'Latin: civis',meaning:'citizen 公民',words:['civil 公民的','civilization 文明','civilian 平民','civic 市政的']},
-{id:'claim',type:'r',morph:'claim/clam',origin:'Latin: clamare',meaning:'shout/declare 喊/宣称',words:['claim 声称','exclaim 感叹','proclaim 宣布','acclaim 称赞','reclaim 回收','disclaim 否认']},
-{id:'clar',type:'r',morph:'clar',origin:'Latin: clarus',meaning:'clear 清晰',words:['clarify 阐明','declare 宣布','clarity 清晰']},
-{id:'cord',type:'r',morph:'cord/card',origin:'Latin: cor',meaning:'heart 心',words:['record 记录','accord 一致','courage 勇气','encourage 鼓励','discord 不和','cardiac 心脏的','core 核心']},
-{id:'corp',type:'r',morph:'corp',origin:'Latin: corpus',meaning:'body 身体',words:['corporate 公司的','corporation 企业','corpse 尸体','incorporate 合并','corps 军团']},
-{id:'cosm',type:'r',morph:'cosm',origin:'Greek: kosmos',meaning:'universe/order 宇宙/秩序',words:['cosmos 宇宙','cosmopolitan 世界性的','cosmic 宇宙的','cosmetic 化妆品']},
-{id:'cur',type:'r',morph:'cur/curs',origin:'Latin: currere',meaning:'run 跑',words:['current 当前的','occur 发生','currency 货币','curriculum 课程','cursor 光标','excursion 远足','recur 复发','concurrent 并发的']},
-{id:'dem',type:'r',morph:'dem',origin:'Greek: demos',meaning:'people 人民',words:['democracy 民主','demographic 人口统计','epidemic 流行病','pandemic 大流行','endemic 地方性的']},
-{id:'derm',type:'r',morph:'derm',origin:'Greek: derma',meaning:'skin 皮肤',words:['dermatology 皮肤科','epidermis 表皮','hypodermic 皮下的']},
-{id:'domin',type:'r',morph:'domin',origin:'Latin: dominus',meaning:'master/rule 主人/统治',words:['dominate 支配','dominant 主导的','domain 领域','predominant 占主导的']},
-{id:'equ',type:'r',morph:'equ',origin:'Latin: aequus',meaning:'equal 平等',words:['equal 平等的','equation 方程','equator 赤道','adequate 充足的','equivalent 等同的','equilibrium 平衡','equity 公平']},
-{id:'fac',type:'r',morph:'fac/fect',origin:'Latin: facere',meaning:'make/do 做/制造',words:['fact 事实','factor 因素','factory 工厂','faculty 学院','affect 影响','effect 效果','perfect 完美的','defect 缺陷','infect 感染','manufacture 制造','satisfy 满足','sufficient 充分的','efficient 高效的','artificial 人工的','beneficial 有益的','certificate 证书','magnificent 壮丽的','significant 重要的','sacrifice 牺牲','facilitate 促进']},
-{id:'fer',type:'r',morph:'fer',origin:'Latin: ferre',meaning:'carry/bear 携带/承载',words:['transfer 转移','refer 参考','offer 提供','differ 不同','prefer 偏好','suffer 遭受','conference 会议','inference 推断','fertile 肥沃的']},
-{id:'fid',type:'r',morph:'fid',origin:'Latin: fidere',meaning:'trust/faith 信任',words:['confident 自信的','confide 倾诉','fidelity 忠诚','infidel 异教徒']},
-{id:'fin',type:'r',morph:'fin',origin:'Latin: finis',meaning:'end/limit 结束/界限',words:['final 最终的','finish 完成','define 定义','infinite 无限的','finance 金融','refine 精炼','finite 有限的','confine 限制']},
-{id:'flex',type:'r',morph:'flex/flect',origin:'Latin: flectere',meaning:'bend 弯曲',words:['flexible 灵活的','reflect 反映','deflect 偏转','inflect 使变化']},
-{id:'flu',type:'r',morph:'flu/flux',origin:'Latin: fluere',meaning:'flow 流动',words:['fluid 流体','influence 影响','fluent 流利的','fluctuate 波动','affluent 富裕的','influx 涌入']},
-{id:'frag',type:'r',morph:'frag/fract',origin:'Latin: frangere',meaning:'break 打碎',words:['fragment 碎片','fraction 分数','fracture 骨折','fragile 脆弱的','refract 折射']},
-{id:'func',type:'r',morph:'func',origin:'Latin: fungi',meaning:'perform 执行',words:['function 功能','functional 功能性的','dysfunction 功能障碍','malfunction 故障']},
-{id:'geo',type:'r',morph:'geo',origin:'Greek: ge',meaning:'earth 地球',words:['geography 地理','geology 地质学','geometry 几何','geopolitics 地缘政治']},
-{id:'gress',type:'r',morph:'gress/grad',origin:'Latin: gradi',meaning:'step/go 步/走',words:['progress 进步','congress 国会','aggressive 侵略性的','graduate 毕业','ingredient 成分','degree 程度']},
-{id:'hab',type:'r',morph:'hab/hib',origin:'Latin: habere',meaning:'have/hold 有/持有',words:['habit 习惯','inhabit 居住','prohibit 禁止','exhibit 展览','habitat 栖息地']},
-{id:'junct',type:'r',morph:'junct/join',origin:'Latin: jungere',meaning:'join 连接',words:['junction 连接','adjunct 附属','conjunction 结合','injunction 禁令']},
-{id:'lect',type:'r',morph:'lect/leg',origin:'Latin: legere',meaning:'read/choose 读/选',words:['collect 收集','elect 选举','select 选择','lecture 讲座','intellect 智力','neglect 忽视','elegant 优雅的','legend 传说']},
-{id:'liber',type:'r',morph:'liber',origin:'Latin: liber',meaning:'free 自由',words:['liberty 自由','liberal 自由主义的','liberate 解放','deliberate 故意的']},
-{id:'liter',type:'r',morph:'liter',origin:'Latin: littera',meaning:'letter 文字',words:['literature 文学','literal 字面的','literacy 读写能力','illiterate 文盲的']},
-{id:'loc',type:'r',morph:'loc',origin:'Latin: locus',meaning:'place 地方',words:['local 当地的','locate 定位','allocate 分配','location 位置','relocate 搬迁','locomotive 火车头']},
-{id:'luc',type:'r',morph:'luc/lum',origin:'Latin: lux',meaning:'light 光',words:['illuminate 照亮','illustrate 说明','lucid 清晰的','luminous 发光的','translucent 半透明的']},
-{id:'man',type:'r',morph:'man/manu',origin:'Latin: manus',meaning:'hand 手',words:['manage 管理','manual 手册','manufacture 制造','manipulate 操纵','manuscript 手稿','manner 方式','manifest 显示']},
-{id:'mar',type:'r',morph:'mar',origin:'Latin: mare',meaning:'sea 海',words:['marine 海洋的','maritime 海事的','submarine 潜艇','mariner 水手']},
-{id:'mater',type:'r',morph:'mater/matr',origin:'Latin: mater',meaning:'mother 母亲',words:['material 材料','maternal 母亲的','matrix 矩阵','maturity 成熟']},
-{id:'med',type:'r',morph:'med',origin:'Latin: medius',meaning:'middle/heal 中间/治愈',words:['medium 媒介','medicine 医学','medieval 中世纪的','mediate 调解','immediate 立即的','remedy 补救']},
-{id:'mem',type:'r',morph:'mem',origin:'Latin: memor',meaning:'mindful/remember 记忆',words:['memory 记忆','remember 记住','memorial 纪念的','memorize 记忆','memoir 回忆录','commemorate 纪念']},
-{id:'ment',type:'r',morph:'ment',origin:'Latin: mens',meaning:'mind 心智',words:['mental 心理的','mentality 心态','mention 提及','mentor 导师','comment 评论']},
-{id:'min',type:'r',morph:'min',origin:'Latin: minuere',meaning:'small/less 小/减少',words:['minor 次要的','minority 少数','minimum 最小值','diminish 减少','minute 分钟','miniature 微型的']},
-{id:'mob',type:'r',morph:'mob/mot/mov',origin:'Latin: movere',meaning:'move 移动',words:['mobile 移动的','motion 运动','motor 马达','motivate 激励','promote 促进','remove 移除','emotion 情感','remote 远程的','automobile 汽车','movement 运动']},
-{id:'morph',type:'r',morph:'morph',origin:'Greek: morphe',meaning:'form/shape 形态',words:['morphology 形态学','metamorphosis 变态','polymorphism 多态性','amorphous 无定形的']},
-{id:'mort',type:'r',morph:'mort',origin:'Latin: mors',meaning:'death 死亡',words:['mortal 凡人的','immortal 不朽的','mortgage 抵押','mortify 使羞愧']},
-{id:'nat',type:'r',morph:'nat',origin:'Latin: nasci',meaning:'born/nature 出生/自然',words:['nature 自然','nation 国家','native 本地的','natural 自然的','innate 天生的','prenatal 产前的','neonatal 新生儿的','international 国际的']},
-{id:'nav',type:'r',morph:'nav',origin:'Latin: navis',meaning:'ship/sail 船/航行',words:['navigate 导航','navy 海军','naval 海军的']},
-{id:'nom',type:'r',morph:'nom/nym',origin:'Latin/Greek: nomen',meaning:'name 名字',words:['nominal 名义上的','nominate 提名','synonym 同义词','anonymous 匿名的','economy 经济','astronomy 天文学','autonomy 自治','polynomial 多项式']},
-{id:'norm',type:'r',morph:'norm',origin:'Latin: norma',meaning:'standard/rule 标准/规范',words:['normal 正常的','abnormal 异常的','enormous 巨大的','norm 规范']},
-{id:'nov',type:'r',morph:'nov',origin:'Latin: novus',meaning:'new 新',words:['novel 小说/新颖的','innovate 创新','renovate 翻新','novice 新手']},
-{id:'oper',type:'r',morph:'oper',origin:'Latin: operari',meaning:'work 工作',words:['operate 操作','cooperate 合作','operation 手术','operator 操作员']},
-{id:'opt',type:'r',morph:'opt',origin:'Latin: optare',meaning:'choose/best 选择/最佳',words:['option 选项','optimal 最优的','optimism 乐观','optimize 优化','adopt 采纳']},
-{id:'ord',type:'r',morph:'ord',origin:'Latin: ordo',meaning:'order/rank 秩序/排列',words:['order 秩序','ordinary 普通的','coordinate 协调','extraordinary 非凡的','subordinate 从属的']},
-{id:'pater',type:'r',morph:'pater/patr',origin:'Latin: pater',meaning:'father 父亲',words:['patron 赞助人','patriot 爱国者','pattern 模式','patrimony 遗产','paternal 父亲的']},
-{id:'ped',type:'r',morph:'ped/pod',origin:'Latin/Greek: pes/pous',meaning:'foot 脚',words:['pedestrian 行人','expedition 远征','pedal 踏板','tripod 三脚架','podium 讲台']},
-{id:'pel',type:'r',morph:'pel/puls',origin:'Latin: pellere',meaning:'push/drive 推/驱动',words:['compel 强迫','expel 驱逐','impulse 冲动','repel 击退','propel 推进','pulse 脉搏']},
-{id:'pend',type:'r',morph:'pend/pens',origin:'Latin: pendere',meaning:'hang/weigh/pay 悬挂/称量/支付',words:['depend 依赖','independent 独立的','spend 花费','suspend 暂停','pension 养老金','expense 费用','compensate 补偿','appendix 附录']},
-{id:'plex',type:'r',morph:'plex/plic',origin:'Latin: plicare',meaning:'fold/twist 折叠/扭',words:['complex 复杂的','complicate 使复杂','duplicate 复制','explicit 明确的','implicit 含蓄的','multiply 乘','replicate 复制','simplify 简化','apply 申请','imply 暗示','reply 回复','supply 供给']},
-{id:'pop',type:'r',morph:'pop',origin:'Latin: populus',meaning:'people 人民',words:['popular 流行的','population 人口','populate 填充']},
-{id:'press',type:'r',morph:'press',origin:'Latin: premere',meaning:'press 按/压',words:['pressure 压力','express 表达','impress 使印象深刻','compress 压缩','depress 使沮丧','suppress 压制','oppress 压迫']},
-{id:'prim',type:'r',morph:'prim',origin:'Latin: primus',meaning:'first 第一',words:['primary 主要的','prime 首要的','primitive 原始的','principal 主要的','principle 原则']},
-{id:'priv',type:'r',morph:'priv',origin:'Latin: privatus',meaning:'private/separate 私有/个别',words:['private 私人的','privilege 特权','privacy 隐私','deprive 剥夺']},
-{id:'prob',type:'r',morph:'prob',origin:'Latin: probare',meaning:'test/prove 测试/证明',words:['problem 问题','probable 可能的','probe 探测','prove 证明','approve 批准','improve 改善']},
-{id:'reg',type:'r',morph:'reg/rect',origin:'Latin: regere',meaning:'rule/straight 统治/直',words:['region 地区','regular 常规的','regulate 调节','regime 政权','correct 正确的','direct 直接的','erect 竖立','rectangle 矩形']},
-{id:'sal',type:'r',morph:'sal/sult',origin:'Latin: salire',meaning:'jump/leap 跳',words:['result 结果','insult 侮辱','assault 攻击','exalt 赞扬','consult 咨询']},
-{id:'sci',type:'r',morph:'sci',origin:'Latin: scire',meaning:'know 知道',words:['science 科学','conscious 有意识的','conscience 良心','omniscient 全知的']},
-{id:'sign',type:'r',morph:'sign',origin:'Latin: signum',meaning:'mark/sign 标记/符号',words:['signal 信号','signature 签名','significant 重要的','design 设计','assign 分配','resign 辞职']},
-{id:'simil',type:'r',morph:'simil',origin:'Latin: similis',meaning:'like/same 相似',words:['similar 相似的','simulate 模拟','simultaneous 同时的','assimilate 吸收']},
-{id:'sol',type:'r',morph:'sol',origin:'Latin: solus',meaning:'alone/sun 单独/太阳',words:['solar 太阳的','solve 解决','solution 解决方案','absolute 绝对的','resolve 解决','dissolve 溶解','isolate 隔离','sole 唯一的']},
-{id:'spec2',type:'r',morph:'spec',origin:'Latin: species',meaning:'kind/appearance 种类/外观',words:['special 特殊的','specific 具体的','species 物种','specimen 标本','aspect 方面']},
-{id:'spher',type:'r',morph:'spher',origin:'Greek: sphaira',meaning:'ball/globe 球',words:['sphere 球体','atmosphere 大气','hemisphere 半球','biosphere 生物圈']},
-{id:'spir',type:'r',morph:'spir',origin:'Latin: spirare',meaning:'breathe 呼吸',words:['spirit 精神','inspire 激励','expire 到期','aspire 渴望','conspire 密谋','respire 呼吸','perspire 出汗']},
-{id:'stat',type:'r',morph:'stat/sist',origin:'Latin: stare',meaning:'stand 站立',words:['state 状态','station 车站','statue 雕像','status 地位','stable 稳定的','statistic 统计','establish 建立','constant 不变的','consist 组成','exist 存在','insist 坚持','persist 坚持','resist 抵抗','assist 协助','circumstance 情况','substance 物质','instant 即时的','distant 遥远的','obstacle 障碍']},
-{id:'stell',type:'r',morph:'stell',origin:'Latin: stella',meaning:'star 星星',words:['stellar 星星的','constellation 星座','interstellar 星际的']},
-{id:'tang',type:'r',morph:'tang/tact',origin:'Latin: tangere',meaning:'touch 触摸',words:['tangible 有形的','contact 接触','intact 完整的','tactile 触觉的','tactic 策略']},
-{id:'temp',type:'r',morph:'temp',origin:'Latin: tempus',meaning:'time 时间',words:['temporary 临时的','temperature 温度','contemporary 当代的','tempo 节奏','temporal 时间的']},
-{id:'ten',type:'r',morph:'ten/tin',origin:'Latin: tenere',meaning:'hold 握持',words:['contain 包含','content 内容','continue 继续','maintain 维持','obtain 获得','retain 保留','sustain 维持','entertain 娱乐','detention 拘留','tenure 任期','tenant 租户']},
-{id:'terr',type:'r',morph:'terr',origin:'Latin: terra',meaning:'earth/land 土地',words:['territory 领土','terrain 地形','terrestrial 陆地的','terrace 露台','extraterrestrial 外星的','Mediterranean 地中海']},
-{id:'test',type:'r',morph:'test',origin:'Latin: testis',meaning:'witness 见证',words:['test 测试','testify 作证','testimony 证词','protest 抗议','contest 比赛','detest 厌恶']},
-{id:'theo',type:'r',morph:'the/theo',origin:'Greek: theos',meaning:'god 神',words:['theology 神学','theory 理论','theocracy 神权政治','atheist 无神论者','monotheism 一神论']},
-{id:'therm',type:'r',morph:'therm',origin:'Greek: thermos',meaning:'heat 热',words:['thermometer 温度计','thermal 热的','thermostat 恒温器','geothermal 地热的','hypothermia 低温症']},
-{id:'tort',type:'r',morph:'tor/tort',origin:'Latin: torquere',meaning:'twist 扭转',words:['torture 折磨','distort 扭曲','contort 扭曲','extort 勒索','torque 扭矩']},
-{id:'typ',type:'r',morph:'typ',origin:'Greek: typos',meaning:'impression/type 印象/类型',words:['type 类型','typical 典型的','typewriter 打字机','prototype 原型','stereotype 刻板印象','typography 印刷术','archetype 原型']},
-{id:'urb',type:'r',morph:'urb',origin:'Latin: urbs',meaning:'city 城市',words:['urban 城市的','suburb 郊区','suburban 郊区的','urbanize 城市化']},
-{id:'val',type:'r',morph:'val',origin:'Latin: valere',meaning:'worth/strong 价值/强',words:['value 价值','valid 有效的','evaluate 评估','equivalent 等同的','prevail 盛行','available 可用的','prevalent 普遍的','valiant 英勇的']},
-{id:'ven',type:'r',morph:'ven/vent',origin:'Latin: venire',meaning:'come 来',words:['event 事件','adventure 冒险','avenue 大道','convenient 方便的','convention 大会','intervene 干预','invent 发明','prevent 预防','revenue 收入','venture 冒险','advent 出现']},
-{id:'vita',type:'r',morph:'vita/viv',origin:'Latin: vita',meaning:'life 生命',words:['vital 至关重要的','vitamin 维生素','vivid 生动的','survive 生存','revive 复兴','viable 可行的']},
-{id:'vol',type:'r',morph:'vol',origin:'Latin: velle',meaning:'will/wish 意愿',words:['volunteer 志愿者','voluntary 自愿的','revolve 旋转','involve 涉及','evolve 进化','revolution 革命','volume 音量','benevolent 仁慈的']},
+{id:'struct',type:'r',morph:'struct',origin:'Latin: struere',meaning:'build 建造'},
+{id:'duct',type:'r',morph:'duct/duc',origin:'Latin: ducere',meaning:'lead 引导'},
+{id:'spect',type:'r',morph:'spect/spec',origin:'Latin: specere',meaning:'look 看'},
+{id:'port',type:'r',morph:'port',origin:'Latin: portare',meaning:'carry 携带/搬运'},
+{id:'ject',type:'r',morph:'ject',origin:'Latin: jacere',meaning:'throw 投掷'},
+{id:'dict',type:'r',morph:'dict',origin:'Latin: dicere',meaning:'say/speak 说/讲'},
+{id:'scrib',type:'r',morph:'scrib/script',origin:'Latin: scribere',meaning:'write 写'},
+{id:'vert',type:'r',morph:'vert/vers',origin:'Latin: vertere',meaning:'turn 转'},
+{id:'mit',type:'r',morph:'mit/mis',origin:'Latin: mittere',meaning:'send 发送'},
+{id:'cred',type:'r',morph:'cred',origin:'Latin: credere',meaning:'believe 相信'},
+{id:'aud',type:'r',morph:'aud',origin:'Latin: audire',meaning:'hear 听'},
+{id:'vis',type:'r',morph:'vis/vid',origin:'Latin: videre',meaning:'see 看'},
+{id:'tract',type:'r',morph:'tract',origin:'Latin: trahere',meaning:'pull/draw 拉/拖'},
+{id:'rupt',type:'r',morph:'rupt',origin:'Latin: rumpere',meaning:'break 打破'},
+{id:'cept',type:'r',morph:'cept/ceiv',origin:'Latin: capere',meaning:'take/seize 拿/抓'},
+{id:'pos',type:'r',morph:'pos/pon',origin:'Latin: ponere',meaning:'put/place 放置'},
+{id:'form',type:'r',morph:'form',origin:'Latin: forma',meaning:'shape 形状'},
+{id:'gen',type:'r',morph:'gen',origin:'Latin/Greek: genus',meaning:'birth/produce 产生/种类'},
+{id:'graph',type:'r',morph:'graph/gram',origin:'Greek: graphein',meaning:'write/draw 书写/画'},
+{id:'log',type:'r',morph:'log/logy',origin:'Greek: logos',meaning:'word/study 话语/学科'},
+{id:'path',type:'r',morph:'path',origin:'Greek: pathos',meaning:'feeling/suffering 感情/痛苦'},
+{id:'phil',type:'r',morph:'phil',origin:'Greek: philos',meaning:'love 爱/喜好'},
+{id:'phon',type:'r',morph:'phon',origin:'Greek: phone',meaning:'sound/voice 声音'},
+{id:'photo',type:'r',morph:'photo',origin:'Greek: phos',meaning:'light 光'},
+{id:'psych',type:'r',morph:'psych',origin:'Greek: psyche',meaning:'mind/soul 心灵/灵魂'},
+{id:'scope',type:'r',morph:'scope',origin:'Greek: skopein',meaning:'watch/observe 观察'},
+{id:'sect',type:'r',morph:'sect',origin:'Latin: secare',meaning:'cut 切割'},
+{id:'sens',type:'r',morph:'sens/sent',origin:'Latin: sentire',meaning:'feel 感觉'},
+{id:'voc',type:'r',morph:'voc/vok',origin:'Latin: vocare',meaning:'call/voice 叫/声音'},
+{id:'act',type:'r',morph:'act',origin:'Latin: agere',meaning:'do/drive 做/驱动'},
+{id:'anim',type:'r',morph:'anim',origin:'Latin: anima',meaning:'life/spirit 生命/精神'},
+{id:'aqua',type:'r',morph:'aqua',origin:'Latin: aqua',meaning:'water 水'},
+{id:'astro',type:'r',morph:'aster/astro',origin:'Greek: astron',meaning:'star 星'},
+{id:'bio',type:'r',morph:'bio',origin:'Greek: bios',meaning:'life 生命'},
+{id:'cap',type:'r',morph:'cap/cip',origin:'Latin: capere',meaning:'take/head 拿/头'},
+{id:'cede',type:'r',morph:'cede/cess',origin:'Latin: cedere',meaning:'go/yield 走/让步'},
+{id:'chron',type:'r',morph:'chron',origin:'Greek: chronos',meaning:'time 时间'},
+{id:'civ',type:'r',morph:'civ',origin:'Latin: civis',meaning:'citizen 公民'},
+{id:'claim',type:'r',morph:'claim/clam',origin:'Latin: clamare',meaning:'shout/declare 喊/宣称'},
+{id:'clar',type:'r',morph:'clar',origin:'Latin: clarus',meaning:'clear 清晰'},
+{id:'cord',type:'r',morph:'cord/card',origin:'Latin: cor',meaning:'heart 心'},
+{id:'corp',type:'r',morph:'corp',origin:'Latin: corpus',meaning:'body 身体'},
+{id:'cosm',type:'r',morph:'cosm',origin:'Greek: kosmos',meaning:'universe/order 宇宙/秩序'},
+{id:'cur',type:'r',morph:'cur/curs',origin:'Latin: currere',meaning:'run 跑'},
+{id:'dem',type:'r',morph:'dem',origin:'Greek: demos',meaning:'people 人民'},
+{id:'derm',type:'r',morph:'derm',origin:'Greek: derma',meaning:'skin 皮肤'},
+{id:'domin',type:'r',morph:'domin',origin:'Latin: dominus',meaning:'master/rule 主人/统治'},
+{id:'equ',type:'r',morph:'equ',origin:'Latin: aequus',meaning:'equal 平等'},
+{id:'fac',type:'r',morph:'fac/fect',origin:'Latin: facere',meaning:'make/do 做/制造'},
+{id:'fer',type:'r',morph:'fer',origin:'Latin: ferre',meaning:'carry/bear 携带/承载'},
+{id:'fid',type:'r',morph:'fid',origin:'Latin: fidere',meaning:'trust/faith 信任'},
+{id:'fin',type:'r',morph:'fin',origin:'Latin: finis',meaning:'end/limit 结束/界限'},
+{id:'flex',type:'r',morph:'flex/flect',origin:'Latin: flectere',meaning:'bend 弯曲'},
+{id:'flu',type:'r',morph:'flu/flux',origin:'Latin: fluere',meaning:'flow 流动'},
+{id:'frag',type:'r',morph:'frag/fract',origin:'Latin: frangere',meaning:'break 打碎'},
+{id:'func',type:'r',morph:'func',origin:'Latin: fungi',meaning:'perform 执行'},
+{id:'geo',type:'r',morph:'geo',origin:'Greek: ge',meaning:'earth 地球'},
+{id:'gress',type:'r',morph:'gress/grad',origin:'Latin: gradi',meaning:'step/go 步/走'},
+{id:'hab',type:'r',morph:'hab/hib',origin:'Latin: habere',meaning:'have/hold 有/持有'},
+{id:'junct',type:'r',morph:'junct/join',origin:'Latin: jungere',meaning:'join 连接'},
+{id:'lect',type:'r',morph:'lect/leg',origin:'Latin: legere',meaning:'read/choose 读/选'},
+{id:'liber',type:'r',morph:'liber',origin:'Latin: liber',meaning:'free 自由'},
+{id:'liter',type:'r',morph:'liter',origin:'Latin: littera',meaning:'letter 文字'},
+{id:'loc',type:'r',morph:'loc',origin:'Latin: locus',meaning:'place 地方'},
+{id:'luc',type:'r',morph:'luc/lum',origin:'Latin: lux',meaning:'light 光'},
+{id:'man',type:'r',morph:'man/manu',origin:'Latin: manus',meaning:'hand 手'},
+{id:'mar',type:'r',morph:'mar',origin:'Latin: mare',meaning:'sea 海'},
+{id:'mater',type:'r',morph:'mater/matr',origin:'Latin: mater',meaning:'mother 母亲'},
+{id:'med',type:'r',morph:'med',origin:'Latin: medius',meaning:'middle/heal 中间/治愈'},
+{id:'mem',type:'r',morph:'mem',origin:'Latin: memor',meaning:'mindful/remember 记忆'},
+{id:'ment',type:'r',morph:'ment',origin:'Latin: mens',meaning:'mind 心智'},
+{id:'min',type:'r',morph:'min',origin:'Latin: minuere',meaning:'small/less 小/减少'},
+{id:'mob',type:'r',morph:'mob/mot/mov',origin:'Latin: movere',meaning:'move 移动'},
+{id:'morph',type:'r',morph:'morph',origin:'Greek: morphe',meaning:'form/shape 形态'},
+{id:'mort',type:'r',morph:'mort',origin:'Latin: mors',meaning:'death 死亡'},
+{id:'nat',type:'r',morph:'nat',origin:'Latin: nasci',meaning:'born/nature 出生/自然'},
+{id:'nav',type:'r',morph:'nav',origin:'Latin: navis',meaning:'ship/sail 船/航行'},
+{id:'nom',type:'r',morph:'nom/nym',origin:'Latin/Greek: nomen',meaning:'name 名字'},
+{id:'norm',type:'r',morph:'norm',origin:'Latin: norma',meaning:'standard/rule 标准/规范'},
+{id:'nov',type:'r',morph:'nov',origin:'Latin: novus',meaning:'new 新'},
+{id:'oper',type:'r',morph:'oper',origin:'Latin: operari',meaning:'work 工作'},
+{id:'opt',type:'r',morph:'opt',origin:'Latin: optare',meaning:'choose/best 选择/最佳'},
+{id:'ord',type:'r',morph:'ord',origin:'Latin: ordo',meaning:'order/rank 秩序/排列'},
+{id:'pater',type:'r',morph:'pater/patr',origin:'Latin: pater',meaning:'father 父亲'},
+{id:'ped',type:'r',morph:'ped/pod',origin:'Latin/Greek: pes/pous',meaning:'foot 脚'},
+{id:'pel',type:'r',morph:'pel/puls',origin:'Latin: pellere',meaning:'push/drive 推/驱动'},
+{id:'pend',type:'r',morph:'pend/pens',origin:'Latin: pendere',meaning:'hang/weigh/pay 悬挂/称量/支付'},
+{id:'plex',type:'r',morph:'plex/plic',origin:'Latin: plicare',meaning:'fold/twist 折叠/扭'},
+{id:'pop',type:'r',morph:'pop',origin:'Latin: populus',meaning:'people 人民'},
+{id:'press',type:'r',morph:'press',origin:'Latin: premere',meaning:'press 按/压'},
+{id:'prim',type:'r',morph:'prim',origin:'Latin: primus',meaning:'first 第一'},
+{id:'priv',type:'r',morph:'priv',origin:'Latin: privatus',meaning:'private/separate 私有/个别'},
+{id:'prob',type:'r',morph:'prob',origin:'Latin: probare',meaning:'test/prove 测试/证明'},
+{id:'reg',type:'r',morph:'reg/rect',origin:'Latin: regere',meaning:'rule/straight 统治/直'},
+{id:'sal',type:'r',morph:'sal/sult',origin:'Latin: salire',meaning:'jump/leap 跳'},
+{id:'sci',type:'r',morph:'sci',origin:'Latin: scire',meaning:'know 知道'},
+{id:'sign',type:'r',morph:'sign',origin:'Latin: signum',meaning:'mark/sign 标记/符号'},
+{id:'simil',type:'r',morph:'simil',origin:'Latin: similis',meaning:'like/same 相似'},
+{id:'sol',type:'r',morph:'sol',origin:'Latin: solus',meaning:'alone/sun 单独/太阳'},
+{id:'spec2',type:'r',morph:'spec',origin:'Latin: species',meaning:'kind/appearance 种类/外观'},
+{id:'spher',type:'r',morph:'spher',origin:'Greek: sphaira',meaning:'ball/globe 球'},
+{id:'spir',type:'r',morph:'spir',origin:'Latin: spirare',meaning:'breathe 呼吸'},
+{id:'stat',type:'r',morph:'stat/sist',origin:'Latin: stare',meaning:'stand 站立'},
+{id:'stell',type:'r',morph:'stell',origin:'Latin: stella',meaning:'star 星星'},
+{id:'tang',type:'r',morph:'tang/tact',origin:'Latin: tangere',meaning:'touch 触摸'},
+{id:'temp',type:'r',morph:'temp',origin:'Latin: tempus',meaning:'time 时间'},
+{id:'ten',type:'r',morph:'ten/tin',origin:'Latin: tenere',meaning:'hold 握持'},
+{id:'terr',type:'r',morph:'terr',origin:'Latin: terra',meaning:'earth/land 土地'},
+{id:'test',type:'r',morph:'test',origin:'Latin: testis',meaning:'witness 见证'},
+{id:'theo',type:'r',morph:'the/theo',origin:'Greek: theos',meaning:'god 神'},
+{id:'therm',type:'r',morph:'therm',origin:'Greek: thermos',meaning:'heat 热'},
+{id:'tort',type:'r',morph:'tor/tort',origin:'Latin: torquere',meaning:'twist 扭转'},
+{id:'typ',type:'r',morph:'typ',origin:'Greek: typos',meaning:'impression/type 印象/类型'},
+{id:'urb',type:'r',morph:'urb',origin:'Latin: urbs',meaning:'city 城市'},
+{id:'val',type:'r',morph:'val',origin:'Latin: valere',meaning:'worth/strong 价值/强'},
+{id:'ven',type:'r',morph:'ven/vent',origin:'Latin: venire',meaning:'come 来'},
+{id:'vita',type:'r',morph:'vita/viv',origin:'Latin: vita',meaning:'life 生命'},
+{id:'vol',type:'r',morph:'vol',origin:'Latin: velle',meaning:'will/wish 意愿'},
 // --- SUFFIXES ---
-{id:'tion',type:'s',morph:'-tion/-sion',origin:'Latin: -tio',meaning:'act/state of 行为/状态(名词)',words:['action 行动','education 教育','information 信息','nation 国家','operation 手术','position 位置','situation 情况','solution 解决方案','condition 条件','attention 注意','collection 收集','communication 沟通','competition 竞争','conclusion 结论','construction 建造','conversation 对话','decision 决定','description 描述','direction 方向','discussion 讨论','expression 表达','impression 印象','invention 发明','investigation 调查','observation 观察','organization 组织','permission 许可','population 人口','production 生产','protection 保护','reaction 反应','relation 关系','revolution 革命','tradition 传统','television 电视','vision 视野','mission 使命','passion 热情','tension 张力','dimension 维度','emission 排放','expansion 扩展','explosion 爆炸','extension 延伸','pollution 污染','promotion 晋升','reception 接待','reflection 反映','suggestion 建议']},
-{id:'ment2',type:'s',morph:'-ment',origin:'Latin: -mentum',meaning:'result/means 结果/手段(名词)',words:['achievement 成就','agreement 协议','argument 论点','assessment 评估','assignment 任务','commitment 承诺','department 部门','development 发展','employment 就业','environment 环境','equipment 设备','establishment 建立','experiment 实验','government 政府','improvement 改善','instrument 乐器','investment 投资','judgment 判断','management 管理','measurement 测量','moment 时刻','movement 运动','payment 支付','punishment 惩罚','requirement 要求','retirement 退休','settlement 定居','statement 声明','treatment 治疗']},
-{id:'ness',type:'s',morph:'-ness',origin:'Old English: -nes',meaning:'state/quality 状态/性质(名词)',words:['awareness 意识','business 商业','darkness 黑暗','effectiveness 有效性','fitness 健康','happiness 幸福','illness 疾病','kindness 善良','loneliness 孤独','weakness 弱点','sadness 悲伤','consciousness 意识','readiness 准备','richness 丰富','sharpness 敏锐','thickness 厚度','wilderness 荒野','witness 目击者']},
-{id:'ity',type:'s',morph:'-ity/-ty',origin:'Latin: -itas',meaning:'quality/state 品质/状态(名词)',words:['ability 能力','activity 活动','authority 权威','capacity 能力','community 社区','complexity 复杂性','creativity 创造力','curiosity 好奇心','diversity 多样性','electricity 电力','identity 身份','majority 多数','minority 少数','opportunity 机会','personality 人格','possibility 可能性','priority 优先','quality 质量','quantity 数量','reality 现实','responsibility 责任','security 安全','society 社会','university 大学','variety 多样性','velocity 速度','probability 概率']},
-{id:'er',type:'s',morph:'-er/-or',origin:'Old English/Latin',meaning:'one who does 做…的人(名词)',words:['teacher 教师','leader 领导者','player 玩家','computer 电脑','manager 管理者','officer 官员','director 导演','doctor 医生','professor 教授','inventor 发明者','operator 操作员','visitor 访客','consumer 消费者','observer 观察者','producer 生产者','conductor 指挥','governor 州长','investor 投资者','senator 参议员','ambassador 大使']},
-{id:'ist',type:'s',morph:'-ist',origin:'Greek: -istes',meaning:'practitioner 从业者/主义者',words:['artist 艺术家','scientist 科学家','tourist 游客','journalist 记者','specialist 专家','therapist 治疗师','optimist 乐观主义者','pessimist 悲观主义者','nationalist 民族主义者','capitalist 资本家','communist 共产主义者','psychologist 心理学家','biologist 生物学家','novelist 小说家']},
-{id:'ism',type:'s',morph:'-ism',origin:'Greek: -ismos',meaning:'doctrine/belief 主义/学说',words:['capitalism 资本主义','communism 共产主义','criticism 批评','feminism 女权主义','journalism 新闻业','mechanism 机制','metabolism 新陈代谢','nationalism 民族主义','optimism 乐观主义','organism 生物','racism 种族主义','realism 现实主义','socialism 社会主义','terrorism 恐怖主义','tourism 旅游业']},
-{id:'able',type:'s',morph:'-able/-ible',origin:'Latin: -abilis',meaning:'capable of 能够…的(形容词)',words:['available 可用的','capable 有能力的','comfortable 舒适的','considerable 相当大的','flexible 灵活的','horrible 可怕的','impossible 不可能的','incredible 不可思议的','inevitable 不可避免的','possible 可能的','reasonable 合理的','remarkable 非凡的','responsible 负责的','suitable 合适的','terrible 糟糕的','valuable 有价值的','variable 可变的','visible 可见的','vulnerable 脆弱的','portable 便携的','sustainable 可持续的','accessible 可访问的']},
-{id:'ful',type:'s',morph:'-ful',origin:'Old English: -full',meaning:'full of 充满…的(形容词)',words:['beautiful 美丽的','careful 仔细的','colorful 多彩的','grateful 感激的','harmful 有害的','helpful 有帮助的','hopeful 充满希望的','meaningful 有意义的','painful 痛苦的','peaceful 和平的','powerful 强大的','successful 成功的','thankful 感谢的','useful 有用的','wonderful 精彩的']},
-{id:'less',type:'s',morph:'-less',origin:'Old English: -leas',meaning:'without 没有…的(形容词)',words:['careless 粗心的','countless 无数的','endless 无尽的','helpless 无助的','homeless 无家可归的','hopeless 绝望的','meaningless 无意义的','needless 不必要的','priceless 无价的','regardless 不管','restless 不安的','useless 无用的','wireless 无线的']},
-{id:'ous',type:'s',morph:'-ous/-ious',origin:'Latin: -osus',meaning:'having quality of 具有…性质的(形容词)',words:['ambitious 有抱负的','anxious 焦虑的','conscious 有意识的','continuous 持续的','curious 好奇的','dangerous 危险的','enormous 巨大的','famous 著名的','generous 慷慨的','gorgeous 华丽的','mysterious 神秘的','nervous 紧张的','obvious 显而易见的','previous 之前的','religious 宗教的','serious 严肃的','tremendous 巨大的','various 各种各样的','precious 珍贵的','delicious 美味的','spacious 宽敞的']},
-{id:'ive',type:'s',morph:'-ive',origin:'Latin: -ivus',meaning:'tending to 倾向于…的(形容词)',words:['active 活跃的','alternative 替代的','attractive 吸引人的','competitive 有竞争力的','creative 有创造力的','effective 有效的','executive 执行的','expensive 昂贵的','impressive 令人印象深刻的','initiative 主动性','native 本地的','negative 消极的','objective 客观的','positive 积极的','productive 高产的','progressive 进步的','relative 相对的','representative 代表性的','sensitive 敏感的','significant 重要的']},
-{id:'al',type:'s',morph:'-al/-ial',origin:'Latin: -alis',meaning:'relating to 与…有关的(形容词)',words:['additional 额外的','annual 年度的','artificial 人工的','central 中心的','commercial 商业的','cultural 文化的','digital 数字的','emotional 情感的','environmental 环境的','essential 基本的','experimental 实验的','financial 金融的','fundamental 基本的','global 全球的','historical 历史的','individual 个人的','industrial 工业的','international 国际的','material 材料的','medical 医学的','mental 心理的','musical 音乐的','national 国家的','natural 自然的','official 官方的','original 原始的','personal 个人的','physical 物理的','political 政治的','potential 潜在的','professional 专业的','regional 区域的','social 社会的','special 特殊的','structural 结构的','technical 技术的','traditional 传统的','tropical 热带的','visual 视觉的']},
-{id:'ic',type:'s',morph:'-ic',origin:'Latin/Greek: -icus',meaning:'of/pertaining to 与…有关的(形容词)',words:['academic 学术的','automatic 自动的','basic 基本的','classic 经典的','domestic 国内的','dramatic 戏剧性的','dynamic 动态的','economic 经济的','electric 电的','electronic 电子的','energetic 充满活力的','fantastic 极好的','genetic 遗传的','historic 历史性的','magnetic 磁性的','organic 有机的','romantic 浪漫的','scientific 科学的','specific 具体的','strategic 战略的','systematic 系统的','democratic 民主的','enthusiastic 热情的']},
-{id:'ly',type:'s',morph:'-ly',origin:'Old English: -lic',meaning:'in manner of 以…方式(副词)',words:['absolutely 绝对地','actually 实际上','apparently 显然','carefully 仔细地','certainly 当然','clearly 清楚地','completely 完全地','constantly 不断地','currently 目前','definitely 肯定地','directly 直接地','effectively 有效地','especially 尤其','eventually 最终','exactly 确切地','extremely 极其','finally 最终','frequently 经常','generally 一般来说','immediately 立即','obviously 显然','particularly 特别','previously 之前','probably 可能','recently 最近','significantly 显著地','simply 简单地','slightly 稍微','specifically 具体地','suddenly 突然','unfortunately 不幸地']},
-{id:'ize',type:'s',morph:'-ize',origin:'Greek: -izein',meaning:'make/become 使成为(动词)',words:['authorize 授权','characterize 描述','customize 定制','emphasize 强调','maximize 最大化','minimize 最小化','modernize 现代化','optimize 优化','organize 组织','prioritize 优先排序','realize 意识到','recognize 认识','specialize 专门化','standardize 标准化','summarize 总结','symbolize 象征','synchronize 同步','utilize 利用','visualize 可视化','urbanize 城市化']},
-{id:'ify',type:'s',morph:'-ify',origin:'Latin: -ificare',meaning:'make/cause 使…化(动词)',words:['amplify 放大','certify 证明','clarify 阐明','classify 分类','diversify 多样化','identify 识别','justify 证明合理','magnify 放大','modify 修改','notify 通知','purify 净化','qualify 有资格','satisfy 满足','signify 表示','simplify 简化','specify 指定','testify 作证','verify 验证']},
-{id:'ate',type:'s',morph:'-ate',origin:'Latin: -atus',meaning:'cause/become 使/成为(动词)',words:['accelerate 加速','accommodate 容纳','accumulate 积累','appreciate 欣赏','calculate 计算','celebrate 庆祝','communicate 沟通','concentrate 集中','coordinate 协调','create 创造','decorate 装饰','demonstrate 展示','educate 教育','eliminate 消除','estimate 估计','evaluate 评估','facilitate 促进','generate 产生','graduate 毕业','illustrate 说明','indicate 表明','investigate 调查','isolate 隔离','navigate 导航','negotiate 谈判','nominate 提名','operate 操作','participate 参与','regulate 调节','separate 分开','stimulate 刺激','tolerate 容忍','translate 翻译','dominate 支配','elaborate 详述','incorporate 合并','integrate 整合','migrate 迁移','motivate 激励','penetrate 渗透','terminate 终止','violate 违反']},
-{id:'en2',type:'s',morph:'-en',origin:'Old English: -en',meaning:'make/become 使成为(动词/形容词)',words:['awaken 唤醒','brighten 变亮','broaden 拓宽','darken 变暗','deepen 加深','enlighten 启发','frighten 吓','golden 金色的','happen 发生','harden 变硬','hasten 加速','heighten 提高','lengthen 延长','lessen 减少','lighten 减轻','listen 听','loosen 放松','often 经常','sharpen 磨利','shorten 缩短','soften 软化','strengthen 加强','threaten 威胁','tighten 收紧','weaken 削弱','widen 加宽','wooden 木制的','written 书面的']},
-{id:'ward',type:'s',morph:'-ward',origin:'Old English: -weard',meaning:'direction 方向(形容词/副词)',words:['afterward 之后','backward 向后','downward 向下','forward 向前','inward 向内','onward 向前','outward 向外','toward 朝向','upward 向上']},
-{id:'dom',type:'s',morph:'-dom',origin:'Old English: -dom',meaning:'domain/state 领域/状态(名词)',words:['boredom 无聊','freedom 自由','kingdom 王国','wisdom 智慧']},
-{id:'ship',type:'s',morph:'-ship',origin:'Old English: -scipe',meaning:'state/skill 状态/技能(名词)',words:['championship 冠军赛','citizenship 公民身份','friendship 友谊','leadership 领导力','membership 会员','ownership 所有权','partnership 伙伴关系','relationship 关系','scholarship 奖学金','worship 崇拜']},
-{id:'hood',type:'s',morph:'-hood',origin:'Old English: -had',meaning:'state/condition 状态/条件(名词)',words:['adulthood 成年','brotherhood 兄弟情谊','childhood 童年','fatherhood 父亲身份','likelihood 可能性','livelihood 生计','motherhood 母亲身份','neighborhood 街区']},
-{id:'age',type:'s',morph:'-age',origin:'Old French: -age',meaning:'action/result 行为/结果(名词)',words:['advantage 优势','average 平均','baggage 行李','coverage 覆盖','damage 损害','garbage 垃圾','heritage 遗产','hostage 人质','language 语言','luggage 行李','manage 管理','marriage 婚姻','message 消息','package 包裹','passage 通道','percentage 百分比','shortage 短缺','storage 存储','usage 用法','village 村庄','voltage 电压']},
-{id:'ance',type:'s',morph:'-ance/-ence',origin:'Latin: -antia/-entia',meaning:'state/quality 状态/性质(名词)',words:['absence 缺席','abundance 丰富','acceptance 接受','appearance 外观','assistance 帮助','attendance 出席','audience 观众','confidence 信心','consequence 后果','dependence 依赖','difference 差异','distance 距离','evidence 证据','excellence 卓越','existence 存在','experience 经验','ignorance 无知','importance 重要性','independence 独立','influence 影响','insurance 保险','intelligence 智力','interference 干扰','occurrence 发生','patience 耐心','performance 表现','preference 偏好','presence 存在','reference 参考','resistance 抵抗','science 科学','sentence 句子','sequence 顺序','significance 重要性','silence 沉默','substance 物质','tolerance 容忍','violence 暴力']},
-{id:'ant',type:'s',morph:'-ant/-ent',origin:'Latin: -ans/-ens',meaning:'performing/being 执行…的(形容词/名词)',words:['abundant 丰富的','ancient 古老的','apparent 明显的','applicant 申请者','assistant 助理','consultant 顾问','convenient 方便的','current 当前的','dependent 依赖的','different 不同的','efficient 高效的','elegant 优雅的','evident 明显的','excellent 优秀的','frequent 频繁的','immigrant 移民','important 重要的','innocent 无辜的','intelligent 聪明的','magnificent 壮丽的','participant 参与者','patient 耐心的','permanent 永久的','persistent 坚持的','pleasant 愉快的','president 总统','prominent 杰出的','relevant 相关的','reluctant 不情愿的','resident 居民','significant 重要的','student 学生','sufficient 充分的','transparent 透明的','urgent 紧急的','violent 暴力的']},
-{id:'ary',type:'s',morph:'-ary/-ory',origin:'Latin: -arius/-orius',meaning:'relating to/place 有关…的/场所(形容词/名词)',words:['arbitrary 任意的','boundary 边界','contemporary 当代的','contrary 相反的','customary 惯常的','dictionary 词典','documentary 纪录片','elementary 初级的','evolutionary 进化的','extraordinary 非凡的','imaginary 想象的','introductory 介绍性的','inventory 库存','laboratory 实验室','legendary 传奇的','literary 文学的','mandatory 强制的','military 军事的','missionary 传教士','monetary 货币的','necessary 必要的','ordinary 普通的','parliamentary 议会的','preliminary 初步的','primary 主要的','revolutionary 革命的','secondary 次要的','secretary 秘书','temporary 临时的','territory 领土','vocabulary 词汇','voluntary 自愿的']},
-{id:'ure',type:'s',morph:'-ure',origin:'Latin: -ura',meaning:'act/result 行为/结果(名词)',words:['adventure 冒险','agriculture 农业','architecture 建筑','capture 捕获','closure 关闭','creature 生物','culture 文化','departure 离开','exposure 曝光','failure 失败','feature 特征','figure 人物','fracture 骨折','furniture 家具','gesture 手势','literature 文学','manufacture 制造','measure 测量','mixture 混合物','moisture 水分','nature 自然','picture 图片','pleasure 快乐','pressure 压力','procedure 程序','sculpture 雕塑','signature 签名','structure 结构','temperature 温度','texture 质地','treasure 宝藏']},
-{id:'ing2',type:'s',morph:'-ing',origin:'Old English: -ing',meaning:'action/process 进行中(名词/形容词)',words:['amazing 令人惊叹的','beginning 开始','building 建筑','challenging 具有挑战性的','concerning 关于','engineering 工程','existing 现有的','fascinating 迷人的','feeling 感觉','following 以下的','growing 增长的','interesting 有趣的','leading 领先的','learning 学习','marketing 营销','meaning 意义','meeting 会议','missing 缺失的','opening 开幕','planning 规划','processing 加工','promising 有前途的','reading 阅读','remaining 剩余的','setting 设置','shocking 震惊的','something 某物','standing 站立','stunning 惊人的','surrounding 周围的','thinking 思考','training 培训','understanding 理解','warning 警告','working 工作']},
-{id:'ed2',type:'s',morph:'-ed',origin:'Old English: -ed',meaning:'past/completed 过去/完成(形容词)',words:['advanced 先进的','alleged 据称的','amazed 惊讶的','concerned 担心的','convinced 确信的','dedicated 献身的','delighted 高兴的','detailed 详细的','disappointed 失望的','educated 受过教育的','established 已建立的','excited 兴奋的','experienced 经验丰富的','frustrated 沮丧的','illustrated 图解的','interested 感兴趣的','involved 参与的','limited 有限的','motivated 有动力的','organized 有组织的','related 相关的','satisfied 满意的','skilled 熟练的','sophisticated 复杂的','structured 有结构的','surprised 惊讶的','united 联合的']},
-{id:'ular',type:'s',morph:'-ular',origin:'Latin: -ularis',meaning:'relating to 与…相关的(形容词)',words:['cellular 细胞的','circular 圆形的','molecular 分子的','muscular 肌肉的','particular 特定的','popular 流行的','regular 常规的','secular 世俗的','singular 单一的','spectacular 壮观的','vehicular 车辆的']},
-{id:'esque',type:'s',morph:'-esque',origin:'French: -esque',meaning:'in style of 风格的(形容词)',words:['picturesque 如画的','grotesque 怪诞的','arabesque 阿拉伯式的']},
-{id:'ling',type:'s',morph:'-ling',origin:'Old English: -ling',meaning:'small/young 小/幼(名词)',words:['darling 亲爱的','duckling 小鸭','sibling 兄弟姐妹','seedling 幼苗','yearling 一岁的动物']},
+{id:'tion',type:'s',morph:'-tion/-sion',origin:'Latin: -tio',meaning:'act/state of 行为/状态(名词)'},
+{id:'ment2',type:'s',morph:'-ment',origin:'Latin: -mentum',meaning:'result/means 结果/手段(名词)'},
+{id:'ness',type:'s',morph:'-ness',origin:'Old English: -nes',meaning:'state/quality 状态/性质(名词)'},
+{id:'ity',type:'s',morph:'-ity/-ty',origin:'Latin: -itas',meaning:'quality/state 品质/状态(名词)'},
+{id:'er',type:'s',morph:'-er/-or',origin:'Old English/Latin',meaning:'one who does 做…的人(名词)'},
+{id:'ist',type:'s',morph:'-ist',origin:'Greek: -istes',meaning:'practitioner 从业者/主义者'},
+{id:'ism',type:'s',morph:'-ism',origin:'Greek: -ismos',meaning:'doctrine/belief 主义/学说'},
+{id:'able',type:'s',morph:'-able/-ible',origin:'Latin: -abilis',meaning:'capable of 能够…的(形容词)'},
+{id:'ful',type:'s',morph:'-ful',origin:'Old English: -full',meaning:'full of 充满…的(形容词)'},
+{id:'less',type:'s',morph:'-less',origin:'Old English: -leas',meaning:'without 没有…的(形容词)'},
+{id:'ous',type:'s',morph:'-ous/-ious',origin:'Latin: -osus',meaning:'having quality of 具有…性质的(形容词)'},
+{id:'ive',type:'s',morph:'-ive',origin:'Latin: -ivus',meaning:'tending to 倾向于…的(形容词)'},
+{id:'al',type:'s',morph:'-al/-ial',origin:'Latin: -alis',meaning:'relating to 与…有关的(形容词)'},
+{id:'ic',type:'s',morph:'-ic',origin:'Latin/Greek: -icus',meaning:'of/pertaining to 与…有关的(形容词)'},
+{id:'ly',type:'s',morph:'-ly',origin:'Old English: -lic',meaning:'in manner of 以…方式(副词)'},
+{id:'ize',type:'s',morph:'-ize',origin:'Greek: -izein',meaning:'make/become 使成为(动词)'},
+{id:'ify',type:'s',morph:'-ify',origin:'Latin: -ificare',meaning:'make/cause 使…化(动词)'},
+{id:'ate',type:'s',morph:'-ate',origin:'Latin: -atus',meaning:'cause/become 使/成为(动词)'},
+{id:'en2',type:'s',morph:'-en',origin:'Old English: -en',meaning:'make/become 使成为(动词/形容词)'},
+{id:'ward',type:'s',morph:'-ward',origin:'Old English: -weard',meaning:'direction 方向(形容词/副词)'},
+{id:'dom',type:'s',morph:'-dom',origin:'Old English: -dom',meaning:'domain/state 领域/状态(名词)'},
+{id:'ship',type:'s',morph:'-ship',origin:'Old English: -scipe',meaning:'state/skill 状态/技能(名词)'},
+{id:'hood',type:'s',morph:'-hood',origin:'Old English: -had',meaning:'state/condition 状态/条件(名词)'},
+{id:'age',type:'s',morph:'-age',origin:'Old French: -age',meaning:'action/result 行为/结果(名词)'},
+{id:'ance',type:'s',morph:'-ance/-ence',origin:'Latin: -antia/-entia',meaning:'state/quality 状态/性质(名词)'},
+{id:'ant',type:'s',morph:'-ant/-ent',origin:'Latin: -ans/-ens',meaning:'performing/being 执行…的(形容词/名词)'},
+{id:'ary',type:'s',morph:'-ary/-ory',origin:'Latin: -arius/-orius',meaning:'relating to/place 有关…的/场所(形容词/名词)'},
+{id:'ure',type:'s',morph:'-ure',origin:'Latin: -ura',meaning:'act/result 行为/结果(名词)'},
+{id:'ing2',type:'s',morph:'-ing',origin:'Old English: -ing',meaning:'action/process 进行中(名词/形容词)'},
+{id:'ed2',type:'s',morph:'-ed',origin:'Old English: -ed',meaning:'past/completed 过去/完成(形容词)'},
+{id:'ular',type:'s',morph:'-ular',origin:'Latin: -ularis',meaning:'relating to 与…相关的(形容词)'},
+{id:'esque',type:'s',morph:'-esque',origin:'French: -esque',meaning:'in style of 风格的(形容词)'},
+{id:'ling',type:'s',morph:'-ling',origin:'Old English: -ling',meaning:'small/young 小/幼(名词)'},
 ];
 
 // ============================================================
@@ -573,6 +575,7 @@ const MORPHEMES = [
 const NODE_CAT = {
   // Prefixes: neg=negation, dir=direction, deg=degree, num=number, aux=auxiliary
   un:'neg',dis:'neg',in1:'neg',non:'neg',anti:'neg',counter:'neg',mis:'neg',
+  in2:'dir',
   pre:'dir',post:'dir',re:'dir',trans:'dir',inter:'dir',intra:'dir',extra:'dir',
   circum:'dir',dia:'dir',ex:'dir',ad:'dir',ab:'dir',retro:'dir',peri:'dir',para:'dir',de:'dir',
   super:'deg',sub:'deg',over:'deg',under:'deg',hyper:'deg',hypo:'deg',
@@ -773,39 +776,46 @@ function approxIPA(w){
 
 function getIPA(w){
   const clean=w.toLowerCase().replace(/[^a-z]/g,'');
-  return IPA_MAP[clean]||approxIPA(clean);
+  if(WORD_IPA[clean]) return WORD_IPA[clean];
+  if(IPA_MAP[clean]) return IPA_MAP[clean];
+  const est=approxIPA(clean);
+  return est ? '≈ '+est : ''; // ≈ marks a rule-based estimate, not a dictionary transcription
 }
 
 // ============================================================
-//  EXPANDED WORD DATA (30k+ words → morpheme mappings)
+//  WORD DATA (exam vocabulary → morpheme mappings, 中文释义, IPA, levels)
 // ============================================================
-// Format: "word:morph1,morph2\n..." — see data/words.js (generated by scripts/embed-words.js)
+// data/words.js is generated by scripts/vocab/build.js from ECDICT + wordroot.txt
+// + reviewed mappings. One tab-separated line per word, most frequent first:
+//   word \t morphemeIds(,) \t 中文 \t IPA \t levels (z 中考 g 高考 4 CET4 6 CET6 k 考研 t TOEFL i IELTS)
 const _t0=performance.now();
 const WORDS_RAW = (window.WORDS_RAW || '').trim(); // loaded from data/words.js
 const WORD_DATA = new Map(); // word → [morphemeIds]
-const MORPH_WORDS = {};      // morphemeId → [words]
+const MORPH_WORDS = {};      // morphemeId → [words], in frequency order
+const WORD_CN = {};          // word → 中文释义 (dictionary, verified)
+const WORD_IPA = {};         // word → IPA (dictionary; missing for a few words)
+const WORD_LV = {};          // word → level codes
+const LV_NAMES = {z:'中考',g:'高考','4':'CET4','6':'CET6',k:'考研',t:'TOEFL',i:'IELTS'};
 if(WORDS_RAW){
   WORDS_RAW.split('\n').forEach(line => {
-    const idx = line.indexOf(':');
-    if(idx < 1) return;
-    const word = line.substring(0, idx);
-    const mlist = line.substring(idx+1).split(',');
+    const f = line.split('\t');
+    if(f.length < 2 || !f[0]) return;
+    const word = f[0], mlist = f[1] ? f[1].split(',') : [];
     WORD_DATA.set(word, mlist);
-    mlist.forEach(m => {
-      if(!MORPH_WORDS[m]) MORPH_WORDS[m] = [];
-      MORPH_WORDS[m].push(word);
-    });
+    if(f[2]) WORD_CN[word] = f[2];
+    if(f[3]) WORD_IPA[word] = f[3];
+    if(f[4]) WORD_LV[word] = f[4];
+    mlist.forEach(m => { (MORPH_WORDS[m] = MORPH_WORDS[m] || []).push(word); });
   });
 }
-// Build Chinese meaning lookup from MORPHEMES inline words
-// Format: "predict 预测" → WORD_CN['predict'] = '预测'
-const WORD_CN = {};
-MORPHEMES.forEach(m=>{
-  m.words.forEach(w=>{
-    const sp=w.lastIndexOf(' ');
-    if(sp>0){ const en=w.substring(0,sp).toLowerCase(), cn=w.substring(sp+1); if(cn&&/[\u4e00-\u9fff]/.test(cn)) WORD_CN[en]=cn; }
-  });
-});
+// Short gloss for tags/lists: first sense only, POS markers removed, ≤14 chars
+function shortCN(cn){
+  if(!cn) return '';
+  let s=cn.split(' / ')[0].replace(/^(\[[^\]]*\]\s*)?([a-z]+\.\s*)+/,'').trim();
+  s=s.split(/[,，;；]/).slice(0,2).join('，');
+  return s.length>14 ? s.slice(0,13)+'…' : s;
+}
+function levelLabel(w){ const lv=WORD_LV[w]||''; return [...lv].map(c=>LV_NAMES[c]).filter(Boolean).join(' · '); }
 
 // Build prefix index for fast word search (2-char prefix → words)
 const WORD_PREFIX = {};
@@ -933,30 +943,19 @@ function buildGraph() {
   // Build morpheme nodes only (LOD: words are data, not 3D nodes)
   MORPHEMES.forEach(m => {
     const hex = getCatColor(m.id);
-    // Word list: merge inline words + expanded MORPH_WORDS data
-    const inlineWords = m.words.map(w => { const sp=w.lastIndexOf(' '); return {en:w.substring(0,sp),cn:w.substring(sp+1)}; });
-    const expandedWords = (MORPH_WORDS[m.id]||[]).map(w => ({en:w, cn:WORD_CN[w.toLowerCase()]||''}));
-    // Merge, dedup by lowercase word
-    const seen = new Set();
-    const allWords = [];
-    inlineWords.forEach(w => { const k=w.en.toLowerCase(); if(!seen.has(k)){seen.add(k); allWords.push(w);} });
-    expandedWords.forEach(w => { const k=w.en.toLowerCase(); if(!seen.has(k)){seen.add(k); allWords.push(w);} });
-    // Sort: words with Chinese meaning first, then alphabetical
-    allWords.sort((a,b) => (b.cn?1:0)-(a.cn?1:0) || a.en.localeCompare(b.en));
+    // Word list from data/words.js — already in frequency order, every entry has a verified 中文释义
+    const allWords = (MORPH_WORDS[m.id]||[]).map(w => ({en:w, cn:WORD_CN[w]||''}));
 
     const node = { id:m.id, type:m.type, label:m.morph, origin:m.origin, meaning:m.meaning,
-      wordList: allWords.slice(0, 200), wordCount: allWords.length,
+      wordList: allWords.slice(0, 300), wordCount: allWords.length,
       color: new THREE.Color(hex), colorHex: hex, catLabel: getCatLabel(m.id),
       x:0,y:0,z:0,vx:0,vy:0,vz:0 };
     nodes.push(node); nodeMap[m.id]=node; adjacency[m.id]=new Set();
   });
 
-  // Build edges: connect morphemes that co-occur in words
-  // Sample first 6000 words for speed (shorter words = more common = better signal)
+  // Build edges: connect morphemes that co-occur in words (all words)
   const cooccur = {};
-  let wCount = 0;
   for(const [word, morphs] of WORD_DATA){
-    if(++wCount > 6000) break;
     const valid = morphs.filter(m => nodeMap[m]);
     for(let i=0; i<valid.length; i++){
       for(let j=i+1; j<valid.length; j++){
@@ -967,11 +966,11 @@ function buildGraph() {
       }
     }
   }
-  // Top co-occurrences only, capped at 250 edges
+  // Top co-occurrences only, capped at 300 edges
   Object.entries(cooccur)
-    .filter(([,c]) => c >= 8)
+    .filter(([,c]) => c >= 4)
     .sort((a,b) => b[1]-a[1])
-    .slice(0, 250)
+    .slice(0, 300)
     .forEach(([key, count]) => {
       const [a, b] = key.split('|');
       edges.push({source:a, target:b, weight:count});
@@ -1502,7 +1501,8 @@ function showTooltip(node,x,y){
     // IPA + Speak
     ttIpa.style.display='flex';
     const ipaText=ipa||'';
-    ttIpa.innerHTML=(ipaText?'<span>'+ipaText+'</span>':'')+
+    const lvText=levelLabel(cleanWord);
+    ttIpa.innerHTML=(ipaText?'<span title="'+(ipaText.startsWith('≈')?'规则估算音标，非词典音标':'词典音标')+'">'+ipaText+'</span>':'')+(lvText?'<span class="tt-lv">'+lvText+'</span>':'')+
       '<button class="tt-speak" title="Pronounce"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>';
     ttIpa.querySelector('.tt-speak').onclick=(e)=>{ e.stopPropagation(); speakWord(node.label); };
     if(!ipaText) ttIpa.querySelector('span')?.remove();
@@ -1545,7 +1545,9 @@ function showTooltip(node,x,y){
       const seen=new Set(); seen.add(node.label.toLowerCase());
       // Build {word, cn, hasCn} so we can sort verified-translation entries first
       const related=[];
-      node.morphemes.forEach(m=>{
+      // Roots first (most informative), then prefixes, then suffixes; within each, frequency order
+      const ORDER={r:0,p:1,s:2};
+      [...node.morphemes].sort((a,b)=>ORDER[a.type]-ORDER[b.type]).forEach(m=>{
         const mWords = MORPH_WORDS[m.id] || [];
         mWords.forEach(w => {
           if(seen.has(w)) return;
@@ -1566,11 +1568,8 @@ function showTooltip(node,x,y){
           related.push({w, cn, hasCn: !!cn});
         });
       });
-      // Verified-translation words first, then alphabetical
-      related.sort((a,b)=>{
-        if(a.hasCn !== b.hasCn) return a.hasCn ? -1 : 1;
-        return a.w.localeCompare(b.w);
-      });
+      // Verified-translation words first; otherwise keep root→prefix→suffix / frequency order
+      related.sort((a,b)=>(a.hasCn===b.hasCn)?0:(a.hasCn?-1:1));
       if(related.length>0){
         ttRelated.style.display='block';
         ttRelated.innerHTML='<div class="tt-related-title">相关词汇</div>';
@@ -1580,7 +1579,7 @@ function showTooltip(node,x,y){
           related.slice(0,limit).forEach(item=>{
             const t=document.createElement('span'); t.className='word-tag';
             // Layer-3 fallback (morpheme composition) only at render time, marked with ~
-            const display = item.cn ? item.w+' '+item.cn
+            const display = item.cn ? item.w+' '+shortCN(item.cn)
               : (()=>{ const c=getWordCN(item.w); return c ? item.w+' ~'+c : item.w; })();
             t.textContent=display;
             if(!item.hasCn) t.style.opacity='0.65';
@@ -1626,7 +1625,7 @@ function showTooltip(node,x,y){
         node.wordList.slice(0,limit).forEach(w=>{
           const t=document.createElement('span'); t.className='word-tag';
           const cn=w.cn||WORD_CN[w.en.toLowerCase()]||'';
-          t.textContent=cn ? w.en+' '+cn : w.en;
+          t.textContent=cn ? w.en+' '+shortCN(cn) : w.en;
           t.onclick=(e)=>{
             e.stopPropagation();
             ttPushHistory({type:'morpheme', id:node.id, x:e.clientX, y:e.clientY});
@@ -1756,7 +1755,7 @@ function makeDropdownItem(r){
   let hlLabel=lbl;
   if(idx>=0) hlLabel=lbl.slice(0,idx)+'<em>'+lbl.slice(idx,idx+q.length)+'</em>'+lbl.slice(idx+q.length);
   const typeStr = TYPE_LABELS[n.type]||'';
-  const meaningStr = n.isVirtual ? (n.meaning || n.morphemes.map(m=>m.label).join(' + ')) : (n.meaning||'');
+  const meaningStr = n.isVirtual ? (shortCN(n.meaning) || n.morphemes.map(m=>m.label).join(' + ')) : (n.meaning||'');
   div.innerHTML=`<span class="sd-dot" style="background:${n.colorHex}"></span><span class="sd-label">${hlLabel}</span><span class="sd-type">${typeStr}</span><span class="sd-meaning">${meaningStr}</span>`;
   div.addEventListener('click',()=>{ selectSearchResult(n); });
   div.addEventListener('mouseenter',()=>{
@@ -2383,7 +2382,7 @@ function expandNode(nodeId){
       const tx = parent.tx + Math.cos(a) * childR;
       const ty = parent.ty + Math.sin(a) * childR;
       mmNodes.push({
-        id:wid, type:'w', label:w.en, meaning:w.cn||'', color:parent.color,
+        id:wid, type:'w', label:w.en, meaning:shortCN(w.cn||''), color:parent.color,
         x:parent.tx, y:parent.ty, tx, ty,
         r:5, isWord:true, isGroup:false, isCenter:false, parentId:nodeId, data:null
       });
