@@ -323,7 +323,8 @@ function renderMeaning(node, displayMeaning){
   const wrap=ttMeaning; wrap.innerHTML='';
   const finish=(guessed)=>{
     wrap.innerHTML='';
-    if(guessed){ const v=document.createElement('div'); v.className='tt-verdict '+(guessed.ok?'ok':'bad'); v.textContent=guessed.ok?'猜对了。':'不对，正确的是「'+guessed.answer+'」。'; wrap.appendChild(v); }
+    if(guessed){ const v=document.createElement('div'); v.className='tt-verdict '+(guessed.ok?'ok':'bad'); v.textContent=guessed.ok?(guessed.tries>1?'第 '+guessed.tries+' 次猜对了。':'一次猜对。'):'正确的是「'+guessed.answer+'」。'; wrap.appendChild(v); }
+    if(guessMode&&displayMeaning){ const again=document.createElement('button'); again.className='tt-again'; again.textContent='重新猜一次'; again.onclick=(e)=>{ e.stopPropagation(); node._revealed=false; renderMeaning(node, displayMeaning); }; wrap.appendChild(again); }
     if(displayMeaning){ const s=document.createElement('div'); s.className='senses'; s.innerHTML=sensesHTML(displayMeaning); wrap.appendChild(s); }
     else { const s=document.createElement('div'); s.className='senses empty'; s.textContent='暂无中文释义'; wrap.appendChild(s); }
     if(WORD_EN[word]){ const e=document.createElement('div'); e.className='tt-en'; e.textContent=WORD_EN[word]; wrap.appendChild(e); }
@@ -342,8 +343,17 @@ function renderMeaning(node, displayMeaning){
   if(!q){ finish(null); return; }
   const box=document.createElement('div'); box.className='tt-quiz';
   box.innerHTML='<div class="q">根据上面的拆解，<b>'+ESC(node.label)+'</b> 是什么意思？</div>';
-  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='tt-opt'; b.innerHTML='<span class="n">'+(i+1)+'</span>'+ESC(o); b.onclick=(e)=>{ e.stopPropagation(); const ok=o===q.answer; node._revealed=true; if(typeof recordGuess==='function') recordGuess(word,ok); if(ok){ if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); } else if(typeof Sfx!=='undefined') Sfx.buzz(); finish({ok,answer:q.answer}); }; box.appendChild(b); });
-  const skip=document.createElement('button'); skip.className='tt-skip'; skip.textContent='直接看释义'; skip.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; finish(null); }; box.appendChild(skip);
+  let tries=0, note=null;
+  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='tt-opt'; b.innerHTML='<span class="n">'+(i+1)+'</span>'+ESC(o); b.onclick=(e)=>{
+    e.stopPropagation(); if(b.disabled) return; tries++; const ok=o===q.answer;
+    if(tries===1){ if(typeof recordGuess==='function') recordGuess(word,ok); if(typeof addHistory==='function') addHistory({type:'guess',word,ok}); }
+    if(ok){ node._revealed=true; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); finish({ok:true,answer:q.answer,tries}); return; }
+    // wrong: mark it, let the learner try again (the first attempt is what gets recorded)
+    b.disabled=true; b.classList.add('wrong'); if(typeof Sfx!=='undefined') Sfx.buzz();
+    if(!note){ note=document.createElement('div'); note.className='tt-quiz-note'; box.insertBefore(note, box.querySelector('.tt-skip')); }
+    note.textContent=tries>=3?'再想想，或者直接看释义。':'不对，再试一次。';
+  }; box.appendChild(b); });
+  const skip=document.createElement('button'); skip.className='tt-skip'; skip.textContent='直接看释义'; skip.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; finish(tries?{ok:false,answer:q.answer,tries}:null); }; box.appendChild(skip);
   const tip=document.createElement('div'); tip.className='tt-quiz-tip'; tip.textContent='猜过再看记得更牢。不想猜可在右上角关闭猜词模式。'; box.appendChild(tip);
   wrap.appendChild(box);
 }

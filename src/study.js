@@ -63,3 +63,10 @@ function recordGuess(word,ok){
 function guessStats(){
   try{ const log=JSON.parse(localStorage.getItem('etym_guess_log')||'{}'); let n=0,ok=0,wrong=[]; for(const w in log){ n+=log[w].n; ok+=log[w].ok; if(!log[w].last) wrong.push(w); } return {n,ok,wrong}; }catch(e){ return {n:0,ok:0,wrong:[]}; }
 }
+
+// History: a chronological log of guesses and practice rounds (newest last, capped).
+function addHistory(entry){
+  try{ const h=JSON.parse(localStorage.getItem('etym_history')||'[]'); h.push(Object.assign({t:Date.now()},entry)); while(h.length>300) h.shift(); localStorage.setItem('etym_history',JSON.stringify(h)); }catch(e){}
+}
+function getHistory(){ try{ return JSON.parse(localStorage.getItem('etym_history')||'[]'); }catch(e){ return []; } }
+function clearHistory(){ try{ localStorage.removeItem('etym_history'); localStorage.removeItem('etym_guess_log'); }catch(e){} }

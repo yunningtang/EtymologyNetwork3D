@@ -123,6 +123,7 @@ function renderStudyPanel(){
     (function(){ const g=guessStats(); return g.n?'<div class="sp-stat"><span>猜词</span><b>猜对 '+g.ok+' / '+g.n+'</b></div>':''; })()+
     '<div class="sp-stat"><span>练习最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
   const rs=stats.querySelector('.sp-resume'); if(rs) rs.onclick=()=>{ openMorph(last.id); closeStudyPanel(); };
+  renderHistory();
   const g=guessStats(); const wrongEl=document.getElementById('sp-wrong'); wrongEl.innerHTML='';
   if(g.wrong.length){ wrongEl.innerHTML='<div class="sp-sub">上次猜错的词 · '+g.wrong.length+'</div>'; g.wrong.slice(-12).reverse().forEach(w=>{ const b=document.createElement('button'); b.className='sp-wrong-item'; b.innerHTML='<b>'+w+'</b><span>'+(shortCN(WORD_CN[w]||''))+'</span>'; b.onclick=()=>{ closeStudyPanel(); showWordDetail(w, Math.max(12, window.innerWidth/2-220), 140); }; wrongEl.appendChild(b); }); }
   const favsEl=document.getElementById('sp-favs');
@@ -150,6 +151,24 @@ function renderStudyPanel(){
   });
 }
 
+function fmtWhen(t){
+  const d=new Date(t), now=new Date(); const day=(a)=>Math.floor((a-new Date(a).getTimezoneOffset()*60000)/86400000);
+  const diff=day(now)-day(d); const hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  return (diff===0?'今天':diff===1?'昨天':(d.getMonth()+1)+'月'+d.getDate()+'日')+' '+hm;
+}
+function renderHistory(){
+  const el=document.getElementById('sp-history'); el.innerHTML='';
+  const h=getHistory().slice().reverse();
+  if(!h.length) return;
+  el.innerHTML='<div class="sp-sub">历史记录<button class="sp-clear">清空</button></div>';
+  el.querySelector('.sp-clear').onclick=()=>{ if(confirm('清空猜词和练习的历史记录？')){ clearHistory(); renderStudyPanel(); } };
+  h.slice(0,40).forEach(e=>{
+    const b=document.createElement('button'); b.className='sp-hist';
+    if(e.type==='guess'){ b.innerHTML='<span class="t">'+fmtWhen(e.t)+'</span><span class="k '+(e.ok?'ok':'bad')+'">'+(e.ok?'猜对':'猜错')+'</span><b>'+e.word+'</b><span class="m">'+(shortCN(WORD_CN[e.word]||''))+'</span>'; b.onclick=()=>{ closeStudyPanel(); showWordDetail(e.word, Math.max(12, window.innerWidth/2-220), 140); }; }
+    else { b.innerHTML='<span class="t">'+fmtWhen(e.t)+'</span><span class="k">练习</span><b>'+e.score+' / '+e.n+'</b><span class="m">'+(e.label?e.label:'整个词库')+(e.wrong&&e.wrong.length?' · 错 '+e.wrong.length:'')+'</span>'; b.onclick=()=>{ closeStudyPanel(); openQuest(e.scope&&nodeMap[e.scope]?{morph:e.scope,label:nodeMap[e.scope].label}:null); }; }
+    el.appendChild(b);
+  });
+}
 function openStudyPanel(){ document.getElementById('study-panel').classList.add('open'); renderStudyPanel(); }
 function closeStudyPanel(){ document.getElementById('study-panel').classList.remove('open'); }
 

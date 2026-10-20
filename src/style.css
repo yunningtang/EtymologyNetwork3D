@@ -415,3 +415,25 @@ a{color:inherit;text-decoration:none}
 .sp-wrong-item b{min-width:110px}
 .sp-wrong-item span{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sp-wrong-item:hover{background:var(--bg)}
+
+/* retry + history */
+.tt-opt.wrong{color:var(--bad);text-decoration:line-through;opacity:0.7}
+.tt-quiz-note{font-size:14px;color:var(--bad);margin:8px 0 2px}
+.tt-again{font-size:13px;color:var(--accent);font-weight:600;margin:-4px 0 10px;border-bottom:1px solid transparent}
+.tt-again:hover{border-bottom-color:var(--accent)}
+.q-footbtns{display:flex;gap:10px;margin-top:12px}
+.q-footbtns .q-next{flex:1;margin-top:0}
+.q-retry{padding:12px 18px;border:1px solid var(--rule-2);font-size:15px;font-weight:600;border-radius:3px}
+.q-retry:hover{border-color:var(--ink)}
+.q-wronglist{font-size:14px;color:var(--ink-2);margin:6px 0 14px;line-height:1.8}
+.q-wronglist b{margin-right:4px}
+.sp-sub{display:flex;align-items:center;justify-content:space-between}
+.sp-clear{font-size:13px;color:var(--muted);font-weight:400}
+.sp-clear:hover{color:var(--bad)}
+.sp-hist{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;padding:8px 28px;border-top:1px solid var(--rule);font-size:14px}
+.sp-hist:hover{background:var(--bg)}
+.sp-hist .t{font-size:13px;color:var(--muted);min-width:86px;font-variant-numeric:tabular-nums}
+.sp-hist .k{font-size:13px;color:var(--muted);min-width:30px}
+.sp-hist .k.ok{color:var(--ok)}.sp-hist .k.bad{color:var(--bad)}
+.sp-hist b{font-weight:700}
+.sp-hist .m{color:var(--muted);font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
