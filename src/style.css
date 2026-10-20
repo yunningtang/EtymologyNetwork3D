@@ -34,8 +34,7 @@ a{color:inherit;text-decoration:none}
 
 /* masthead */
 #top{position:fixed;top:0;left:0;right:0;height:60px;z-index:20;display:flex;align-items:center;gap:24px;padding:0 32px;background:var(--bg);border-bottom:1px solid var(--rule-2)}
-#brand{font-size:17px;font-weight:700;white-space:nowrap;letter-spacing:-0.01em}
-#topnav{margin-left:auto;display:flex;align-items:center;gap:22px}
+#topnav{display:flex;align-items:center;gap:22px}
 .lv-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 #level-select{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:none;border-bottom:1px solid var(--ink);padding:2px 0;cursor:pointer;outline:none}
 #quest-btn,#study-toggle{font-size:13px;color:var(--ink);padding:6px 0;position:relative;border-bottom:1px solid transparent}

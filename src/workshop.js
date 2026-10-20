@@ -181,4 +181,3 @@ function renderRoot(id){
 
 function openMorph(id){ wsGo('wall',id); }
 function wsRefresh(){ wsRender(); }
-document.getElementById('brand').onclick=(e)=>{ e.preventDefault(); wsGo('shelf'); };
