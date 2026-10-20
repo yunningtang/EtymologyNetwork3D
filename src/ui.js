@@ -120,8 +120,11 @@ function renderStudyPanel(){
     '<div class="sp-stat"><span>研究过的词根</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
     '<div class="sp-stat"><span>看过的单词</span><b>'+prog.totalWords+'</b></div>'+
     '<div class="sp-stat"><span>收藏</span><b>'+favs.length+'</b></div>'+
+    (function(){ const g=guessStats(); return g.n?'<div class="sp-stat"><span>猜词</span><b>猜对 '+g.ok+' / '+g.n+'</b></div>':''; })()+
     '<div class="sp-stat"><span>练习最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
   const rs=stats.querySelector('.sp-resume'); if(rs) rs.onclick=()=>{ openMorph(last.id); closeStudyPanel(); };
+  const g=guessStats(); const wrongEl=document.getElementById('sp-wrong'); wrongEl.innerHTML='';
+  if(g.wrong.length){ wrongEl.innerHTML='<div class="sp-sub">上次猜错的词 · '+g.wrong.length+'</div>'; g.wrong.slice(-12).reverse().forEach(w=>{ const b=document.createElement('button'); b.className='sp-wrong-item'; b.innerHTML='<b>'+w+'</b><span>'+(shortCN(WORD_CN[w]||''))+'</span>'; b.onclick=()=>{ closeStudyPanel(); showWordDetail(w, Math.max(12, window.innerWidth/2-220), 140); }; wrongEl.appendChild(b); }); }
   const favsEl=document.getElementById('sp-favs');
   favsEl.innerHTML='';
   if(!favs.length){

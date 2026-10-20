@@ -93,25 +93,9 @@ function showTooltip(node,x,y){
     displayMeaning = WORD_CN[node.label.toLowerCase()] || '';
   }
   ttGuess.style.display = isWordView ? 'inline-block' : 'none';
-  if(displayMeaning && isWordView && guessMode && !node._revealed){
-    ttMeaning.textContent=''; ttMeaning.style.cssText='';
-    const rv=document.createElement('div'); rv.className='tt-reveal';
-    rv.innerHTML='<div class="q">释义先藏起来了：根据上面的拆解猜一猜，再点这里查看。<small>猜过再看记得更牢 · 右上角可关闭猜词模式</small></div><div class="go">查看释义</div>';
-    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); };
-    ttMeaning.appendChild(rv);
-  } else if(displayMeaning){
-    ttMeaning.textContent = displayMeaning;
-    ttMeaning.style.color = '';
-    ttMeaning.style.fontStyle = '';
-    ttMeaning.style.opacity = '';
-  } else if(isWordView){
-    ttMeaning.textContent = '暂无中文释义';
-    ttMeaning.style.color = 'var(--muted)';
-    ttMeaning.style.fontStyle = 'italic';
-    ttMeaning.style.opacity = '0.7';
-  } else {
-    ttMeaning.textContent = '';
-  }
+  ttMeaning.style.cssText=''; ttMeaning.innerHTML='';
+  if(isWordView) renderMeaning(node, displayMeaning);
+  else ttMeaning.textContent='';
   ttWords.innerHTML=''; ttCount.textContent='';
   const ttIpa=document.getElementById('tt-ipa');
   const ttEtymology=document.getElementById('tt-etymology');
@@ -308,6 +292,60 @@ function showTooltip(node,x,y){
   show('tt-sec-build', ttEtymology.style.display!=='none'); show('tt-sec-meaning', true); show('tt-sec-compare', ttCompare.style.display!=='none'); show('tt-sec-related', ttRelated.style.display!=='none');
   positionTooltip(x,y);
   tooltip.classList.add('visible');
+}
+
+// ---------- the 含义 section of a word card ----------
+// Guess mode: four meanings to choose from (two from the same root when possible, so the
+// learner has to read the prefix), then the dictionary senses by part of speech, the English
+// definition, word forms, and a 词源解释 that walks from the literal reading to the real meaning.
+let _allWords=null;
+function guessOptions(word){
+  const answer=shortCN(WORD_CN[word]||''); if(!answer) return null;
+  const seen=new Set([answer]), out=[];
+  const ids=(WORD_DATA.get(word)||[]).filter(id=>nodeMap[id]);
+  const rootId=ids.find(id=>nodeMap[id].type==='r');
+  const tryAdd=(w)=>{ if(w===word||!WORD_CN[w]||!wordVisible(w)) return; const c=shortCN(WORD_CN[w]); if(!c||seen.has(c)||c.length>18) return; seen.add(c); out.push(c); };
+  if(rootId){ for(const w of (MORPH_WORDS[rootId]||[])){ if(out.length>=2) break; tryAdd(w); } }
+  _allWords=_allWords||[...WORD_DATA.keys()];
+  let guard=0; while(out.length<3&&guard++<400){ tryAdd(_allWords[Math.floor(Math.random()*Math.min(_allWords.length,3000))]); }
+  if(out.length<3) return null;
+  const opts=[answer,...out]; for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [opts[i],opts[j]]=[opts[j],opts[i]]; }
+  return {answer,opts};
+}
+function sensesHTML(cn){
+  return (cn||'').split(' / ').map(seg=>{ const m=seg.match(/^((?:[a-z]+\.\s*)+(?:&\s*[a-z]+\.\s*)?)(.*)$/i); return '<div class="sense">'+(m?'<i>'+ESC(m[1].trim())+'</i><span>'+ESC(m[2].trim())+'</span>':'<span>'+ESC(seg)+'</span>')+'</div>'; }).join('');
+}
+function literalOf(node){
+  return (node.morphemes||[]).map(m=>nodeMap[m.id]).filter(Boolean).map(n=>{ const z=(n.meaning||'').match(/[一-鿿…].*$/); return (z?z[0]:n.meaning||'').split('/')[0].replace(/[（(].*$/,''); }).filter(Boolean);
+}
+function renderMeaning(node, displayMeaning){
+  const word=node.label.toLowerCase();
+  const wrap=ttMeaning; wrap.innerHTML='';
+  const finish=(guessed)=>{
+    wrap.innerHTML='';
+    if(guessed){ const v=document.createElement('div'); v.className='tt-verdict '+(guessed.ok?'ok':'bad'); v.textContent=guessed.ok?'猜对了。':'不对，正确的是「'+guessed.answer+'」。'; wrap.appendChild(v); }
+    if(displayMeaning){ const s=document.createElement('div'); s.className='senses'; s.innerHTML=sensesHTML(displayMeaning); wrap.appendChild(s); }
+    else { const s=document.createElement('div'); s.className='senses empty'; s.textContent='暂无中文释义'; wrap.appendChild(s); }
+    if(WORD_EN[word]){ const e=document.createElement('div'); e.className='tt-en'; e.textContent=WORD_EN[word]; wrap.appendChild(e); }
+    if(WORD_FORMS[word]){ const names={p:'过去式',i:'现在分词',s:'复数',r:'比较级'}; const f=document.createElement('div'); f.className='tt-forms'; f.innerHTML=WORD_FORMS[word].split('/').sort((a,b)=>'pisr'.indexOf(a[0])-'pisr'.indexOf(b[0])).map(x=>{ const [k,v]=x.split(':'); return names[k]?'<span><i>'+names[k]+'</i>'+ESC(v)+'</span>':''; }).join(''); wrap.appendChild(f); }
+    const note=(window.WORD_NOTES||{})[word]; const lit=literalOf(node);
+    if(note||lit.length){
+      const w=document.createElement('div'); w.className='tt-why';
+      const parts=(node.morphemes||[]).map(m=>nodeMap[m.id]).filter(Boolean);
+      const text=note||(parts.length>1?'字面义「'+lit.join(' + ')+'」'+(displayMeaning?'，引申为「'+shortCN(displayMeaning)+'」。':'。')
+        :'由 '+parts[0].label.replace(/^-|-$/g,'')+'（'+lit[0]+'）构成'+(displayMeaning?'，引申为「'+shortCN(displayMeaning)+'」。':'。'));
+      w.innerHTML='<span class="k">词源解释</span><p>'+ESC(text)+'</p>';
+      wrap.appendChild(w);
+    }
+  };
+  const q=(displayMeaning&&guessMode&&!node._revealed)?guessOptions(word):null;
+  if(!q){ finish(null); return; }
+  const box=document.createElement('div'); box.className='tt-quiz';
+  box.innerHTML='<div class="q">根据上面的拆解，<b>'+ESC(node.label)+'</b> 是什么意思？</div>';
+  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='tt-opt'; b.innerHTML='<span class="n">'+(i+1)+'</span>'+ESC(o); b.onclick=(e)=>{ e.stopPropagation(); const ok=o===q.answer; node._revealed=true; if(typeof recordGuess==='function') recordGuess(word,ok); if(ok){ if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); } else if(typeof Sfx!=='undefined') Sfx.buzz(); finish({ok,answer:q.answer}); }; box.appendChild(b); });
+  const skip=document.createElement('button'); skip.className='tt-skip'; skip.textContent='直接看释义'; skip.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; finish(null); }; box.appendChild(skip);
+  const tip=document.createElement('div'); tip.className='tt-quiz-tip'; tip.textContent='猜过再看记得更牢。不想猜可在右上角关闭猜词模式。'; box.appendChild(tip);
+  wrap.appendChild(box);
 }
 
 function positionTooltip(x,y){

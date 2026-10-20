@@ -163,6 +163,8 @@ const MORPH_WORDS = {};      // morphemeId → [words], in frequency order
 const WORD_CN = {};          // word → 中文释义 (dictionary, verified)
 const WORD_IPA = {};         // word → IPA (dictionary; missing for a few words)
 const WORD_LV = {};          // word → level codes
+const WORD_EN = {};          // word → short English definition
+const WORD_FORMS = {};       // word → "p:past/i:-ing/s:plural/r:comparative"
 const LV_NAMES = {z:'中考',g:'高考','4':'CET4','6':'CET6',k:'考研',t:'TOEFL',i:'IELTS'};
 if(WORDS_RAW){
   WORDS_RAW.split('\n').forEach(line => {
@@ -173,6 +175,8 @@ if(WORDS_RAW){
     if(f[2]) WORD_CN[word] = f[2];
     if(f[3]) WORD_IPA[word] = f[3];
     if(f[4]) WORD_LV[word] = f[4];
+    if(f[5]) WORD_EN[word] = f[5];
+    if(f[6]) WORD_FORMS[word] = f[6];
     mlist.forEach(m => { (MORPH_WORDS[m] = MORPH_WORDS[m] || []).push(word); });
   });
 }

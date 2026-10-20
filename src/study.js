@@ -55,3 +55,11 @@ function updateStudyBadge(){
 // Last root studied, for "继续上次" on the home page and in the study panel.
 function rememberRoot(id){ try{ localStorage.setItem('etym_last',id); }catch(e){} }
 function lastRoot(){ try{ const id=localStorage.getItem('etym_last'); return id&&nodeMap[id]?nodeMap[id]:null; }catch(e){ return null; } }
+
+// Guess log: word → {ok, n, t}. Feeds the stats in the study panel (and a review queue later).
+function recordGuess(word,ok){
+  try{ const log=JSON.parse(localStorage.getItem('etym_guess_log')||'{}'); const e=log[word]||{n:0,ok:0}; e.n++; if(ok) e.ok++; e.last=ok?1:0; e.t=Date.now(); log[word]=e; localStorage.setItem('etym_guess_log',JSON.stringify(log)); }catch(e){}
+}
+function guessStats(){
+  try{ const log=JSON.parse(localStorage.getItem('etym_guess_log')||'{}'); let n=0,ok=0,wrong=[]; for(const w in log){ n+=log[w].n; ok+=log[w].ok; if(!log[w].last) wrong.push(w); } return {n,ok,wrong}; }catch(e){ return {n:0,ok:0,wrong:[]}; }
+}

@@ -39,7 +39,9 @@
 | **词库选择** | 默认初高中（中考+高考），也可切到四六级 / 考研 / 托福雅思 / 全部 |
 | **练习** | 10 道小题：猜释义、把构件按顺序拼成词、找出含某词根的词；即时反馈、记录最高分；也可只练某一个词根的词 |
 | **单词研究** | 按「拆解 → 含义 → 同源 → 迁移」四步组织：构件逐段标色，点开看每段含义，换一个前缀得到另一个词 |
-| **先猜后看** | 单词卡先给词素拆解，猜过再揭晓词典释义（可关闭） |
+| **猜词模式** | 单词面板先给拆解和字面义，四选一猜含义，再揭晓；猜错的词记在学习记录里（可关闭） |
+| **词典释义** | 按词性分行的中文释义、英文释义、词形变化（过去式 / 现在分词 / 复数 / 比较级） |
+| **词源解释** | 650+ 个初高中词各一句手写解释，从字面义走到实际义：in（进入）+ spect（看）→ 往里面仔细看 → 检查；其余词自动生成 |
 | **词根故事** | 206 个词根各一句来历，例如 salary 本义是"买盐的钱" |
 | **同源对比** | 同一词根换前缀排成一列：import / export / transport / report |
 | **键盘操作** | `/` 搜索，`Esc` 逐级返回（关卡片 → 回盒子 → 回工坊） |
@@ -101,12 +103,15 @@ EtymologyNetwork3D/
 │   ├── router.js             # hash 路由：地址栏、后退/前进、深链接
 │   └── main.js               # 启动流程
 ├── data/
-│   ├── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
+│   ├── words.js              # 词汇数据：单词、词素映射、释义、音标、等级、英文释义、词形（由 scripts/vocab/build.js 生成）
+│   ├── notes.js              # 词源解释（由 scripts/vocab/notes.tsv 生成）
 │   └── images.js             # 词根配图的文件名与署名（由 scripts/images/fetch-commons.js 生成）
 ├── assets/morphemes/         # 词素配图（Wikimedia Commons，自由许可）
 ├── scripts/vocab/
 │   ├── fetch.js              # 下载 ECDICT 词典与词根库到 scripts/output/（已 gitignore）
 │   ├── build.js              # 生成 data/words.js
+│   ├── build-notes.js        # notes.tsv → data/notes.js
+│   ├── notes.tsv             # 手写词源解释
 │   ├── rootmap.js            # 本项目词素 ↔ ECDICT 词根库条目的对应表
 │   ├── patterns.js           # 正则候选规则（只产生候选，不直接入库）
 │   └── review/reviewed.tsv   # 人工校验结果：单词 → 词素（覆盖其它来源）

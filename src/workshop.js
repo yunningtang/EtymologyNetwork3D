@@ -148,7 +148,7 @@ function renderRoot(id){
   </header>`;
   const tbl=prefixTable(n);
   if(tbl.length>1){
-    html+=`<section class="study"><div class="kicker">观察</div><h2>${n.type==='r'?'前缀如何改变同一个词根的含义':n.type==='p'?'同一个前缀接上不同词根':'同一个后缀接在不同的词根上'}</h2><table class="ptable"><tbody>`;
+    html+=`<section class="study"><div class="kicker">观察</div><h2>${n.type==='r'?'前缀如何改变同一个词根的含义':n.type==='p'?'同一个前缀接上不同词根':'同一个后缀接在不同的词根上'}</h2><p class="howto">先看左边的拆解和中间的字面义，猜一猜右边是哪个词、什么意思，再对照。</p><table class="ptable"><tbody>`;
     tbl.forEach(r=>{
       const pn=r.pre?nodeMap[r.pre]:null;
       const literal=r.ids.map(x=>zh(nodeMap[x].meaning).split('/')[0]).join(' + ');
@@ -156,7 +156,7 @@ function renderRoot(id){
     });
     html+='</tbody></table></section>';
   }
-  html+=`<section class="study"><div class="kicker">词表</div><h2>用 ${esc(n.label)} 构成的词<span class="count">${words.length} 个${levelFilter.size?' · 当前词表':''}</span></h2>`;
+  html+=`<section class="study"><div class="kicker">词表</div><h2>用 ${esc(n.label)} 构成的词<span class="count">${words.length} 个${levelFilter.size?' · 当前词表':''}</span></h2><p class="howto">点开一个词：先根据拆解猜含义，再看词典释义和词源解释。</p>`;
   const total=(n.wordList||[]).length; const lvName=(function(){ const s=document.getElementById('level-select'); return s&&s.selectedOptions[0]?s.selectedOptions[0].textContent:''; })();
   if(!words.length) html+='<p class="empty">当前词库「'+esc(lvName)+'」里没有用它构成的词。<button class="lv-all">查看全部词库</button></p>';
   else if(levelFilter.size&&total>words.length) html+='<p class="lv-note">当前只显示「'+esc(lvName)+'」词库里的 '+words.length+' 个词，全部词库共 '+total+' 个。<button class="lv-all">查看全部</button></p>';
