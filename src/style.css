@@ -21,8 +21,6 @@ a{color:inherit;text-decoration:none}
 .num{font-size:13px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
 .en{font-size:13px;color:var(--muted);margin-left:8px;font-weight:400}
 .gloss{color:var(--muted);font-size:13px}
-.mark{font-size:13px;color:var(--muted);margin-left:10px;white-space:nowrap}
-.wrow.seen .wrow-word,.mrow.seen .mrow-label{color:var(--ink-2)}
 .idx{font-size:13px;color:var(--muted);width:44px;flex-shrink:0;font-variant-numeric:tabular-nums}
 .lede{font-size:16px;color:var(--ink-2);max-width:620px;line-height:1.75}
 
