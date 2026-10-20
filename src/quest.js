@@ -73,7 +73,7 @@ function closeQuest(){ qp.style.display='none'; qShade.style.display='none'; que
 qShade.onclick=closeQuest;
 function renderQ(){
   const q=quest.qs[quest.i], i=quest.i;
-  const head='<div class="q-head"><span class="q-step">第 '+(i+1)+' / '+QUEST_N+' 题</span><span class="q-score">⭐ '+quest.score+'</span><button class="q-close" aria-label="关闭">✕</button></div>'+
+  const head='<div class="q-head"><span class="q-step">第 '+(i+1)+' / '+QUEST_N+' 题</span><span class="q-score">得分 '+quest.score+'</span><button class="q-close" aria-label="关闭">✕</button></div>'+
     '<div class="q-bar"><div class="q-fill" style="width:'+(i/QUEST_N*100)+'%"></div></div>';
   let body='';
   if(q.type==='meaning'){
@@ -100,7 +100,7 @@ function renderQ(){
 }
 function finishQ(ok,explain){
   quest.lock=true; if(ok){ quest.score++; const r=qp.getBoundingClientRect(); confetti(r.left+r.width/2,r.top+r.height/3,70); Sfx.ding(); } else Sfx.buzz();
-  qp.querySelector('.q-score').textContent='⭐ '+quest.score;
+  qp.querySelector('.q-score').textContent='得分 '+quest.score;
   const q=quest.qs[quest.i];
   const foot=qp.querySelector('.q-foot');
   foot.innerHTML='<div class="q-result '+(ok?'ok':'no')+'">'+(ok?'太棒了！':'差一点，正确答案是：')+' '+explain+'</div>'+
@@ -132,7 +132,7 @@ function pickChip(c){
 function renderEnd(){
   const s=quest.score; const stars=s>=9?3:s>=6?2:s>=3?1:0;
   let best=0; try{ best=+(localStorage.getItem('etym_quest_best')||0); if(s>best){ best=s; localStorage.setItem('etym_quest_best',String(s)); } }catch(e){}
-  qp.innerHTML='<div class="q-end"><div class="q-stars">'+'⭐'.repeat(stars)+'<span class="dim">'+'⭐'.repeat(3-stars)+'</span></div>'+
+  qp.innerHTML='<div class="q-end"><div class="q-stars">'+s+'<span class="dim"> / '+QUEST_N+'</span></div>'+
     '<div class="q-endtitle">'+(stars===3?'全对，太厉害了':stars===2?'做得很好':stars===1?'不错的开始':'再来一次')+'</div>'+
     '<div class="q-endscore">答对 '+s+' / '+QUEST_N+' 题 · 最高纪录 '+best+'</div>'+
     '<div class="q-endbtns"><button class="q-next" id="q-again">再练一组</button><button class="q-opt" id="q-done">回到工坊</button></div></div>';

@@ -62,27 +62,26 @@ function renderHome(){
   const sample=(type)=>nodes.filter(n=>n.type===type).sort((a,b)=>b.wordCount-a.wordCount).slice(0,3).map(n=>n.label).join(' · ');
   let html=`
   <section class="hero">
-    <div class="kicker">01 / Morphology 构词法</div>
     <h1>从一个词根，<br>理解一组词。</h1>
     <p class="lede">英语单词由前缀、词根和后缀拼合而成。记住 200 多个常用的部件，就能看懂成千上万个词。这本图谱带你从一个部件出发，看它如何长出一整组词，以及这些词之间的联系。</p>
   </section>
   <section class="chapter">
-    <div class="chapter-head"><span class="kicker">Chapter 01</span><h2>认识构词</h2></div>
+    <div class="chapter-head"><span class="kicker">第一章</span><h2>认识构词</h2></div>
     <div class="cols-3">
-      <article class="col"><div class="num">01 / Prefixes</div><h3>前缀</h3><p>放在词的开头，改变方向、数量或态度。</p><div class="ex">${esc(sample('p'))}</div></article>
-      <article class="col"><div class="num">02 / Roots</div><h3>词根</h3><p>词的核心意义所在，多来自拉丁语和希腊语。</p><div class="ex">${esc(sample('r'))}</div></article>
-      <article class="col"><div class="num">03 / Suffixes</div><h3>后缀</h3><p>放在词的末尾，决定它是名词、形容词还是动词。</p><div class="ex">${esc(sample('s'))}</div></article>
+      <article class="col"><div class="num">01 · Prefix</div><h3>前缀</h3><p>放在词的开头，改变方向、数量或态度。</p><div class="ex">${esc(sample('p'))}</div></article>
+      <article class="col"><div class="num">02 · Root</div><h3>词根</h3><p>词的核心意义所在，多来自拉丁语和希腊语。</p><div class="ex">${esc(sample('r'))}</div></article>
+      <article class="col"><div class="num">03 · Suffix</div><h3>后缀</h3><p>放在词的末尾，决定它是名词、形容词还是动词。</p><div class="ex">${esc(sample('s'))}</div></article>
     </div>
   </section>`;
   if(tr){
     const words=visibleWordsOf(tr).slice(0,6);
     html+=`
   <section class="today">
-    <div class="today-side"><div class="kicker">Today's exploration · 今日词根</div><div class="today-root serif">${esc(tr.label)}</div><div class="today-origin">${esc(originLangZh(tr))}${originWord(tr)?' · '+esc(originWord(tr)):''} · ${esc(en(tr.meaning))}</div><div class="today-zh">${esc(zh(tr.meaning))}</div><button class="link-btn" id="today-open">研究这个词根 →</button></div>
+    <div class="today-side"><div class="kicker">今日词根</div><div class="today-root serif">${esc(tr.label)}</div><div class="today-origin">${esc(originLangZh(tr))}${originWord(tr)?' · '+esc(originWord(tr)):''} · ${esc(en(tr.meaning))}</div><div class="today-zh">${esc(zh(tr.meaning))}</div><button class="link-btn" id="today-open">研究这个词根 →</button></div>
     <ul class="today-words">${words.map(w=>'<li><button class="word-link" data-w="'+esc(w.en)+'"><span class="serif">'+esc(w.en)+'</span><span class="gloss">'+esc(shortCN(w.cn))+'</span></button></li>').join('')}</ul>
   </section>`;
   }
-  html+=`<section class="chapter"><div class="chapter-head"><span class="kicker">Chapter 02</span><h2>词根目录</h2><p class="chapter-note">按意义分成 16 组。每组列出它包含的部件，点进去逐个研究。</p></div>`;
+  html+=`<section class="chapter"><div class="chapter-head"><span class="kicker">第二章</span><h2>词根目录</h2><p class="chapter-note">按意义分成 16 组。每组列出它包含的部件，点进去逐个研究。</p></div>`;
   [['p','前缀','Prefixes'],['r','词根','Roots'],['s','后缀','Suffixes']].forEach(([type,t,e],gi)=>{
     html+=`<div class="index-group"><h3 class="index-title"><span class="num">${pad2(gi+1)}</span>${t}<span class="en">${e}</span></h3><ol class="index">`;
     byType[type].forEach((cat,i)=>{
@@ -105,7 +104,7 @@ function renderCategory(cat){
   const type=BOX_TYPE[cat]; const gi=['p','r','s'].indexOf(type)+1; const ci=BOX_ORDER.filter(c=>BOX_TYPE[c]===type).indexOf(cat)+1;
   const parts=[{label:'目录',go:()=>wsGo('shelf')},{label:catZh(cat)}];
   const intro={p:'这些前缀放在词的开头。',r:'这些词根是词的核心，大多来自拉丁语和希腊语。',s:'这些后缀放在词的末尾，决定词性。'}[type];
-  let html=crumbs(parts)+`<header class="page-head"><div class="kicker">${pad2(gi)}.${ci} / ${esc(catEn(cat))} · ${TYPE_EN[type]}</div><h1>${esc(catZh(cat))}</h1><p class="lede">${intro} 下面按能拼出的词数排列，点一个部件进入它的研究页。</p></header><ol class="mlist">`;
+  let html=crumbs(parts)+`<header class="page-head"><div class="kicker">第二章 · ${pad2(gi)}.${ci} · ${esc(catEn(cat))}</div><h1>${esc(catZh(cat))}</h1><p class="lede">${intro} 下面按能拼出的词数排列，点一个部件进入它的研究页。</p></header><ol class="mlist">`;
   items.forEach((n,i)=>{
     const vw=visibleWordsOf(n); const sample=vw.slice(0,3).map(w=>w.en).join(', ');
     html+=`<li><button class="mrow${vw.length?'':' dim'}" data-id="${n.id}"><span class="idx">${pad2(i+1)}</span><span class="mrow-main"><span class="serif mrow-label">${esc(n.label)}</span><span class="mrow-meaning">${esc(n.meaning)}</span></span><span class="mrow-origin">${esc(n.origin||'')}</span><span class="mrow-sample">${esc(sample)}</span><span class="mrow-count">${vw.length?vw.length+' 词':'本词表无词'}</span>${isFavorite(n.id)?'<span class="mark">收藏</span>':''}${_progCache&&_progCache.morphemes[n.id]?'<span class="mark">已读</span>':''}</button></li>`;
@@ -136,7 +135,7 @@ function renderRoot(id){
   const lang=originLang(n), ow=originWord(n);
   let html=crumbs(parts)+`
   <header class="root-head">
-    <div class="kicker">${TYPE_EN[n.type]} study / ${num}${lang?' · '+esc(lang):''}</div>
+    <div class="kicker">${TYPE_ZH[n.type]} ${num}${lang?' · '+esc(originLangZh(n)):''}</div>
     <div class="root-title-row"><h1 class="serif">${esc(n.label)}</h1><button class="fav-btn${fav?' on':''}" title="收藏">${fav?'已收藏':'收藏'}</button></div>
     <p class="root-origin">${ow?'源自'+(lang?esc(originLangZh(n)):'')+'的 <i>'+esc(ow)+'</i>，':''}意思是「${esc(zh(n.meaning))}」${en(n.meaning)?'（'+esc(en(n.meaning))+'）':''}。</p>
     ${n.story?'<p class="root-story">'+esc(n.story)+'</p>':''}

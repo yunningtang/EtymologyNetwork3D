@@ -245,16 +245,14 @@ function showTooltip(node,x,y){
           related.slice(0,limit).forEach(item=>{
             const t=document.createElement('span'); t.className='word-tag';
             // Layer-3 fallback (morpheme composition) only at render time, marked with ~
-            const display = item.cn ? item.w+' '+shortCN(item.cn)
-              : (()=>{ const c=getWordCN(item.w); return c ? item.w+' ~'+c : item.w; })();
-            t.textContent=display;
+            const cn = item.cn ? shortCN(item.cn) : (()=>{ const c=getWordCN(item.w); return c ? '~'+c : ''; })();
+            t.innerHTML='<b>'+item.w+'</b><span>'+cn.replace(/[&<>]/g,'')+'</span>';
             if(!item.hasCn) t.style.opacity='0.65';
             t.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(item.w, e.clientX, e.clientY); };
             list.appendChild(t);
           });
           if(related.length>limit){
-            const more=document.createElement('span'); more.className='word-tag';
-            more.style.cssText='color:var(--cyan);border-color:rgba(0,229,255,0.2);cursor:pointer';
+            const more=document.createElement('span'); more.className='word-tag more';
             more.textContent='展开全部 '+related.length+' 个';
             more.onclick=(e)=>{ e.stopPropagation(); renderRelated(related.length); };
             list.appendChild(more);
@@ -290,7 +288,7 @@ function showTooltip(node,x,y){
         visible.slice(0,limit).forEach(w=>{
           const t=document.createElement('span'); t.className='word-tag';
           const cn=w.cn||WORD_CN[w.en.toLowerCase()]||'';
-          t.textContent=cn ? w.en+' '+shortCN(cn) : w.en;
+          t.innerHTML='<b>'+w.en+'</b><span>'+(cn?shortCN(cn):'').replace(/[&<>]/g,'')+'</span>';
           t.onclick=(e)=>{
             e.stopPropagation();
             ttPushHistory({type:'morpheme', id:node.id, x:e.clientX, y:e.clientY});
@@ -299,8 +297,7 @@ function showTooltip(node,x,y){
           ttWords.appendChild(t);
         });
         if(visible.length>limit){
-          const more=document.createElement('span'); more.className='word-tag';
-          more.style.cssText='color:var(--cyan);border-color:rgba(0,229,255,0.2);cursor:pointer';
+          const more=document.createElement('span'); more.className='word-tag more';
           more.textContent='展开全部 '+visible.length+' 个单词';
           more.onclick=(e)=>{ e.stopPropagation(); renderWords(visible.length); };
           ttWords.appendChild(more);
