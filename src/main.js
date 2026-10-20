@@ -7,7 +7,8 @@ function init(){
   buildGraph(); nodes.forEach(n=>indexNode(n)); buildWordReverse();
   bar.style.width='70%'; status.textContent='把积木摆上架…';
   setTimeout(()=>{
-    wsRender();
+    if(location.hash.length>2) applyHash(); else wsRender();
+    syncHash(true);
     bar.style.width='100%';
     setTimeout(startIntro,250);
   },60);

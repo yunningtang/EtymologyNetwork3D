@@ -51,3 +51,7 @@ function updateStudyBadge(){
   if(_favCache.length>0){ badge.style.display='flex'; badge.textContent=_favCache.length; }
   else { badge.style.display='none'; }
 }
+
+// Last root studied, for "继续上次" on the home page and in the study panel.
+function rememberRoot(id){ try{ localStorage.setItem('etym_last',id); }catch(e){} }
+function lastRoot(){ try{ const id=localStorage.getItem('etym_last'); return id&&nodeMap[id]?nodeMap[id]:null; }catch(e){ return null; } }

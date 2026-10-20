@@ -19,8 +19,8 @@ const TYPE_LABELS={p:'前缀',r:'词根',s:'后缀',w:'单词'};
 // hides the dictionary meaning behind a "揭晓" control until the learner has made a guess.
 let guessMode=(function(){ try{ return localStorage.getItem('etym_guess')!=='0'; }catch(e){ return true; } })();
 const ttGuess=document.getElementById('tt-guess');
-function setGuessMode(on){ guessMode=on; try{ localStorage.setItem('etym_guess',on?'1':'0'); }catch(e){} ttGuess.classList.toggle('on',on); }
-ttGuess.classList.toggle('on',guessMode);
+function setGuessMode(on){ guessMode=on; try{ localStorage.setItem('etym_guess',on?'1':'0'); }catch(e){} ttGuess.classList.toggle('on',on); ttGuess.textContent=on?'猜词模式 开':'猜词模式 关'; }
+setGuessMode(guessMode);
 ttGuess.onclick=(e)=>{ e.stopPropagation(); setGuessMode(!guessMode); if(pinnedWordNode){ pinnedWordNode._revealed=false; showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); } };
 const ttStory=document.getElementById('tt-story'), ttImage=document.getElementById('tt-image'), ttCompare=document.getElementById('tt-compare');
 const ESC=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -72,6 +72,7 @@ function showWordDetail(word, x, y, _fromBack){
   }
   showTooltip(vNode, x, y);
   tooltip.classList.add('pinned','visible');
+  if(typeof syncHash==='function') syncHash();
 }
 
 function showTooltip(node,x,y){
@@ -95,7 +96,7 @@ function showTooltip(node,x,y){
   if(displayMeaning && isWordView && guessMode && !node._revealed){
     ttMeaning.textContent=''; ttMeaning.style.cssText='';
     const rv=document.createElement('div'); rv.className='tt-reveal';
-    rv.innerHTML='<div class="q">先根据上面的拆解猜一猜它的意思<small>猜过再看，记得更牢</small></div><div class="go">查看释义</div>';
+    rv.innerHTML='<div class="q">释义先藏起来了：根据上面的拆解猜一猜，再点这里查看。<small>猜过再看记得更牢 · 右上角可关闭猜词模式</small></div><div class="go">查看释义</div>';
     rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); };
     ttMeaning.appendChild(rv);
   } else if(displayMeaning){
@@ -160,17 +161,9 @@ function showTooltip(node,x,y){
         onSwap: (w)=>{ ttPushHistory({type:'word', label:node.label, x:tooltip.offsetLeft+40, y:tooltip.offsetTop+40}); showWordDetail(w, tooltip.offsetLeft, tooltip.offsetTop, true); tooltip.classList.add('pinned'); },
       });
       ttEtymology.appendChild(row);
-      const constructed = node.constructedMeaning || buildMorphMeaning(node.morphemes.map(m=>m.id||m));
-      if(constructed){
-        const line=document.createElement('div'); line.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap';
-        const arrow=document.createElement('span'); arrow.className='tt-morph-arrow'; arrow.textContent='≈';
-        arrow.title='词素拼接·非权威释义';
-        const result=document.createElement('span');
-        result.style.cssText='font-size:11px;color:var(--muted);font-style:italic';
-        result.textContent=constructed;
-        result.title='词素拼接·非权威释义';
-        line.appendChild(arrow); line.appendChild(result); ttEtymology.appendChild(line);
-      }
+      // literal reading: one short gloss per part, e.g. 进入 + 看
+      const lit=node.morphemes.map(m=>nodeMap[m.id]).filter(Boolean).map(n=>{ const z=(n.meaning||'').match(/[一-鿿…].*$/); return (z?z[0]:n.meaning||'').split('/')[0].replace(/[（(].*$/,''); }).filter(Boolean).join(' + ');
+      if(lit){ const line=document.createElement('div'); line.className='tt-literal'; line.innerHTML='<span class="k">字面义</span><span>'+ESC(lit)+'</span>'; ttEtymology.appendChild(line); }
     }
     // Same-root comparison: other words built on this word's main root, one per prefix,
     // so the learner sees how the prefix changes the meaning (import / export / transport …)
@@ -372,6 +365,15 @@ function pinNode(node){ document.getElementById('hint').classList.remove('visibl
 
 function unpinNode(){
   pinnedNode=null; pinnedWordNode=null; ttDragged=false; tooltip.classList.remove('pinned'); hideTooltip(); ttClearHistory();
+  if(typeof syncHash==='function') syncHash();
 }
+// Mobile: the panel is a bottom sheet; dragging it down (from the top of its content) closes it.
+(function(){
+  let y0=null;
+  tooltip.addEventListener('touchstart',e=>{ y0=(window.innerWidth<=720&&tooltip.scrollTop<=0)?e.touches[0].clientY:null; },{passive:true});
+  tooltip.addEventListener('touchmove',e=>{ if(y0===null) return; const dy=e.touches[0].clientY-y0; if(dy>0&&tooltip.scrollTop<=0){ tooltip.style.transition='none'; tooltip.style.transform='translateY('+dy+'px)'; } },{passive:true});
+  const end=e=>{ if(y0===null) return; const dy=(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientY:y0)-y0; tooltip.style.transition=''; tooltip.style.transform=''; y0=null; if(dy>90) unpinNode(); };
+  tooltip.addEventListener('touchend',end); tooltip.addEventListener('touchcancel',end);
+})();
 
 document.getElementById('tt-close').onclick=()=>unpinNode();

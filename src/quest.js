@@ -24,23 +24,28 @@ function cfStep(){
 
 // ---------- question building ----------
 const QUEST_N=10;
-function qPool(){
-  // words visible under the level filter, with a gloss and at least one morpheme; most frequent first
-  const pool=[]; for(const [w,ids] of WORD_DATA){ if(!wordVisible(w)) continue; if(!WORD_CN[w]) continue; const v=ids.filter(id=>nodeMap[id]); if(v.length) pool.push({w,ids:v}); if(pool.length>=1500) break; }
+function qPool(scope){
+  // words visible under the level filter, with a gloss and at least one morpheme; most frequent first.
+  // scope {morph} limits the pool to the words built with that morpheme (练习这组词).
+  const pool=[];
+  const src=scope&&scope.morph ? (MORPH_WORDS[scope.morph]||[]).map(w=>[w,WORD_DATA.get(w)||[]]) : WORD_DATA;
+  for(const [w,ids] of src){ if(!wordVisible(w)) continue; if(!WORD_CN[w]) continue; const v=ids.filter(id=>nodeMap[id]); if(v.length) pool.push({w,ids:v}); if(pool.length>=1500) break; }
   return pool;
 }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function pick(a,n){ return shuffle(a.slice()).slice(0,n); }
-function buildQuestions(){
-  const pool=qPool(); if(pool.length<12) return [];
+function buildQuestions(scope){
+  const pool=qPool(scope); if(pool.length<(scope?4:12)) return [];
+  const all=scope?qPool():pool;              // distractors always come from the whole word list
   const multi=pool.filter(p=>p.ids.length>=2);
   const qs=[]; const used=new Set();
   const take=(arr)=>{ for(const p of shuffle(arr.slice())){ if(!used.has(p.w)){ used.add(p.w); return p; } } return null; };
-  for(let i=0;i<QUEST_N;i++){
+  const n=scope?Math.min(QUEST_N,pool.length):QUEST_N;
+  for(let i=0;i<n;i++){
     const type=i%3; // 0 meaning, 1 build, 2 root
     if(type===0){
       const p=take(pool); if(!p) break;
-      const wrong=pick(pool.filter(x=>x.w!==p.w&&shortCN(WORD_CN[x.w])!==shortCN(WORD_CN[p.w])),3).map(x=>shortCN(WORD_CN[x.w]));
+      const wrong=pick(all.filter(x=>x.w!==p.w&&shortCN(WORD_CN[x.w])!==shortCN(WORD_CN[p.w])),3).map(x=>shortCN(WORD_CN[x.w]));
       qs.push({type:'meaning',word:p.w,ids:p.ids,answer:shortCN(WORD_CN[p.w]),options:shuffle([shortCN(WORD_CN[p.w]),...wrong])});
     } else if(type===1){
       const p=take(multi.length?multi:pool); if(!p) break;
@@ -49,7 +54,7 @@ function buildQuestions(){
     } else {
       const p=take(pool.filter(x=>x.ids.some(id=>nodeMap[id].type==='r'))); if(!p) break;
       const root=p.ids.find(id=>nodeMap[id].type==='r');
-      const others=pick(pool.filter(x=>!x.ids.includes(root)&&!(WORD_DATA.get(x.w)||[]).includes(root)),3).map(x=>x.w);
+      const others=pick(all.filter(x=>!x.ids.includes(root)&&!(WORD_DATA.get(x.w)||[]).includes(root)),3).map(x=>x.w);
       qs.push({type:'root',root,word:p.w,ids:p.ids,answer:p.w,options:shuffle([p.w,...others])});
     }
   }
@@ -62,10 +67,11 @@ const qp=document.createElement('div'); qp.id='quest-panel'; qp.setAttribute('ro
 const qShade=document.createElement('div'); qShade.id='quest-shade'; qShade.style.display='none'; document.body.appendChild(qShade);
 const ESCQ=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function morphChip(id,extra){ const n=nodeMap[id]; return '<span class="q-chip q-chip-'+n.type+'" data-id="'+ESCQ(id)+'" title="'+ESCQ(n.meaning)+'">'+(extra||'')+ESCQ(n.label)+'</span>'; }
-function openQuest(){
-  const qs=buildQuestions();
-  if(qs.length<QUEST_N){ toast('这个等级的单词太少，换个等级再来吧'); return; }
-  quest={qs,i:0,score:0,picked:[],lock:false};
+function openQuest(scope){
+  scope=(scope&&scope.morph)?scope:null;     // called from a click handler with an event otherwise
+  const qs=buildQuestions(scope);
+  if(qs.length<(scope?4:QUEST_N)){ toast(scope?'这个词根的词太少，先练整个词库吧':'这个词库的单词太少，换一个词库再来吧'); return; }
+  quest={qs,i:0,score:0,picked:[],lock:false,n:qs.length,scope};
   qShade.style.display='block'; qp.style.display='block'; if(pinnedNode) unpinNode();
   renderQ();
 }
@@ -73,8 +79,8 @@ function closeQuest(){ qp.style.display='none'; qShade.style.display='none'; que
 qShade.onclick=closeQuest;
 function renderQ(){
   const q=quest.qs[quest.i], i=quest.i;
-  const head='<div class="q-head"><span class="q-step">第 '+(i+1)+' / '+QUEST_N+' 题</span><span class="q-score">得分 '+quest.score+'</span><button class="q-close" aria-label="关闭">✕</button></div>'+
-    '<div class="q-bar"><div class="q-fill" style="width:'+(i/QUEST_N*100)+'%"></div></div>';
+  const head='<div class="q-head"><span class="q-step">第 '+(i+1)+' / '+quest.n+' 题</span>'+(quest.scope?'<span class="q-scope">'+ESCQ(quest.scope.label)+'</span>':'')+'<span class="q-score">得分 '+quest.score+'</span><button class="q-close" aria-label="关闭">✕</button></div>'+
+    '<div class="q-bar"><div class="q-fill" style="width:'+(i/quest.n*100)+'%"></div></div>';
   let body='';
   if(q.type==='meaning'){
     body='<div class="q-title">这个词是什么意思？</div><div class="q-word">'+ESCQ(q.word)+'</div>'+
@@ -105,9 +111,9 @@ function finishQ(ok,explain){
   const foot=qp.querySelector('.q-foot');
   foot.innerHTML='<div class="q-result '+(ok?'ok':'no')+'">'+(ok?'太棒了！':'差一点，正确答案是：')+' '+explain+'</div>'+
     '<div class="q-explain">'+ESCQ(q.word)+' = '+q.ids.map(id=>ESCQ(nodeMap[id].label)).join(' + ')+' ≈ '+ESCQ(buildMorphMeaning(q.ids))+'</div>'+
-    '<button class="q-next">'+(quest.i+1<QUEST_N?'下一题':'看结果')+'</button>';
+    '<button class="q-next">'+(quest.i+1<quest.n?'下一题':'看结果')+'</button>';
   trackExplore('word',q.word);
-  foot.querySelector('.q-next').onclick=()=>{ quest.i++; if(quest.i<QUEST_N) renderQ(); else renderEnd(); };
+  foot.querySelector('.q-next').onclick=()=>{ quest.i++; if(quest.i<quest.n) renderQ(); else renderEnd(); };
 }
 function answerChoice(k){
   if(!quest||quest.lock) return;
@@ -130,15 +136,15 @@ function pickChip(c){
   }
 }
 function renderEnd(){
-  const s=quest.score; const stars=s>=9?3:s>=6?2:s>=3?1:0;
-  let best=0; try{ best=+(localStorage.getItem('etym_quest_best')||0); if(s>best){ best=s; localStorage.setItem('etym_quest_best',String(s)); } }catch(e){}
-  qp.innerHTML='<div class="q-end"><div class="q-stars">'+s+'<span class="dim"> / '+QUEST_N+'</span></div>'+
+  const s=quest.score, N=quest.n; const stars=s>=N*0.9?3:s>=N*0.6?2:s>=N*0.3?1:0;
+  let best=0; try{ best=+(localStorage.getItem('etym_quest_best')||0); if(!quest.scope&&s>best){ best=s; localStorage.setItem('etym_quest_best',String(s)); } }catch(e){}
+  qp.innerHTML='<div class="q-end"><div class="q-stars">'+s+'<span class="dim"> / '+N+'</span></div>'+
     '<div class="q-endtitle">'+(stars===3?'全对，太厉害了':stars===2?'做得很好':stars===1?'不错的开始':'再来一次')+'</div>'+
-    '<div class="q-endscore">答对 '+s+' / '+QUEST_N+' 题 · 最高纪录 '+best+'</div>'+
+    '<div class="q-endscore">答对 '+s+' / '+N+' 题'+(quest.scope?'':' · 最高纪录 '+best)+'</div>'+
     '<div class="q-endbtns"><button class="q-next" id="q-again">再练一组</button><button class="q-opt" id="q-done">回到工坊</button></div></div>';
   if(stars===3) confetti(undefined,undefined,160);
   Sfx.tada();
-  qp.querySelector('#q-again').onclick=openQuest; qp.querySelector('#q-done').onclick=closeQuest;
+  qp.querySelector('#q-again').onclick=()=>openQuest(quest.scope); qp.querySelector('#q-done').onclick=closeQuest;
   if(typeof updateStudyBadge==='function') updateStudyBadge();
 }
 document.getElementById('quest-btn').onclick=openQuest;

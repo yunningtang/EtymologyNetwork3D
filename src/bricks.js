@@ -58,8 +58,9 @@ function renderBricks(container, ids, opts){
     container.appendChild(b);
     setTimeout(()=>{ b.classList.add('in'); Sfx.click(); },120+i*140);
   });
-  const hint=document.createElement('div'); hint.className='brick-hint'; hint.textContent='点击展开每个部件的含义'; container.appendChild(hint);
-  container.onclick=(e)=>{ if(e.target.closest('.brick-pop')) return; e.stopPropagation(); container.classList.toggle('exploded'); hint.textContent=container.classList.contains('exploded')?'再点一下收起':'点击展开每个部件的含义'; Sfx.pop(); };
+  container.classList.add('exploded');
+  const hint=document.createElement('div'); hint.className='brick-hint'; hint.textContent='「查看」进入部件的研究页 · 点击整行收起'; container.appendChild(hint);
+  container.onclick=(e)=>{ if(e.target.closest('.brick-pop')) return; e.stopPropagation(); container.classList.toggle('exploded'); hint.textContent=container.classList.contains('exploded')?'「查看」进入部件的研究页 · 点击整行收起':'点击展开每个部件的含义'; Sfx.pop(); };
 }
 // other real words on the same root, one per prefix (most frequent first); "" = bare root word
 function swapOptions(word,rootId){

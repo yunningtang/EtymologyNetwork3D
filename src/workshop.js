@@ -36,6 +36,7 @@ function wsGo(view,arg){
   else { ws.view='wall'; ws.morph=arg; ws.cat=NODE_CAT[arg]||ws.cat; ws.wallLimit=40; }
   if(pinnedNode||pinnedWordNode) unpinNode();
   wsRender();
+  if(typeof syncHash==='function') syncHash();
 }
 function crumbs(parts){
   return '<nav class="crumbs">'+parts.map((p,i)=>'<button class="crumb'+(i===parts.length-1?' cur':'')+'" data-i="'+i+'">'+p.label+'</button>').join('<span class="crumb-sep">/</span>')+'</nav>';
@@ -57,13 +58,14 @@ function todaysRoot(){
 
 // ---------- home ----------
 function renderHome(){
-  const tr=todaysRoot();
+  const tr=todaysRoot(); const last=typeof lastRoot==='function'?lastRoot():null;
   const byType={p:[],r:[],s:[]}; BOX_ORDER.forEach(c=>byType[BOX_TYPE[c]].push(c));
   const sample=(type)=>nodes.filter(n=>n.type===type).sort((a,b)=>b.wordCount-a.wordCount).slice(0,3).map(n=>n.label).join(' · ');
   let html=`
   <section class="hero">
     <h1>从一个词根，<br>理解一组词。</h1>
     <p class="lede">英语单词由前缀、词根和后缀拼合而成。记住 200 多个常用的部件，就能看懂成千上万个词。这本图谱带你从一个部件出发，看它如何长出一整组词，以及这些词之间的联系。</p>
+    <div class="hero-actions">${tr?'<button class="btn-primary" id="hero-start">从今日词根开始 · '+esc(tr.label)+'</button>':''}${last&&(!tr||last.id!==tr.id)?'<button class="btn-ghost" id="hero-resume">继续上次 · '+esc(last.label)+'</button>':''}<button class="btn-ghost" id="hero-index">浏览目录</button></div>
   </section>
   <section class="chapter">
     <div class="chapter-head"><span class="kicker">第一章</span><h2>认识构词</h2></div>
@@ -95,6 +97,9 @@ function renderHome(){
   wsEl.innerHTML=html;
   wsEl.querySelectorAll('.index-row').forEach(b=>b.onclick=()=>wsGo('box',b.dataset.cat));
   const t=wsEl.querySelector('#today-open'); if(t) t.onclick=()=>wsGo('wall',tr.id);
+  const hs=wsEl.querySelector('#hero-start'); if(hs) hs.onclick=()=>wsGo('wall',tr.id);
+  const hr=wsEl.querySelector('#hero-resume'); if(hr) hr.onclick=()=>wsGo('wall',last.id);
+  const hi=wsEl.querySelector('#hero-index'); if(hi) hi.onclick=()=>{ const el=wsEl.querySelectorAll('.chapter')[1]; if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); };
   wsEl.querySelectorAll('.word-link').forEach(b=>b.onclick=(e)=>showWordDetail(b.dataset.w, e.clientX, e.clientY));
 }
 
@@ -152,12 +157,23 @@ function renderRoot(id){
     html+='</tbody></table></section>';
   }
   html+=`<section class="study"><div class="kicker">词表</div><h2>用 ${esc(n.label)} 构成的词<span class="count">${words.length} 个${levelFilter.size?' · 当前词表':''}</span></h2>`;
-  if(!words.length) html+='<p class="empty">当前词表里没有用它构成的词，换一个词表试试。</p>';
+  const total=(n.wordList||[]).length; const lvName=(function(){ const s=document.getElementById('level-select'); return s&&s.selectedOptions[0]?s.selectedOptions[0].textContent:''; })();
+  if(!words.length) html+='<p class="empty">当前词库「'+esc(lvName)+'」里没有用它构成的词。<button class="lv-all">查看全部词库</button></p>';
+  else if(levelFilter.size&&total>words.length) html+='<p class="lv-note">当前只显示「'+esc(lvName)+'」词库里的 '+words.length+' 个词，全部词库共 '+total+' 个。<button class="lv-all">查看全部</button></p>';
   html+='<ol class="wlist">'+words.slice(0,ws.wallLimit).map((w,i)=>`<li><button class="wrow" data-w="${esc(w)}"><span class="idx">${pad2(i+1)}</span><span class="wrow-word serif">${esc(w)}</span><span class="wrow-seg">${segments(w,id)}</span><span class="wrow-cn">${esc(shortCN(WORD_CN[w]||''))}</span>${_progCache&&_progCache.words[w]?'<span class="mark">已看</span>':''}</button></li>`).join('')+'</ol>';
   if(words.length>ws.wallLimit) html+='<button class="more-btn">继续列出 '+Math.min(40,words.length-ws.wallLimit)+' 个</button>';
   html+='</section>';
+  // next step: practise this root, or move to the neighbouring root in the same category
+  const sibs=morphsIn(cat).sort((a,b)=>visibleWordsOf(b).length-visibleWordsOf(a).length); const si=sibs.indexOf(n); const prev=sibs[si-1], next=sibs[si+1];
+  html+='<nav class="pager"><div class="pager-practice">'+(words.length>=4?'<button class="btn-primary" id="root-quest">练习这组词</button><span class="pager-note">用 '+esc(n.label)+' 构成的词出题</span>':'')+'</div><div class="pager-nav">'
+    +(prev?'<button class="pager-btn" data-id="'+esc(prev.id)+'"><span class="k">上一个</span><b>'+esc(prev.label)+'</b><span class="m">'+esc(zh(prev.meaning))+'</span></button>':'<span></span>')
+    +(next?'<button class="pager-btn next" data-id="'+esc(next.id)+'"><span class="k">下一个</span><b>'+esc(next.label)+'</b><span class="m">'+esc(zh(next.meaning))+'</span></button>':'<button class="pager-btn next" data-cat="'+esc(cat)+'"><span class="k">本组已读完</span><b>回到 '+esc(catZh(cat))+'</b></button>')
+    +'</div></nav>';
   wsEl.innerHTML=html; bindCrumbs(parts);
-  trackExplore('morpheme',id);
+  trackExplore('morpheme',id); if(typeof rememberRoot==='function') rememberRoot(id);
+  wsEl.querySelectorAll('.lv-all').forEach(b=>b.onclick=()=>{ const s=document.getElementById('level-select'); s.value=''; s.dispatchEvent(new Event('change')); });
+  wsEl.querySelectorAll('.pager-btn').forEach(b=>b.onclick=()=>{ if(b.dataset.id) wsGo('wall',b.dataset.id); else wsGo('box',b.dataset.cat); });
+  const rq=wsEl.querySelector('#root-quest'); if(rq) rq.onclick=()=>openQuest({morph:id,label:n.label});
   wsEl.querySelectorAll('.wrow,.prow').forEach(r=>r.onclick=(e)=>{ showWordDetail(r.dataset.w, e.clientX, e.clientY); });
   const more=wsEl.querySelector('.more-btn'); if(more) more.onclick=()=>{ ws.wallLimit+=40; const top=wsEl.scrollTop; renderRoot(id); wsEl.scrollTop=top; };
   const favBtn=wsEl.querySelector('.fav-btn'); favBtn.onclick=()=>{ toggleFavorite(id,[id],'morpheme'); const on=isFavorite(id); favBtn.classList.toggle('on',on); favBtn.textContent=on?'已收藏':'收藏'; updateStudyBadge(); if(on) toast('已收藏 '+n.label); };

@@ -54,10 +54,11 @@
 
 <div id="tooltip" role="dialog" aria-label="单词">
   <div id="tooltip-inner">
+    <div class="tt-handle" aria-hidden="true"></div>
     <div class="tt-header">
       <div class="badge" id="tt-badge"></div>
       <div class="tt-tools">
-        <button id="tt-guess" class="tt-chip" title="先看拆解，猜过再看释义" style="display:none">先猜后看</button>
+        <button id="tt-guess" class="tt-chip" title="开启时先看拆解，猜过再看释义" style="display:none">猜词模式 开</button>
         <button id="tt-back" title="返回" style="display:none">←</button>
         <button id="tt-close" aria-label="关闭">×</button>
       </div>
@@ -92,6 +93,7 @@
 <script src="src/ui.js"></script>
 <script src="src/workshop.js"></script>
 <script src="src/quest.js"></script>
+<script src="src/router.js"></script>
 <script src="src/main.js"></script>
 </body>
 </html>

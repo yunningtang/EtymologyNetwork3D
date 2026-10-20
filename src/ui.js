@@ -114,16 +114,18 @@ function renderStudyPanel(){
   const prog=loadProgress(), favs=loadFavorites();
   const stats=document.getElementById('sp-stats');
   const pct=Math.round(prog.totalMorphemes/MORPHEMES.length*100);
-  stats.innerHTML=
+  const last=lastRoot();
+  stats.innerHTML=(last?'<button class="sp-resume"><span>继续上次</span><b>'+last.label+' →</b></button>':'')+
     '<div class="sp-progress-bar"><div class="sp-progress-fill" style="width:'+pct+'%"></div></div>'+
     '<div class="sp-stat"><span>研究过的词根</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
     '<div class="sp-stat"><span>看过的单词</span><b>'+prog.totalWords+'</b></div>'+
     '<div class="sp-stat"><span>收藏</span><b>'+favs.length+'</b></div>'+
     '<div class="sp-stat"><span>练习最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
+  const rs=stats.querySelector('.sp-resume'); if(rs) rs.onclick=()=>{ openMorph(last.id); closeStudyPanel(); };
   const favsEl=document.getElementById('sp-favs');
   favsEl.innerHTML='';
   if(!favs.length){
-    favsEl.innerHTML='<div class="sp-empty">暂无收藏<br><span style="font-size:10px;margin-top:6px;display:block;color:var(--muted)">点击词素或单词详情中的 ♥ 收藏</span></div>';
+    favsEl.innerHTML='<div class="sp-empty">暂无收藏<br><span style="font-size:13px;margin-top:6px;display:block;color:var(--muted)">在词根页或单词面板点「收藏」</span></div>';
     return;
   }
   favs.slice().reverse().forEach(f=>{
