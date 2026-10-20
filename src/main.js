@@ -1,31 +1,16 @@
 // Startup sequence.
 // Classic script: shares the global scope with the other files in src/ (load order matters, see index.html).
 
-// ============================================================
-//  INIT
-// ============================================================
 function init(){
   const bar=document.getElementById('load-bar'), status=document.getElementById('load-status');
-  bar.style.width='20%'; status.textContent='Loading '+WORD_DATA.size+' words & 200+ morphemes...';
+  bar.style.width='30%'; status.textContent='装载 '+WORD_DATA.size+' 个单词和 206 块积木…';
   buildGraph(); nodes.forEach(n=>indexNode(n)); buildWordReverse();
-  bar.style.width='40%'; status.textContent='Building morpheme network...';
-  initPositions();
+  bar.style.width='70%'; status.textContent='把积木摆上架…';
   setTimeout(()=>{
-    bar.style.width='50%'; status.textContent='Computing layout (1/2)...';
-    setTimeout(()=>{
-      runSimulation(50);
-      bar.style.width='70%'; status.textContent='Computing layout (2/2)...';
-      setTimeout(()=>{
-        runSimulation(50);
-        bar.style.width='85%'; status.textContent='Rendering...';
-        setTimeout(()=>{
-          initThree(); resizeLabels();
-          bar.style.width='100%';
-          setTimeout(()=>{ startIntro(); animate(); },300);
-        },50);
-      },50);
-    },50);
-  },50);
+    if(location.hash.length>2) applyHash(); else wsRender();
+    syncHash(true);
+    bar.style.width='100%';
+    setTimeout(startIntro,250);
+  },60);
 }
-
 init();

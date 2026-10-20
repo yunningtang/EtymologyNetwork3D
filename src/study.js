@@ -41,7 +41,8 @@ function trackExplore(type, id){
   if(!bucket[id]){
     bucket[id]=Date.now();
     prog['total'+(type==='morpheme'?'Morphemes':'Words')]=Object.keys(bucket).length;
-    localStorage.setItem(STORAGE_KEY_PROG, JSON.stringify(prog));
+    try{ localStorage.setItem(STORAGE_KEY_PROG, JSON.stringify(prog)); }catch(e){}
+    if(type==='morpheme' && typeof toast==='function' && appState==='active') toast('已研究 '+prog.totalMorphemes+' / '+MORPHEMES.length+' 个词根');
   }
   return prog;
 }
@@ -50,3 +51,22 @@ function updateStudyBadge(){
   if(_favCache.length>0){ badge.style.display='flex'; badge.textContent=_favCache.length; }
   else { badge.style.display='none'; }
 }
+
+// Last root studied, for "继续上次" on the home page and in the study panel.
+function rememberRoot(id){ try{ localStorage.setItem('etym_last',id); }catch(e){} }
+function lastRoot(){ try{ const id=localStorage.getItem('etym_last'); return id&&nodeMap[id]?nodeMap[id]:null; }catch(e){ return null; } }
+
+// Guess log: word → {ok, n, t}. Feeds the stats in the study panel (and a review queue later).
+function recordGuess(word,ok){
+  try{ const log=JSON.parse(localStorage.getItem('etym_guess_log')||'{}'); const e=log[word]||{n:0,ok:0}; e.n++; if(ok) e.ok++; e.last=ok?1:0; e.t=Date.now(); log[word]=e; localStorage.setItem('etym_guess_log',JSON.stringify(log)); }catch(e){}
+}
+function guessStats(){
+  try{ const log=JSON.parse(localStorage.getItem('etym_guess_log')||'{}'); let n=0,ok=0,wrong=[]; for(const w in log){ n+=log[w].n; ok+=log[w].ok; if(!log[w].last) wrong.push(w); } return {n,ok,wrong}; }catch(e){ return {n:0,ok:0,wrong:[]}; }
+}
+
+// History: a chronological log of guesses and practice rounds (newest last, capped).
+function addHistory(entry){
+  try{ const h=JSON.parse(localStorage.getItem('etym_history')||'[]'); h.push(Object.assign({t:Date.now()},entry)); while(h.length>300) h.shift(); localStorage.setItem('etym_history',JSON.stringify(h)); }catch(e){}
+}
+function getHistory(){ try{ return JSON.parse(localStorage.getItem('etym_history')||'[]'); }catch(e){ return []; } }
+function clearHistory(){ try{ localStorage.removeItem('etym_history'); localStorage.removeItem('etym_guess_log'); }catch(e){} }

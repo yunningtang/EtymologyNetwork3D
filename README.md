@@ -1,8 +1,8 @@
 <div align="center">
 
-# Etymology Network 词源星图
+# Etymology Atlas · 词根研究室
 
-**看见英语单词之间的联系 — 一张活的语言网络**
+**从一个词根，理解一组词。**
 
 [![在线体验](https://img.shields.io/badge/在线体验-Live_Demo-00E5FF?style=for-the-badge&logo=github&logoColor=white)](https://yunningtang.github.io/EtymologyNetwork3D/)
 [![版本](https://img.shields.io/badge/v3.0-正式版-69F0AE?style=for-the-badge)]()
@@ -11,8 +11,7 @@
 
 <br/>
 
-*通过前缀、词根、后缀，用交互式 3D/2D 可视化探索英语词源。*
-*专为中文母语者学习英语词汇设计。*
+*一本可以探索的英语构词教材：前缀、词根、后缀，以及它们之间的联系。面向中文母语学习者。*
 
 <br/>
 
@@ -20,9 +19,6 @@
 
 <br/>
 
-![3D 星图视图](screenshot-3d.png)
-
-![分类筛选栏](screenshot-2d.png)
 
 </div>
 
@@ -32,22 +28,30 @@
 
 | 功能 | 说明 |
 |------|------|
-| **3D 星图** | 在 WebGL 驱动的星空中浏览词素之间的连接关系，支持旋转、缩放、平滑镜头 |
-| **2D 思维导图** | 层级辐射布局 — 逐层展开分组、词素、单词 |
+| **图谱首页** | 章节式目录：认识构词（前缀 / 词根 / 后缀）、今日词根、16 组词根索引 |
+| **词根研究页** | 来源与故事、「前缀 + 词根 → 含义」对照表、用该词根构成的全部单词（每个词显示其构件） |
 | **智能搜索** | 6,000+ 核心词汇即时搜索，支持中英双语，下拉实时匹配 |
 | **单词详情** | 点击任意单词查看词源拆解、词素构成、词典释义、音标与考试等级（中考/高考/四六级/考研/托福/雅思） |
 | **发音朗读** | 内置 Text-to-Speech，点击即可听到单词发音 |
 | **收藏夹** | 收藏感兴趣的单词，追踪学习进度 |
-| **分类筛选** | 按 Prefix / Root / Suffix 筛选，支持细分子类别（否定、方向、动作等） |
-| **等级筛选** | 按 中考 / 高考 / CET4 / CET6 / 考研 / TOEFL / IELTS 只看对应考纲的单词 |
-| **键盘操作** | 方向键旋转、+/− 缩放、Enter 固定屏幕中心的词素、/ 搜索、Esc 重置 |
+| **链接与后退** | 每个页面和单词都有地址（`#/root/spect`、`#/cat/sense/w/expect`），浏览器后退、刷新、分享链接都可用 |
+| **学习路径** | 首页「从今日词根开始」；词根页底部「练习这组词」与上一个 / 下一个词根；学习记录里「继续上次」 |
+| **词库选择** | 默认初高中（中考+高考），也可切到四六级 / 考研 / 托福雅思 / 全部 |
+| **练习** | 10 道小题：猜释义、把构件按顺序拼成词、找出含某词根的词；即时反馈、记录最高分；也可只练某一个词根的词 |
+| **单词研究** | 按「拆解 → 含义 → 同源 → 迁移」四步组织：构件逐段标色，点开看每段含义，换一个前缀得到另一个词 |
+| **猜词模式** | 单词面板先给拆解和字面义，四选一猜含义，再揭晓；猜错的词记在学习记录里（可关闭） |
+| **词典释义** | 按词性分行的中文释义、英文释义、词形变化（过去式 / 现在分词 / 复数 / 比较级） |
+| **词源解释** | 650+ 个初高中词各一句手写解释，从字面义走到实际义：in（进入）+ spect（看）→ 往里面仔细看 → 检查；其余词自动生成 |
+| **词根故事** | 206 个词根各一句来历，例如 salary 本义是"买盐的钱" |
+| **同源对比** | 同一词根换前缀排成一列：import / export / transport / report |
+| **键盘操作** | `/` 搜索，`Esc` 逐级返回（关卡片 → 回盒子 → 回工坊） |
 | **双语界面** | 全程中英文对照 |
 
 ## 快速开始
 
 **在线版**：[yunningtang.github.io/EtymologyNetwork3D](https://yunningtang.github.io/EtymologyNetwork3D/)
 
-**本地预览**：clone 后直接双击 [`index.html`](index.html) 用浏览器打开即可（three.js 与词汇数据都在仓库内，不依赖任何外部 CDN 或字体服务）。需要本地静态服务器的话：
+**本地预览**：clone 后直接双击 [`index.html`](index.html) 用浏览器打开即可（不依赖任何 CDN、字体服务或第三方库）。需要本地静态服务器的话：
 
 ```bash
 git clone https://github.com/yunningtang/EtymologyNetwork3D.git
@@ -73,11 +77,9 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 
 | 层级 | 技术方案 |
 |------|---------|
-| 3D 渲染 | **Three.js** r128（自托管于 `vendor/`）— 自定义 GLSL Shader、Point Sprites、Additive Blending |
-| 2D 可视化 | **Canvas 2D** — 辐射式思维导图 + 碰撞避免算法 |
-| 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无运行时外部依赖 |
-| 界面 | Liquid Glass 风格：半透明毛玻璃面板、高光描边、胶囊按钮；词素以带光照的星球渲染，大小随单词数变化 |
-| 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
+| 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无任何第三方库 |
+| 界面 | 教材式排版：白底、浅灰面板、近黑粗黑体标题、一个蓝色强调色，1px 分隔线与留白组织内容；橙 / 蓝 / 紫分别标记前缀 / 词根 / 后缀。无 WebGL、无第三方库、无图片依赖 |
+| 字体 | 系统字体栈（Helvetica / PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
 
@@ -87,26 +89,29 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 EtymologyNetwork3D/
 ├── index.html                # 页面骨架，按顺序加载 src/ 下的脚本
 ├── src/
-│   ├── style.css             # 样式
+│   ├── style.css             # 全部样式（单文件）
 │   ├── morphemes.js          # 206 个词素：来源、双语释义、语义分类
 │   ├── data.js               # 读取 data/words.js；音标回退
 │   ├── search.js             # 搜索（前缀 / 包含 / 三元组模糊）
-│   ├── graph.js              # 词素节点、共现连线、力导向布局
-│   ├── scene3d.js            # Three.js 场景、标签层、相机
+│   ├── graph.js              # 词素节点与每个词根的单词列表
 │   ├── study.js              # 收藏与学习进度（localStorage）
-│   ├── highlight.js          # 高亮状态计算
 │   ├── tooltip.js            # 词素 / 单词详情卡
 │   ├── ui.js                 # 搜索框、筛选、学习面板、交互事件、开场动画
-│   ├── loop.js               # 3D 渲染主循环
-│   ├── mindmap.js            # 2D 思维导图
+│   ├── workshop.js           # 图谱：首页 → 分类索引 → 词根研究页
+│   ├── bricks.js             # 构件组件（拆解展示、换前缀、练习拖拽）+ 合成音效
+│   ├── quest.js              # 练习题 + 提示/反馈
+│   ├── router.js             # hash 路由：地址栏、后退/前进、深链接
 │   └── main.js               # 启动流程
 ├── data/
-│   └── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
-├── vendor/
-│   └── three.min.js          # Three.js r128（自托管）
+│   ├── words.js              # 词汇数据：单词、词素映射、释义、音标、等级、英文释义、词形（由 scripts/vocab/build.js 生成）
+│   ├── notes.js              # 词源解释（由 scripts/vocab/notes.tsv 生成）
+│   └── images.js             # 词根配图的文件名与署名（由 scripts/images/fetch-commons.js 生成）
+├── assets/morphemes/         # 词素配图（Wikimedia Commons，自由许可）
 ├── scripts/vocab/
 │   ├── fetch.js              # 下载 ECDICT 词典与词根库到 scripts/output/（已 gitignore）
 │   ├── build.js              # 生成 data/words.js
+│   ├── build-notes.js        # notes.tsv → data/notes.js
+│   ├── notes.tsv             # 手写词源解释
 │   ├── rootmap.js            # 本项目词素 ↔ ECDICT 词根库条目的对应表
 │   ├── patterns.js           # 正则候选规则（只产生候选，不直接入库）
 │   └── review/reviewed.tsv   # 人工校验结果：单词 → 词素（覆盖其它来源）
@@ -131,9 +136,17 @@ npm run data:build    # 生成 data/words.js，并在 scripts/output/ 输出覆�
 
 音标缺失的少数单词会显示规则估算音标，并以 `≈` 标出。
 
-## 17 大语义分类
+### 词素配图
 
-词素网络按颜色编码分为以下语义组：
+```bash
+node scripts/images/fetch-commons.js        # 按 scripts/images/queries.tsv 从 Wikimedia Commons 取图
+```
+
+只接受公有领域 / CC0 / CC BY / CC BY-SA 的照片，每张压成 480px 宽的 webp 放到 `assets/morphemes/`，作者与许可证写入 `data/images.js`，卡片上显示带链接的署名。
+
+## 16 组词根
+
+词素按语义分为 16 组：
 
 > **Create 创造** · **Action 动作** · **Sense 感知** · **Mind 认知** · **Language 语言** · **Nature 自然** · **Society 社会** · **Number 数量** · **Direction 方向** · **Negation 否定** · **Degree 程度** · **Noun 名词** · **Adj 形容词** · **Verb 动词** · **Adv 副词** · **Auxiliary 辅助** · **Fidelity 忠诚**
 

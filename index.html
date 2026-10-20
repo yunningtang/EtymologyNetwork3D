@@ -11,148 +11,91 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Etymology Network 词源星图">
 <meta name="twitter:description" content="Explore English word origins through an interactive 3D network visualization.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%233C6E47'/><text x='50' y='68' font-size='54' text-anchor='middle' fill='white' font-family='Georgia,serif'>Æ</text></svg>">
 <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
 
-<!-- Loading -->
-<div id="loading">
-  <div class="brand-load">Etymology Network</div>
-  <div class="loader-ring"></div>
-  <div id="load-status">Mapping word roots...</div>
-  <div id="load-progress"><div id="load-bar"></div></div>
-</div>
+<div id="loading"><div class="brand-load serif">词根图谱</div><div id="load-status">正在整理词根…</div><div id="load-progress"><div id="load-bar"></div></div></div>
+<div id="intro-overlay" style="display:none"></div>
+<div id="hint" style="display:none"></div>
 
-<!-- Intro Overlay -->
-<div id="intro-overlay">
-  <div class="tagline">See how English words connect</div>
-  <div class="tagline-sub">200+ roots · 6,000+ words · One living network</div>
-</div>
+<header id="top">
+  <nav id="topnav">
+    <label class="lv-wrap"><span>词库</span>
+      <select id="level-select" aria-label="选择词库">
+        <option value="zg" selected>初高中</option><option value="z">中考</option><option value="g">高考</option><option value="46">四六级</option><option value="k">考研</option><option value="ti">托福雅思</option><option value="">全部</option>
+      </select>
+    </label>
+    <button id="quest-btn">练习</button>
+    <button id="study-toggle" aria-haspopup="dialog">学习记录<span id="study-badge"></span></button>
+    <div id="search-wrap">
+      <input id="search" type="text" placeholder="搜索单词或词根，例如 spect" autocomplete="off" spellcheck="false" aria-label="搜索">
+      <button id="search-clear" aria-label="清除">×</button>
+      <span id="search-count"></span>
+      <div id="search-dropdown"></div>
+    </div>
+  </nav>
+</header>
+<div id="metrics" hidden><b id="m-nodes">0</b><b id="m-clusters">0</b></div>
 
-<!-- Hint -->
-<div id="hint">
-  <span class="pulse-dot"></span>
-  <span>Hover to explore · Click to pin 悬停探索 · 点击固定</span>
-</div>
+<main id="workshop" aria-live="polite"></main>
 
-<!-- Top Bar -->
-<div id="topbar">
-  <div id="brand">Etymology Network</div>
-  <div id="metrics">
-    Words <b id="m-nodes">0</b> &nbsp;·&nbsp; Morphemes <b id="m-clusters">0</b> &nbsp;·&nbsp; Connections <b id="m-edges">0</b>
-  </div>
-</div>
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
 
-<!-- Search -->
-<div id="search-wrap">
-  <svg id="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <input id="search" type="text" placeholder="Search words... 搜索单词 (try 'struct', 'biology')" autocomplete="off" spellcheck="false">
-  <button id="search-clear" aria-label="Clear search">&times;</button>
-  <span id="search-count"></span>
-  <div id="search-dropdown"></div>
-</div>
-
-<!-- Exam level filter -->
-<div id="level-filters" role="group" aria-label="考试等级筛选">
-  <button class="lv-btn active" data-lv="">全部</button>
-  <button class="lv-btn" data-lv="z">中考</button>
-  <button class="lv-btn" data-lv="g">高考</button>
-  <button class="lv-btn" data-lv="4">CET4</button>
-  <button class="lv-btn" data-lv="6">CET6</button>
-  <button class="lv-btn" data-lv="k">考研</button>
-  <button class="lv-btn" data-lv="t">TOEFL</button>
-  <button class="lv-btn" data-lv="i">IELTS</button>
-</div>
-
-<!-- Filters -->
-<div id="filters">
-  <button class="filter-btn active" data-type="all">All 全部</button>
-  <button class="filter-btn" data-type="p"><span class="dot" style="background:var(--cyan)"></span>Prefix 前缀</button>
-  <button class="filter-btn" data-type="r"><span class="dot" style="background:var(--mint)"></span>Root 词根</button>
-  <button class="filter-btn" data-type="s"><span class="dot" style="background:var(--pink)"></span>Suffix 后缀</button>
-</div>
-<div id="sub-filters"></div>
-
-<!-- Instructions -->
-<div id="instructions">
-  Drag to rotate 拖拽旋转 · Scroll to zoom 滚轮缩放<br>
-  <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> Rotate 旋转 &nbsp; <kbd>+</kbd><kbd>−</kbd> Zoom 缩放 &nbsp; <kbd>Enter</kbd> Pin center 固定中心<br>
-  <kbd>/</kbd> Search 搜索 &nbsp; <kbd>Esc</kbd> Reset 重置
-</div>
-
-<!-- Study Toggle & Panel -->
-<button id="study-toggle" aria-label="Study progress 学习进度" aria-haspopup="dialog">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-  <span id="study-badge"></span>
-</button>
-<div id="study-panel">
-  <div id="sp-header">
-    <h3>学习进度</h3>
-    <button id="sp-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>
+<aside id="study-panel" aria-label="学习记录">
+  <div id="sp-header"><h3>学习记录</h3><button id="sp-close" aria-label="关闭">×</button></div>
+  <div class="sp-sfx">音效 <button class="tt-chip" id="sfx-toggle">开</button></div>
   <div id="sp-stats"></div>
+  <div id="sp-wrong"></div>
+  <div id="sp-history"></div>
   <div id="sp-favs"></div>
-</div>
+</aside>
 
-<!-- Tooltip -->
-<div id="tooltip">
+<div id="tooltip" role="dialog" aria-label="单词">
   <div id="tooltip-inner">
+    <div class="tt-handle" aria-hidden="true"></div>
     <div class="tt-header">
       <div class="badge" id="tt-badge"></div>
-      <div style="display:flex;gap:4px;align-items:center">
-        <button id="tt-back" title="Back 返回" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button id="tt-close">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+      <div class="tt-tools">
+        <button id="tt-guess" class="tt-chip" title="开启时先看拆解，猜过再看释义" style="display:none">猜词模式 开</button>
+        <button id="tt-back" title="返回" style="display:none">←</button>
+        <button id="tt-close" aria-label="关闭">×</button>
       </div>
     </div>
-    <div class="tt-label-row">
-      <div class="label" id="tt-label"></div>
-      <button id="tt-fav" title="收藏">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </button>
-    </div>
+    <div class="tt-label-row"><div class="label serif" id="tt-label"></div><button id="tt-fav" title="收藏">♡</button></div>
     <div class="tt-ipa" id="tt-ipa" style="display:none"></div>
+    <div class="tt-image" id="tt-image" style="display:none"></div>
     <div class="origin" id="tt-origin"></div>
-    <div class="meaning" id="tt-meaning"></div>
+    <div class="tt-sec" id="tt-sec-build">1 · 拆解</div>
     <div class="tt-etymology" id="tt-etymology" style="display:none"></div>
+    <div class="tt-sec" id="tt-sec-meaning">2 · 含义</div>
+    <div class="meaning" id="tt-meaning"></div>
+    <div class="tt-story" id="tt-story" style="display:none"></div>
+    <div class="tt-sec" id="tt-sec-compare">3 · 同源</div>
+    <div class="tt-compare" id="tt-compare" style="display:none"></div>
     <div class="words-list" id="tt-words"></div>
     <div class="word-count" id="tt-count"></div>
+    <div class="tt-sec" id="tt-sec-related">4 · 迁移</div>
     <div class="tt-related" id="tt-related" style="display:none"></div>
   </div>
 </div>
 
-<!-- View Toggle -->
-<div id="view-toggle">
-  <button class="view-btn active" data-view="3d">3D Globe</button>
-  <button class="view-btn" data-view="2d">2D Map</button>
-</div>
-
-<!-- 2D Mindmap -->
-<div id="mindmap-container">
-  <canvas id="mindmap-canvas"></canvas>
-</div>
-<div id="mindmap-hint">Click any morpheme to expand its word family</div>
-
-<!-- Label canvas for morpheme names -->
-<canvas id="label-canvas"></canvas>
-
-<script src="vendor/three.min.js"></script>
 <script src="data/words.js"></script>
+<script src="data/images.js"></script>
+<script src="data/notes.js"></script>
 <script src="src/morphemes.js"></script>
+<script src="src/bricks.js"></script>
 <script src="src/data.js"></script>
 <script src="src/search.js"></script>
 <script src="src/graph.js"></script>
-<script src="src/scene3d.js"></script>
 <script src="src/study.js"></script>
-<script src="src/highlight.js"></script>
 <script src="src/tooltip.js"></script>
 <script src="src/ui.js"></script>
-<script src="src/loop.js"></script>
-<script src="src/mindmap.js"></script>
+<script src="src/workshop.js"></script>
+<script src="src/quest.js"></script>
+<script src="src/router.js"></script>
 <script src="src/main.js"></script>
 </body>
 </html>
