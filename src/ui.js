@@ -175,6 +175,8 @@ function buildSubFilters(type){
   window.applyTheme=apply;
   document.getElementById('theme-toggle').onclick=()=>{ theme=theme==='kid'?'glass':'kid'; try{ localStorage.setItem('etym_theme',theme); }catch(e){} apply(); };
 })();
+// Sound effects toggle
+(function(){ const b=document.getElementById('sfx-toggle'); const paint=()=>{ b.textContent=sfxOn?'开':'关'; b.classList.toggle('on',sfxOn); }; paint(); b.onclick=()=>{ setSfx(!sfxOn); paint(); if(sfxOn) Sfx.ding(); }; })();
 // Default level: 初高中 (中考 + 高考) — the audience is school-age learners
 levelFilter = new Set(['z','g']);
 

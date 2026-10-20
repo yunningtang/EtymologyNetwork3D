@@ -82,9 +82,9 @@ function renderQ(){
       '<div class="q-hint2">'+q.ids.map(id=>ESCQ(nodeMap[id].label)+' = '+ESCQ((nodeMap[id].meaning||'').split(' ').slice(-1)[0])).join('　')+'</div>'+
       '<div class="q-opts">'+q.options.map((o,k)=>'<button class="q-opt" data-k="'+k+'"><span class="q-key">'+(k+1)+'</span>'+ESCQ(o)+'</button>').join('')+'</div>';
   } else if(q.type==='build'){
-    body='<div class="q-title">把词素按顺序拼出这个词</div><div class="q-cn">'+ESCQ(shortCN(WORD_CN[q.word]))+'</div>'+
+    body='<div class="q-title">把积木拖到框里，按顺序拼出这个词</div><div class="q-cn">'+ESCQ(shortCN(WORD_CN[q.word]))+'</div>'+
       '<div class="q-slots">'+q.ids.map(()=>'<span class="q-slot"></span>').join('')+'</div>'+
-      '<div class="q-chips">'+q.chips.map(id=>morphChip(id)).join('')+'</div><div class="q-sub">多了一个用不上的词素，小心别选错</div>';
+      '<div class="q-tray-hint">积木盒（拖上去或点一下；放错了点它拿回来）</div><div class="q-chips"></div><div class="q-sub">多了一块用不上的积木，小心别选错</div>';
   } else {
     body='<div class="q-title">哪个单词里藏着这个词根？</div><div class="q-rootrow">'+morphChip(q.root,morphIcon(q.root)+' ')+'<span class="q-rootmeaning">'+ESCQ(nodeMap[q.root].meaning)+'</span></div>'+
       '<div class="q-opts">'+q.options.map((o,k)=>'<button class="q-opt" data-k="'+k+'"><span class="q-key">'+(k+1)+'</span>'+ESCQ(o)+'</button>').join('')+'</div>';
@@ -93,10 +93,13 @@ function renderQ(){
   qp.querySelector('.q-close').onclick=closeQuest;
   quest.lock=false; quest.picked=[];
   qp.querySelectorAll('.q-opt').forEach(b=>b.onclick=()=>answerChoice(+b.dataset.k));
-  if(q.type==='build') qp.querySelectorAll('.q-chips .q-chip').forEach(c=>c.onclick=()=>pickChip(c));
+  if(q.type==='build'){
+    const tray=qp.querySelector('.q-chips');
+    q.chips.forEach(id=>{ const b=brickEl(id); tray.appendChild(b); makeDraggable(b,{onTap:pickChip,onDrop:pickChip}); });
+  }
 }
 function finishQ(ok,explain){
-  quest.lock=true; if(ok){ quest.score++; const r=qp.getBoundingClientRect(); confetti(r.left+r.width/2,r.top+r.height/3,70); }
+  quest.lock=true; if(ok){ quest.score++; const r=qp.getBoundingClientRect(); confetti(r.left+r.width/2,r.top+r.height/3,70); Sfx.ding(); } else Sfx.buzz();
   qp.querySelector('.q-score').textContent='⭐ '+quest.score;
   const q=quest.qs[quest.i];
   const foot=qp.querySelector('.q-foot');
@@ -115,7 +118,12 @@ function answerChoice(k){
 function pickChip(c){
   if(!quest||quest.lock||c.classList.contains('used')) return;
   const q=quest.qs[quest.i]; c.classList.add('used'); quest.picked.push(c.dataset.id);
-  const slots=qp.querySelectorAll('.q-slot'); const s=slots[quest.picked.length-1]; s.innerHTML=morphChip(c.dataset.id); s.classList.add('filled');
+  const slots=qp.querySelectorAll('.q-slot'); const s=slots[quest.picked.length-1];
+  const placed=brickEl(c.dataset.id,{meaning:false}); placed.classList.add('in'); s.innerHTML=''; s.appendChild(placed); s.classList.add('filled');
+  Sfx.click();
+  // tap a placed brick to take it back (only before the word is complete)
+  placed.onclick=()=>{ if(quest.lock) return; const k=quest.picked.indexOf(c.dataset.id); if(k<0) return; quest.picked.splice(k,1); c.classList.remove('used');
+    const all=[...qp.querySelectorAll('.q-slot')]; all.forEach((sl,j)=>{ sl.innerHTML=''; sl.classList.remove('filled'); const id=quest.picked[j]; if(id){ const pb=brickEl(id,{meaning:false}); pb.classList.add('in'); pb.onclick=placed.onclick; sl.appendChild(pb); sl.classList.add('filled'); } }); Sfx.pop(); };
   if(quest.picked.length===q.ids.length){
     const ok=quest.picked.every((id,j)=>id===q.ids[j]);
     finishQ(ok, ok?'<b>'+ESCQ(q.word)+'</b>':'<b>'+q.ids.map(id=>ESCQ(nodeMap[id].label)).join(' + ')+'</b>');
@@ -129,6 +137,7 @@ function renderEnd(){
     '<div class="q-endscore">答对 '+s+' / '+QUEST_N+' 题 · 最高纪录 '+best+'</div>'+
     '<div class="q-endbtns"><button class="q-next" id="q-again">再来一关 🚀</button><button class="q-opt" id="q-done">回到星图</button></div></div>';
   if(stars===3) confetti(undefined,undefined,160);
+  Sfx.tada();
   qp.querySelector('#q-again').onclick=openQuest; qp.querySelector('#q-done').onclick=closeQuest;
   if(typeof updateStudyBadge==='function') updateStudyBadge();
 }

@@ -109,7 +109,7 @@ function showTooltip(node,x,y){
     ttMeaning.textContent=''; ttMeaning.style.cssText='';
     const rv=document.createElement('div'); rv.className='tt-reveal';
     rv.innerHTML='<div class="q">看下面的词素拆解，先猜猜这个词的意思<small>猜好了再点开，记得更牢</small></div><div class="go">揭晓释义 →</div>';
-    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); };
+    rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); };
     ttMeaning.appendChild(rv);
   } else if(displayMeaning){
     ttMeaning.textContent = displayMeaning;
@@ -163,27 +163,26 @@ function showTooltip(node,x,y){
     // The dictionary meaning is shown above; this row deliberately shows the
     // literal composition so learners can compare the two.
     if(node.morphemes&&node.morphemes.length>0){
-      ttEtymology.style.display='flex';
-      node.morphemes.forEach((m,i)=>{
-        if(i>0){ const plus=document.createElement('span'); plus.className='tt-morph-plus'; plus.textContent='+'; ttEtymology.appendChild(plus); }
-        const mn=nodeMap[m.id]; const mhex=mn?mn.colorHex:'#999';
-        const part=document.createElement('span'); part.className='tt-morph-part';
-        part.style.background=mhex+'1A'; part.style.color=mhex; part.style.borderColor=mhex+'40';
-        part.textContent=m.label;
-        part.title=mn?mn.meaning:'';
-        part.style.cursor='pointer';
-        part.onclick=(e)=>{ e.stopPropagation(); if(nodeMap[m.id]){ ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); pinNode(nodeMap[m.id]); } };
-        ttEtymology.appendChild(part);
+      ttEtymology.style.display='block';
+      const me=node.label.toLowerCase();
+      // Bricks: fly in and snap; click to explode (meanings + 查看 + 换一块前缀 → new word)
+      const row=document.createElement('div');
+      renderBricks(row, node.morphemes.map(m=>m.id), {
+        word: me,
+        onOpen: (id)=>{ ttPushHistory({type:'word', label:node.label, x:tooltip.offsetLeft+40, y:tooltip.offsetTop+40}); pinNode(nodeMap[id]); },
+        onSwap: (w)=>{ ttPushHistory({type:'word', label:node.label, x:tooltip.offsetLeft+40, y:tooltip.offsetTop+40}); showWordDetail(w, tooltip.offsetLeft, tooltip.offsetTop, true); tooltip.classList.add('pinned'); },
       });
+      ttEtymology.appendChild(row);
       const constructed = node.constructedMeaning || buildMorphMeaning(node.morphemes.map(m=>m.id||m));
       if(constructed){
+        const line=document.createElement('div'); line.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap';
         const arrow=document.createElement('span'); arrow.className='tt-morph-arrow'; arrow.textContent='≈';
         arrow.title='词素拼接·非权威释义';
         const result=document.createElement('span');
         result.style.cssText='font-size:11px;color:var(--muted);font-style:italic';
         result.textContent=constructed;
         result.title='词素拼接·非权威释义';
-        ttEtymology.appendChild(arrow); ttEtymology.appendChild(result);
+        line.appendChild(arrow); line.appendChild(result); ttEtymology.appendChild(line);
       }
     }
     // Same-root comparison: other words built on this word's main root, one per prefix,
@@ -278,17 +277,7 @@ function showTooltip(node,x,y){
         ttRelated.appendChild(list);
       }
     }
-    // Morpheme tags
-    if(node.morphemes){
-      node.morphemes.forEach(m=>{
-        const mn=nodeMap[m.id]; const mhex=mn?mn.colorHex:'#999';
-        const t=document.createElement('span'); t.className='morpheme-tag';
-        t.style.background=mhex+'1A'; t.style.color=mhex; t.style.borderColor=mhex+'40';
-        t.textContent=m.label;
-        t.onclick=(e)=>{ e.stopPropagation(); if(nodeMap[m.id]){ ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); pinNode(nodeMap[m.id]); } };
-        ttWords.appendChild(t);
-      });
-    }
+    // (morpheme navigation now lives on the bricks: 查看)
   } else {
     // Morpheme node: picture (Wikimedia Commons, with credit) and one-line origin story
     const img=(window.MORPH_IMAGES||{})[node.id];
