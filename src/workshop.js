@@ -112,7 +112,7 @@ function renderCategory(cat){
   let html=crumbs(parts)+`<header class="page-head"><div class="kicker">第二章 · ${pad2(gi)}.${ci} · ${esc(catEn(cat))}</div><h1>${esc(catZh(cat))}</h1><p class="lede">${intro} 下面按能拼出的词数排列，点一个部件进入它的研究页。</p></header><ol class="mlist">`;
   items.forEach((n,i)=>{
     const vw=visibleWordsOf(n); const sample=vw.slice(0,3).map(w=>w.en).join(', ');
-    html+=`<li><button class="mrow${vw.length?'':' dim'}" data-id="${n.id}"><span class="idx">${pad2(i+1)}</span><span class="mrow-main"><span class="serif mrow-label">${esc(n.label)}</span><span class="mrow-meaning">${esc(n.meaning)}</span></span><span class="mrow-origin">${esc(n.origin||'')}</span><span class="mrow-sample">${esc(sample)}</span><span class="mrow-count">${vw.length?vw.length+' 词':'本词表无词'}</span>${isFavorite(n.id)?'<span class="mark">收藏</span>':''}${_progCache&&_progCache.morphemes[n.id]?'<span class="mark">已读</span>':''}</button></li>`;
+    html+=`<li><button class="mrow${vw.length?'':' dim'}${_progCache&&_progCache.morphemes[n.id]?' seen':''}" data-id="${n.id}"><span class="idx">${pad2(i+1)}</span><span class="mrow-main"><span class="serif mrow-label">${esc(n.label)}</span><span class="mrow-meaning">${esc(n.meaning)}</span></span><span class="mrow-origin">${esc(n.origin||'')}</span><span class="mrow-sample">${esc(sample)}</span><span class="mrow-count">${vw.length?vw.length+' 词':'本词表无词'}</span>${isFavorite(n.id)?'<span class="mark">收藏</span>':''}${_progCache&&_progCache.morphemes[n.id]?'<span class="mark">已读</span>':''}</button></li>`;
   });
   html+='</ol>';
   wsEl.innerHTML=html; bindCrumbs(parts);
@@ -160,7 +160,7 @@ function renderRoot(id){
   const total=(n.wordList||[]).length; const lvName=(function(){ const s=document.getElementById('level-select'); return s&&s.selectedOptions[0]?s.selectedOptions[0].textContent:''; })();
   if(!words.length) html+='<p class="empty">当前词库「'+esc(lvName)+'」里没有用它构成的词。<button class="lv-all">查看全部词库</button></p>';
   else if(levelFilter.size&&total>words.length) html+='<p class="lv-note">当前只显示「'+esc(lvName)+'」词库里的 '+words.length+' 个词，全部词库共 '+total+' 个。<button class="lv-all">查看全部</button></p>';
-  html+='<ol class="wlist">'+words.slice(0,ws.wallLimit).map((w,i)=>`<li><button class="wrow" data-w="${esc(w)}"><span class="idx">${pad2(i+1)}</span><span class="wrow-word serif">${esc(w)}</span><span class="wrow-seg">${segments(w,id)}</span><span class="wrow-cn">${esc(shortCN(WORD_CN[w]||''))}</span>${_progCache&&_progCache.words[w]?'<span class="mark">已看</span>':''}</button></li>`).join('')+'</ol>';
+  html+='<ol class="wlist">'+words.slice(0,ws.wallLimit).map((w,i)=>`<li><button class="wrow${_progCache&&_progCache.words[w]?' seen':''}" data-w="${esc(w)}"><span class="idx">${pad2(i+1)}</span><span class="wrow-word serif">${esc(w)}</span><span class="wrow-seg">${segments(w,id)}</span><span class="wrow-cn">${esc(shortCN(WORD_CN[w]||''))}</span>${_progCache&&_progCache.words[w]?'<span class="mark">已看</span>':''}</button></li>`).join('')+'</ol>';
   if(words.length>ws.wallLimit) html+='<button class="more-btn">继续列出 '+Math.min(40,words.length-ws.wallLimit)+' 个</button>';
   html+='</section>';
   // next step: practise this root, or move to the neighbouring root in the same category
