@@ -144,6 +144,7 @@ function renderRoot(id){
     <div class="root-title-row"><h1 class="serif">${esc(n.label)}</h1><button class="fav-btn${fav?' on':''}" title="收藏">${fav?'已收藏':'收藏'}</button></div>
     <p class="root-origin">${ow?'源自'+(lang?esc(originLangZh(n)):'')+'的 <i>'+esc(ow)+'</i>，':''}意思是「${esc(zh(n.meaning))}」${en(n.meaning)?'（'+esc(en(n.meaning))+'）':''}。</p>
     ${n.story?'<p class="root-story">'+esc(n.story)+'</p>':''}
+    ${n.caution?'<p class="root-caution"><span class="k">易混</span>'+esc(n.caution)+'</p>':''}
     ${img&&img.file?'<figure class="root-fig"><img loading="lazy" alt="" src="assets/morphemes/'+esc(img.file)+'"><figcaption><a href="'+esc(img.url||'#')+'" target="_blank" rel="noopener">'+esc((img.author||'Wikimedia Commons')+' · '+(img.license||''))+'</a></figcaption></figure>':''}
   </header>`;
   const tbl=prefixTable(n);

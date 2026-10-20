@@ -437,3 +437,5 @@ a{color:inherit;text-decoration:none}
 .sp-hist .k.ok{color:var(--ok)}.sp-hist .k.bad{color:var(--bad)}
 .sp-hist b{font-weight:700}
 .sp-hist .m{color:var(--muted);font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.root-caution{margin-top:12px;font-size:14px;color:var(--ink-2);max-width:640px;line-height:1.8;padding:10px 14px;background:var(--surface);border-radius:3px}
+.root-caution .k{font-weight:700;color:var(--bad);margin-right:8px}
