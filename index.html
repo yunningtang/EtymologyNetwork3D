@@ -11,58 +11,42 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Etymology Network 词源星图">
 <meta name="twitter:description" content="Explore English word origins through an interactive 3D network visualization.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%233C6E47'/><text x='50' y='68' font-size='54' text-anchor='middle' fill='white' font-family='Georgia,serif'>Æ</text></svg>">
 <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
 
-<div id="loading">
-  <div class="brand-load">词根积木</div>
-  <div id="load-status">正在把积木摆上架…</div>
-  <div id="load-progress"><div id="load-bar"></div></div>
-</div>
+<div id="loading"><div class="brand-load serif">Etymology Atlas</div><div id="load-status">正在整理词根…</div><div id="load-progress"><div id="load-bar"></div></div></div>
 <div id="intro-overlay" style="display:none"></div>
 <div id="hint" style="display:none"></div>
 
 <header id="top">
-  <a id="brand" href="#" aria-label="回到工坊"><span class="brand-brick"><i></i><i></i><i></i></span><span class="brand-text">词根积木</span></a>
-  <div id="search-wrap">
-    <svg id="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input id="search" type="text" placeholder="查一个单词或词根" autocomplete="off" spellcheck="false">
-    <button id="search-clear" aria-label="清除">&times;</button>
-    <span id="search-count"></span>
-    <div id="search-dropdown"></div>
-  </div>
+  <a id="brand" href="#"><span class="brand-main serif">Etymology Atlas</span><span class="brand-sub">词根研究室</span></a>
   <nav id="topnav">
-    <button id="quest-btn" title="10 道小题的练习">今天的练习</button>
-    <button id="study-toggle" aria-label="我的学习" aria-haspopup="dialog">我的<span id="study-badge"></span></button>
+    <label class="lv-wrap"><span>词库</span>
+      <select id="level-select" aria-label="选择词库">
+        <option value="zg" selected>初高中</option><option value="z">中考</option><option value="g">高考</option><option value="46">四六级</option><option value="k">考研</option><option value="ti">托福雅思</option><option value="">全部</option>
+      </select>
+    </label>
+    <button id="quest-btn">练习</button>
+    <button id="study-toggle" aria-haspopup="dialog">学习记录<span id="study-badge"></span></button>
+    <div id="search-wrap">
+      <input id="search" type="text" placeholder="搜索单词或词根，例如 spect" autocomplete="off" spellcheck="false" aria-label="搜索">
+      <button id="search-clear" aria-label="清除">×</button>
+      <span id="search-count"></span>
+      <div id="search-dropdown"></div>
+    </div>
   </nav>
 </header>
-
-<div id="toolbar">
-  <div id="level-filters" role="group" aria-label="考试等级">
-    <span class="lv-label">词表</span>
-    <button class="lv-btn active" data-lv="zg">初高中</button>
-    <button class="lv-btn" data-lv="z">中考</button>
-    <button class="lv-btn" data-lv="g">高考</button>
-    <button class="lv-btn" data-lv="46">四六级</button>
-    <button class="lv-btn" data-lv="k">考研</button>
-    <button class="lv-btn" data-lv="ti">托福雅思</button>
-    <button class="lv-btn" data-lv="">全部</button>
-  </div>
-  <div id="metrics"><b id="m-nodes">0</b> 个词 · <b id="m-clusters">0</b> 块积木</div>
-</div>
+<div id="metrics" hidden><b id="m-nodes">0</b><b id="m-clusters">0</b></div>
 
 <main id="workshop" aria-live="polite"></main>
 
 <div id="toast"></div>
 <canvas id="confetti"></canvas>
 
-<aside id="study-panel" aria-label="我的学习">
-  <div id="sp-header">
-    <h3>我的学习</h3>
-    <button id="sp-close" aria-label="关闭">×</button>
-  </div>
+<aside id="study-panel" aria-label="学习记录">
+  <div id="sp-header"><h3>学习记录</h3><button id="sp-close" aria-label="关闭">×</button></div>
   <div class="sp-sfx">音效 <button class="tt-chip" id="sfx-toggle">开</button></div>
   <div id="sp-stats"></div>
   <div id="sp-favs"></div>
@@ -73,34 +57,32 @@
     <div class="tt-header">
       <div class="badge" id="tt-badge"></div>
       <div class="tt-tools">
-        <button id="tt-guess" class="tt-chip" title="先猜后看：先看词素拆解，再揭晓释义" style="display:none">先猜后看</button>
+        <button id="tt-guess" class="tt-chip" title="先看拆解，猜过再看释义" style="display:none">先猜后看</button>
         <button id="tt-back" title="返回" style="display:none">←</button>
         <button id="tt-close" aria-label="关闭">×</button>
       </div>
     </div>
-    <div class="tt-label-row">
-      <div class="label" id="tt-label"></div>
-      <button id="tt-fav" title="收藏">♡</button>
-    </div>
+    <div class="tt-label-row"><div class="label serif" id="tt-label"></div><button id="tt-fav" title="收藏">♡</button></div>
     <div class="tt-ipa" id="tt-ipa" style="display:none"></div>
     <div class="tt-image" id="tt-image" style="display:none"></div>
     <div class="origin" id="tt-origin"></div>
+    <div class="tt-sec" id="tt-sec-build">1 · 拆解</div>
+    <div class="tt-etymology" id="tt-etymology" style="display:none"></div>
+    <div class="tt-sec" id="tt-sec-meaning">2 · 含义</div>
     <div class="meaning" id="tt-meaning"></div>
     <div class="tt-story" id="tt-story" style="display:none"></div>
-    <div class="tt-etymology" id="tt-etymology" style="display:none"></div>
+    <div class="tt-sec" id="tt-sec-compare">3 · 同源</div>
     <div class="tt-compare" id="tt-compare" style="display:none"></div>
     <div class="words-list" id="tt-words"></div>
     <div class="word-count" id="tt-count"></div>
+    <div class="tt-sec" id="tt-sec-related">4 · 迁移</div>
     <div class="tt-related" id="tt-related" style="display:none"></div>
   </div>
 </div>
 
 <script src="data/words.js"></script>
 <script src="data/images.js"></script>
-<script src="data/sprites.js"></script>
 <script src="src/morphemes.js"></script>
-<script src="src/icons.js"></script>
-<script src="src/pixels.js"></script>
 <script src="src/bricks.js"></script>
 <script src="src/data.js"></script>
 <script src="src/search.js"></script>

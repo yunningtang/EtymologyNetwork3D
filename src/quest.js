@@ -61,7 +61,7 @@ let quest=null; // {qs, i, score, picked:[]}
 const qp=document.createElement('div'); qp.id='quest-panel'; qp.setAttribute('role','dialog'); qp.setAttribute('aria-label','今天探索'); qp.style.display='none'; document.body.appendChild(qp);
 const qShade=document.createElement('div'); qShade.id='quest-shade'; qShade.style.display='none'; document.body.appendChild(qShade);
 const ESCQ=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function morphChip(id,extra){ const n=nodeMap[id]; return '<span class="q-chip" data-id="'+ESCQ(id)+'" style="color:'+n.colorHex+';border-color:'+n.colorHex+'66" title="'+ESCQ(n.meaning)+'">'+(extra||'')+ESCQ(n.label)+'</span>'; }
+function morphChip(id,extra){ const n=nodeMap[id]; return '<span class="q-chip q-chip-'+n.type+'" data-id="'+ESCQ(id)+'" title="'+ESCQ(n.meaning)+'">'+(extra||'')+ESCQ(n.label)+'</span>'; }
 function openQuest(){
   const qs=buildQuestions();
   if(qs.length<QUEST_N){ toast('这个等级的单词太少，换个等级再来吧'); return; }
@@ -84,9 +84,9 @@ function renderQ(){
   } else if(q.type==='build'){
     body='<div class="q-title">把积木拖到框里，按顺序拼出这个词</div><div class="q-cn">'+ESCQ(shortCN(WORD_CN[q.word]))+'</div>'+
       '<div class="q-slots">'+q.ids.map(()=>'<span class="q-slot"></span>').join('')+'</div>'+
-      '<div class="q-tray-hint">积木盒（拖上去或点一下；放错了点它拿回来）</div><div class="q-chips"></div><div class="q-sub">多了一块用不上的积木，小心别选错</div>';
+      '<div class="q-tray-hint">可用的部件（拖上去或点一下；放错了点它拿回来）</div><div class="q-chips"></div><div class="q-sub">其中一个部件用不上</div>';
   } else {
-    body='<div class="q-title">哪个单词里藏着这个词根？</div><div class="q-rootrow"><span class="q-rootpx">'+morphSprite(q.root,48)+'</span>'+morphChip(q.root)+'<span class="q-rootmeaning">'+ESCQ(nodeMap[q.root].meaning)+'</span></div>'+
+    body='<div class="q-title">哪个单词里藏着这个词根？</div><div class="q-rootrow">'+morphChip(q.root)+'<span class="q-rootmeaning">'+ESCQ(nodeMap[q.root].meaning)+'</span></div>'+
       '<div class="q-opts">'+q.options.map((o,k)=>'<button class="q-opt" data-k="'+k+'"><span class="q-key">'+(k+1)+'</span>'+ESCQ(o)+'</button>').join('')+'</div>';
   }
   qp.innerHTML=head+'<div class="q-body">'+body+'</div><div class="q-foot"></div>';

@@ -47,19 +47,19 @@ function renderBricks(container, ids, opts){
   const rootId=valid.find(id=>nodeMap[id].type==='r');
   const hasPrefix=valid.some(id=>nodeMap[id].type==='p');
   // ghost slot to add a prefix when the word has none but its root family has prefixed words
-  if(!hasPrefix && rootId && swapOptions(opts.word,rootId).length){ const g=document.createElement('div'); g.className='brick brick-ghost'; g.innerHTML='<div class="brick-label">+</div><div class="brick-meaning">加一块前缀</div>'; g.onclick=(e)=>{ e.stopPropagation(); openSwap(g,opts.word,rootId,opts.onSwap); }; container.appendChild(g); }
+  if(!hasPrefix && rootId && swapOptions(opts.word,rootId).length){ const g=document.createElement('div'); g.className='brick brick-ghost'; g.innerHTML='<div class="brick-label">+</div><div class="brick-meaning">加一个前缀</div>'; g.onclick=(e)=>{ e.stopPropagation(); openSwap(g,opts.word,rootId,opts.onSwap); }; container.appendChild(g); }
   valid.forEach((id,i)=>{
     const b=brickEl(id);
     const tools=document.createElement('div'); tools.className='brick-tools';
     const open=document.createElement('button'); open.className='brick-tool'; open.textContent='查看'; open.onclick=(e)=>{ e.stopPropagation(); opts.onOpen&&opts.onOpen(id); };
     tools.appendChild(open);
-    if(nodeMap[id].type==='p' && rootId && swapOptions(opts.word,rootId).length){ const sw=document.createElement('button'); sw.className='brick-tool swap'; sw.textContent='换一块'; sw.onclick=(e)=>{ e.stopPropagation(); openSwap(b,opts.word,rootId,opts.onSwap); }; tools.appendChild(sw); }
+    if(nodeMap[id].type==='p' && rootId && swapOptions(opts.word,rootId).length){ const sw=document.createElement('button'); sw.className='brick-tool swap'; sw.textContent='换前缀'; sw.onclick=(e)=>{ e.stopPropagation(); openSwap(b,opts.word,rootId,opts.onSwap); }; tools.appendChild(sw); }
     b.appendChild(tools);
     container.appendChild(b);
     setTimeout(()=>{ b.classList.add('in'); Sfx.click(); },120+i*140);
   });
-  const hint=document.createElement('div'); hint.className='brick-hint'; hint.textContent='点一下拆开看看'; container.appendChild(hint);
-  container.onclick=(e)=>{ if(e.target.closest('.brick-pop')) return; e.stopPropagation(); container.classList.toggle('exploded'); hint.textContent=container.classList.contains('exploded')?'再点一下拼回去':'点一下拆开看看'; Sfx.pop(); };
+  const hint=document.createElement('div'); hint.className='brick-hint'; hint.textContent='点击展开每个部件的含义'; container.appendChild(hint);
+  container.onclick=(e)=>{ if(e.target.closest('.brick-pop')) return; e.stopPropagation(); container.classList.toggle('exploded'); hint.textContent=container.classList.contains('exploded')?'再点一下收起':'点击展开每个部件的含义'; Sfx.pop(); };
 }
 // other real words on the same root, one per prefix (most frequent first); "" = bare root word
 function swapOptions(word,rootId){
@@ -75,7 +75,7 @@ function swapOptions(word,rootId){
 function openSwap(anchor,word,rootId,onSwap){
   document.querySelectorAll('.brick-pop').forEach(p=>p.remove());
   const pop=document.createElement('div'); pop.className='brick-pop';
-  pop.innerHTML='<div class="brick-pop-title">换一块前缀，变成新词</div>';
+  pop.innerHTML='<div class="brick-pop-title">换一个前缀，得到另一个词</div>';
   swapOptions(word,rootId).forEach(o=>{
     const row=document.createElement('button'); row.className='brick-pop-row';
     const pn=o.pre?nodeMap[o.pre]:null;

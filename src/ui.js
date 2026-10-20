@@ -99,16 +99,12 @@ function buildSubFilters(){}
 levelFilter = new Set(['z','g']);
 
 // Exam-level filter: single select ("全部" clears). Re-renders the pinned card and the 2D map.
-document.querySelectorAll('.lv-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.lv-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    levelFilter = this.dataset.lv ? new Set(this.dataset.lv.split('')) : new Set();
-    document.getElementById('m-nodes').textContent=visibleWordCount();
-    if(pinnedWordNode){ showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); }
-    if(searchQuery){ searchResults=fuzzySearch(searchQuery); renderDropdown(searchResults); }
-    wsRefresh();
-  });
+document.getElementById('level-select').addEventListener('change',function(){
+  levelFilter = this.value ? new Set(this.value.split('')) : new Set();
+  document.getElementById('m-nodes').textContent=visibleWordCount();
+  if(pinnedWordNode){ showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); }
+  if(searchQuery){ searchResults=fuzzySearch(searchQuery); renderDropdown(searchResults); }
+  wsRefresh();
 });
 
 // ============================================================
@@ -120,7 +116,7 @@ function renderStudyPanel(){
   const pct=Math.round(prog.totalMorphemes/MORPHEMES.length*100);
   stats.innerHTML=
     '<div class="sp-progress-bar"><div class="sp-progress-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="sp-stat"><span>打开过的积木</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
+    '<div class="sp-stat"><span>研究过的词根</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
     '<div class="sp-stat"><span>看过的单词</span><b>'+prog.totalWords+'</b></div>'+
     '<div class="sp-stat"><span>收藏</span><b>'+favs.length+'</b></div>'+
     '<div class="sp-stat"><span>练习最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
@@ -134,7 +130,7 @@ function renderStudyPanel(){
     const isMorph=f.type==='morpheme';
     const cn=isMorph?(nodeMap[f.morphemes[0]]?nodeMap[f.morphemes[0]].meaning:''):getWordCN(f.word);
     const item=document.createElement('div'); item.className='sp-fav-item';
-    const typeTag=isMorph?'<span class="sp-fav-type sp-fav-morph">词素</span>':'<span class="sp-fav-type sp-fav-word-type">单词</span>';
+    const typeTag=isMorph?'<span class="sp-fav-type sp-fav-morph">词根</span>':'<span class="sp-fav-type sp-fav-word-type">单词</span>';
     item.innerHTML=typeTag+
       '<div class="sp-fav-info"><span class="sp-fav-word">'+f.word+'</span>'+(cn?'<span class="sp-fav-cn">'+cn+'</span>':'')+'</div>'+
       '<button class="sp-fav-speak" title="发音"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>'+

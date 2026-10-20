@@ -79,10 +79,8 @@ function showTooltip(node,x,y){
   const catText=node.catLabel?' · '+node.catLabel:'';
   ttBadge.textContent=TYPE_LABELS[node.type]+(catText||'');
   ttBadge.className='badge '+(node.type==='p'?'prefix':node.type==='r'?'root':node.type==='s'?'suffix':'word');
-  ttBadge.style.background=(node.colorHex||'#999')+'26'; ttBadge.style.color=node.colorHex||'#999';
   ttLabel.textContent=node.label; ttOrigin.textContent=node.origin||'';
   // icon badge (kid theme shows it large; glass theme keeps it subtle)
-  if(node.type!=='w' && !node.isVirtual){ const ic=document.createElement('span'); ic.className='tt-icon'; ic.innerHTML=morphSprite(node.id,32); ttLabel.prepend(ic); }
   ttOrigin.style.display=node.origin?'block':'none';
 
   // Primary meaning area: only show curated/verified translations.
@@ -97,7 +95,7 @@ function showTooltip(node,x,y){
   if(displayMeaning && isWordView && guessMode && !node._revealed){
     ttMeaning.textContent=''; ttMeaning.style.cssText='';
     const rv=document.createElement('div'); rv.className='tt-reveal';
-    rv.innerHTML='<div class="q">看下面的词素拆解，先猜猜这个词的意思<small>猜好了再点开，记得更牢</small></div><div class="go">揭晓释义 →</div>';
+    rv.innerHTML='<div class="q">先根据上面的拆解猜一猜它的意思<small>猜过再看，记得更牢</small></div><div class="go">查看释义</div>';
     rv.onclick=(e)=>{ e.stopPropagation(); node._revealed=true; ttMeaning.innerHTML=''; ttMeaning.textContent=displayMeaning; if(typeof confetti==='function') confetti(e.clientX,e.clientY,36); if(typeof Sfx!=='undefined') Sfx.ding(); };
     ttMeaning.appendChild(rv);
   } else if(displayMeaning){
@@ -198,7 +196,7 @@ function showTooltip(node,x,y){
             const row=document.createElement('div'); row.className='cmp-row'+(r.w===me?' cur':'');
             const pn=r.pre?nodeMap[r.pre]:null;
             const pre=document.createElement('span'); pre.className='cmp-pre'+(pn?'':' none');
-            if(pn){ pre.textContent=pn.label; pre.style.color=pn.colorHex; pre.style.borderColor=pn.colorHex+'66'; pre.title=pn.meaning; } else pre.textContent='—';
+            if(pn){ pre.textContent=pn.label; pre.title=pn.meaning; } else pre.textContent='—';
             const wd=document.createElement('span'); wd.className='cmp-word'; wd.innerHTML='<b>'+ESC(r.w)+'</b><span>'+ESC(shortCN(WORD_CN[r.w]||''))+'</span>';
             row.appendChild(pre); row.appendChild(wd);
             if(r.w!==me) row.onclick=(e)=>{ e.stopPropagation(); ttPushHistory({type:'word', label:node.label, x:e.clientX, y:e.clientY}); showWordDetail(r.w, e.clientX, e.clientY); };
@@ -314,6 +312,10 @@ function showTooltip(node,x,y){
       renderWords(showMax);
     }
   }
+  // numbered section labels only for word cards and only where the section has content
+  const isW=node.type==='w'||node.isVirtual;
+  const show=(id,on)=>{ const el=document.getElementById(id); if(el) el.style.display=(isW&&on)?'block':'none'; };
+  show('tt-sec-build', ttEtymology.style.display!=='none'); show('tt-sec-meaning', true); show('tt-sec-compare', ttCompare.style.display!=='none'); show('tt-sec-related', ttRelated.style.display!=='none');
   positionTooltip(x,y);
   tooltip.classList.add('visible');
 }

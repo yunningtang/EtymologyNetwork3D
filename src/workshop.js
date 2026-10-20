@@ -1,121 +1,169 @@
-// 积木工坊 — the main view. Three levels, all concrete:
-//   shelf  : 16 boxes (semantic categories) on a shelf
-//   box    : the bricks (morphemes) inside one box
-//   wall   : one brick and the "wall" of words built with it — every word is a row of bricks
+// The atlas — three views, organised like a textbook rather than a dashboard:
+//   home     : masthead copy, "认识构词" chapter (three numbered sections), today's root,
+//              and the numbered index of all 16 categories
+//   category : numbered list of the morphemes in one category
+//   root     : root study page — origin, story, a "prefix + root → meaning" table,
+//              then every word built with the root, each shown as its segments
+// ws.view keeps the old names (shelf / box / wall) so other modules need no change.
 // Classic script: shares the global scope with the other files in src/.
 
-const ws={view:'shelf',cat:null,morph:null,wallLimit:30};
+const ws={view:'shelf',cat:null,morph:null,wallLimit:40};
 const wsEl=document.getElementById('workshop');
 const BOX_ORDER=['neg','dir','deg','num','aux','create','move','sense','mind','lang','nature','society','noun_s','adj_s','verb_s','adv_s'];
 const BOX_TYPE={neg:'p',dir:'p',deg:'p',num:'p',aux:'p',create:'r',move:'r',sense:'r',mind:'r',lang:'r',nature:'r',society:'r',noun_s:'s',adj_s:'s',verb_s:'s',adv_s:'s'};
 const TYPE_ZH={p:'前缀',r:'词根',s:'后缀'};
-// printed-ink versions of the category colours for box lids
-const BOX_COLOR={neg:'#D9534F',dir:'#3F7BD9',deg:'#9B59B6',num:'#E8A33D',aux:'#2BA38A',create:'#3FA876',move:'#3A8FD1',sense:'#E0723B',mind:'#8B6BC9',lang:'#2C9DAA',nature:'#6BA543',society:'#D78B2E',noun_s:'#C85C8E',adj_s:'#8E58B5',verb_s:'#D14A7A',adv_s:'#6A5BB0'};
+const TYPE_EN={p:'Prefix',r:'Root',s:'Suffix'};
 const esc=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad2=(n)=>String(n).padStart(2,'0');
 function catZh(cat){ const l=(CAT_META[cat]||{}).label||cat; const m=l.match(/[一-鿿].*$/); return m?m[0]:l; }
 function catEn(cat){ const l=(CAT_META[cat]||{}).label||cat; return l.replace(/[一-鿿].*$/,'').trim(); }
-function bricksIn(cat){ return nodes.filter(n=>NODE_CAT[n.id]===cat); }
+function morphsIn(cat){ return nodes.filter(n=>NODE_CAT[n.id]===cat); }
 function visibleWordsOf(n){ return (n.wordList||[]).filter(w=>wordVisible(w.en)); }
+function zh(s){ const m=(s||'').match(/[一-鿿…].*$/); return m?m[0]:(s||''); }
+function en(s){ return (s||'').replace(/[一-鿿…].*$/,'').trim(); }
+const LANG_ZH={'Latin':'拉丁语','Greek':'希腊语','Old English':'古英语','French':'法语','Old French':'古法语','Germanic':'日耳曼语','Middle English':'中古英语','Italian':'意大利语','Arabic':'阿拉伯语','Sanskrit':'梵语','Anglo-Saxon':'古英语'};
+function originLang(n){ const m=(n.origin||'').match(/^([A-Za-z ]+?):/); return m?m[1].trim():''; }
+function originLangZh(n){ const l=originLang(n); return LANG_ZH[l]||l; }
+function originWord(n){ const m=(n.origin||'').match(/:\s*(.+)$/); return m?m[1].trim():(n.origin||''); }
 
 function wsRender(){
-  if(ws.view==='shelf') renderShelf(); else if(ws.view==='box') renderBox(ws.cat); else renderWall(ws.morph);
+  if(ws.view==='shelf') renderHome(); else if(ws.view==='box') renderCategory(ws.cat); else renderRoot(ws.morph);
   wsEl.scrollTop=0;
 }
 function wsGo(view,arg){
   if(view==='shelf'){ ws.view='shelf'; ws.cat=null; ws.morph=null; }
   else if(view==='box'){ ws.view='box'; ws.cat=arg; ws.morph=null; }
-  else { ws.view='wall'; ws.morph=arg; ws.cat=NODE_CAT[arg]||ws.cat; ws.wallLimit=30; }
+  else { ws.view='wall'; ws.morph=arg; ws.cat=NODE_CAT[arg]||ws.cat; ws.wallLimit=40; }
   if(pinnedNode||pinnedWordNode) unpinNode();
-  wsRender(); Sfx.pop();
+  wsRender();
 }
 function crumbs(parts){
-  return '<div class="ws-crumbs">'+parts.map((p,i)=>'<button class="ws-crumb'+(i===parts.length-1?' cur':'')+'" data-i="'+i+'">'+p.label+'</button>').join('<span class="ws-sep">›</span>')+'</div>';
+  return '<nav class="crumbs">'+parts.map((p,i)=>'<button class="crumb'+(i===parts.length-1?' cur':'')+'" data-i="'+i+'">'+p.label+'</button>').join('<span class="crumb-sep">/</span>')+'</nav>';
 }
-function bindCrumbs(parts){ wsEl.querySelectorAll('.ws-crumb').forEach(b=>{ const p=parts[+b.dataset.i]; if(p.go) b.onclick=p.go; }); }
-
-// ---------- shelf ----------
-function renderShelf(){
-  const cats=BOX_ORDER.filter(cat=>{
-    if(filterCats.size && !filterCats.has(cat)) return false;
-    if(filterType!=='all' && BOX_TYPE[cat]!==filterType) return false;
-    return true;
-  });
-  const tabs=[['all','全部'],['p','前缀'],['r','词根'],['s','后缀']].map(([t,l])=>'<button class="ws-tab'+(filterType===t?' on':'')+'" data-type="'+t+'">'+l+'</button>').join('');
-  let html='<div class="ws-head"><h1>积木工坊</h1><p>每个英语单词都是用积木拼出来的。打开一个盒子，看看里面的积木能拼出什么词。</p><div class="ws-tabs">'+tabs+'</div></div>';
-  const groups=[['p','前缀','放在左边，改变方向或意思'],['r','词根','放在中间，决定核心含义'],['s','后缀','放在右边，决定词性']];
-  groups.forEach(([type,title,sub])=>{
-    const list=cats.filter(c=>BOX_TYPE[c]===type); if(!list.length) return;
-    html+='<section class="ws-group"><h2 class="ws-group-title"><span class="ws-dot ws-dot-'+type+'"></span>'+title+'<small>'+sub+'</small></h2><div class="ws-shelf">';
-    list.forEach(cat=>{
-      const items=bricksIn(cat); const wc=items.reduce((a,n)=>a+visibleWordsOf(n).length,0);
-      const sample=items.slice().sort((a,b)=>b.wordCount-a.wordCount).slice(0,3);
-      html+='<button class="ws-box ws-box-'+type+'" data-cat="'+cat+'" style="--cc:'+(BOX_COLOR[cat]||(CAT_META[cat]||{}).hex)+'">'+
-        '<div class="ws-box-lid"><span class="ws-box-icon">'+boxSprite(cat,44)+'</span><span class="ws-box-name">'+esc(catZh(cat))+'</span><span class="ws-box-en">'+esc(catEn(cat))+'</span></div>'+
-        '<div class="ws-box-peek">'+sample.map(n=>'<span class="brick mini brick-'+n.type+'" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-label">'+esc(n.label)+'</span></span>').join('')+'</div>'+
-        '<div class="ws-box-meta">'+items.length+' 块 · '+wc+' 个词</div></button>';
-    });
-    html+='</div><div class="ws-plank"></div></section>';
-  });
-  if(!cats.length) html+='<div class="ws-empty">这个筛选下没有盒子，换一个试试</div>';
-  wsEl.innerHTML=html;
-  wsEl.querySelectorAll('.ws-box').forEach(b=>b.onclick=()=>wsGo('box',b.dataset.cat));
-  wsEl.querySelectorAll('.ws-tab').forEach(b=>b.onclick=()=>{ filterType=b.dataset.type; filterCats.clear(); renderShelf(); });
-}
-
-// ---------- box ----------
-function renderBox(cat){
-  const items=bricksIn(cat).sort((a,b)=>visibleWordsOf(b).length-visibleWordsOf(a).length);
-  const type=BOX_TYPE[cat];
-  const parts=[{label:'工坊',go:()=>wsGo('shelf')},{label:catZh(cat)}];
-  let html=crumbs(parts)+'<div class="ws-head"><h1>'+boxSprite(cat,40)+' '+esc(catZh(cat))+'<small>'+esc(catEn(cat))+' · '+TYPE_ZH[type]+'</small></h1><p>'+(type==='p'?'这些积木放在单词左边。':type==='r'?'这些积木是单词的核心，放在中间。':'这些积木放在单词右边，决定它是名词、形容词还是动词。')+' 点一块积木，看它能拼出哪些词。</p></div><div class="ws-bricks">';
-  items.forEach(n=>{
-    const wc=visibleWordsOf(n).length; const zh=(n.meaning||'').match(/[一-鿿].*$/);
-    html+='<button class="ws-brick-tile'+(wc?'':' dim')+'" data-id="'+n.id+'"><span class="ws-tile-icon">'+morphSprite(n.id,56)+'</span>'+
-      '<span class="brick brick-'+n.type+'" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-studs"><i></i><i></i><i></i></span><span class="brick-label">'+esc(n.label)+'</span></span>'+
-      '<span class="ws-tile-meaning">'+esc(zh?zh[0]:n.meaning)+'</span><span class="ws-tile-count">'+(wc?wc+' 个词':'这个等级没有词')+'</span>'+
-      (isFavorite(n.id)?'<span class="ws-tile-fav">❤️</span>':'')+(_progCache&&_progCache.morphemes[n.id]?'<span class="ws-tile-done">✓</span>':'')+'</button>';
-  });
-  html+='</div>';
-  wsEl.innerHTML=html; bindCrumbs(parts);
-  wsEl.querySelectorAll('.ws-brick-tile').forEach(b=>b.onclick=()=>wsGo('wall',b.dataset.id));
-}
-
-// ---------- wall ----------
-function wallRow(w){
+function bindCrumbs(parts){ wsEl.querySelectorAll('.crumb').forEach(b=>{ const p=parts[+b.dataset.i]; if(p.go) b.onclick=p.go; }); }
+// a word shown as its segments: in·port·ant with each piece coloured by type (subtle)
+function segments(w,emphasis){
   const ids=(WORD_DATA.get(w)||[]).filter(id=>nodeMap[id]);
-  return '<button class="ws-row" data-w="'+esc(w)+'"><span class="ws-row-bricks">'+ids.map(id=>{ const n=nodeMap[id]; return '<span class="brick mini brick-'+n.type+(id===ws.morph?' me':'')+'" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-label">'+esc(n.label)+'</span></span>'; }).join('')+'</span>'+
-    '<span class="ws-row-word">'+esc(w)+'</span><span class="ws-row-cn">'+esc(shortCN(WORD_CN[w]||''))+'</span>'+(_progCache&&_progCache.words[w]?'<span class="ws-row-done">✓</span>':'')+'</button>';
+  if(!ids.length) return '<span class="seg seg-plain">'+esc(w)+'</span>';
+  return ids.map(id=>{ const n=nodeMap[id]; return '<span class="seg seg-'+n.type+(id===emphasis?' seg-em':'')+'" title="'+esc(n.meaning)+'">'+esc(n.label.replace(/^-|-$/g,'').split('/')[0])+'</span>'; }).join('<span class="seg-dot">·</span>');
 }
-function renderWall(id){
+// today's root: deterministic per day among roots with enough words
+function todaysRoot(){
+  const roots=nodes.filter(n=>n.type==='r'&&visibleWordsOf(n).length>=6);
+  if(!roots.length) return null;
+  const day=Math.floor(Date.now()/86400000);
+  return roots[day%roots.length];
+}
+
+// ---------- home ----------
+function renderHome(){
+  const tr=todaysRoot();
+  const byType={p:[],r:[],s:[]}; BOX_ORDER.forEach(c=>byType[BOX_TYPE[c]].push(c));
+  const sample=(type)=>nodes.filter(n=>n.type===type).sort((a,b)=>b.wordCount-a.wordCount).slice(0,3).map(n=>n.label).join(' · ');
+  let html=`
+  <section class="hero">
+    <div class="kicker">01 / Morphology 构词法</div>
+    <h1>从一个词根，<br>理解一组词。</h1>
+    <p class="lede">英语单词由前缀、词根和后缀拼合而成。记住 200 多个常用的部件，就能看懂成千上万个词。这本图谱带你从一个部件出发，看它如何长出一整组词，以及这些词之间的联系。</p>
+  </section>
+  <section class="chapter">
+    <div class="chapter-head"><span class="kicker">Chapter 01</span><h2>认识构词</h2></div>
+    <div class="cols-3">
+      <article class="col"><div class="num">01 / Prefixes</div><h3>前缀</h3><p>放在词的开头，改变方向、数量或态度。</p><div class="ex">${esc(sample('p'))}</div></article>
+      <article class="col"><div class="num">02 / Roots</div><h3>词根</h3><p>词的核心意义所在，多来自拉丁语和希腊语。</p><div class="ex">${esc(sample('r'))}</div></article>
+      <article class="col"><div class="num">03 / Suffixes</div><h3>后缀</h3><p>放在词的末尾，决定它是名词、形容词还是动词。</p><div class="ex">${esc(sample('s'))}</div></article>
+    </div>
+  </section>`;
+  if(tr){
+    const words=visibleWordsOf(tr).slice(0,6);
+    html+=`
+  <section class="today">
+    <div class="today-side"><div class="kicker">Today's exploration · 今日词根</div><div class="today-root serif">${esc(tr.label)}</div><div class="today-origin">${esc(originLangZh(tr))}${originWord(tr)?' · '+esc(originWord(tr)):''} · ${esc(en(tr.meaning))}</div><div class="today-zh">${esc(zh(tr.meaning))}</div><button class="link-btn" id="today-open">研究这个词根 →</button></div>
+    <ul class="today-words">${words.map(w=>'<li><button class="word-link" data-w="'+esc(w.en)+'"><span class="serif">'+esc(w.en)+'</span><span class="gloss">'+esc(shortCN(w.cn))+'</span></button></li>').join('')}</ul>
+  </section>`;
+  }
+  html+=`<section class="chapter"><div class="chapter-head"><span class="kicker">Chapter 02</span><h2>词根目录</h2><p class="chapter-note">按意义分成 16 组。每组列出它包含的部件，点进去逐个研究。</p></div>`;
+  [['p','前缀','Prefixes'],['r','词根','Roots'],['s','后缀','Suffixes']].forEach(([type,t,e],gi)=>{
+    html+=`<div class="index-group"><h3 class="index-title"><span class="num">${pad2(gi+1)}</span>${t}<span class="en">${e}</span></h3><ol class="index">`;
+    byType[type].forEach((cat,i)=>{
+      const items=morphsIn(cat); const wc=items.reduce((a,n)=>a+visibleWordsOf(n).length,0);
+      const top=items.slice().sort((a,b)=>b.wordCount-a.wordCount).slice(0,4).map(n=>n.label).join(' · ');
+      html+=`<li><button class="index-row" data-cat="${cat}"><span class="idx">${pad2(gi+1)}.${i+1}</span><span class="idx-name">${esc(catZh(cat))}<span class="en">${esc(catEn(cat))}</span></span><span class="idx-ex">${esc(top)}</span><span class="idx-count">${items.length} 个部件 · ${wc} 词</span></button></li>`;
+    });
+    html+='</ol></div>';
+  });
+  html+='</section>';
+  wsEl.innerHTML=html;
+  wsEl.querySelectorAll('.index-row').forEach(b=>b.onclick=()=>wsGo('box',b.dataset.cat));
+  const t=wsEl.querySelector('#today-open'); if(t) t.onclick=()=>wsGo('wall',tr.id);
+  wsEl.querySelectorAll('.word-link').forEach(b=>b.onclick=(e)=>showWordDetail(b.dataset.w, e.clientX, e.clientY));
+}
+
+// ---------- category ----------
+function renderCategory(cat){
+  const items=morphsIn(cat).sort((a,b)=>visibleWordsOf(b).length-visibleWordsOf(a).length);
+  const type=BOX_TYPE[cat]; const gi=['p','r','s'].indexOf(type)+1; const ci=BOX_ORDER.filter(c=>BOX_TYPE[c]===type).indexOf(cat)+1;
+  const parts=[{label:'目录',go:()=>wsGo('shelf')},{label:catZh(cat)}];
+  const intro={p:'这些前缀放在词的开头。',r:'这些词根是词的核心，大多来自拉丁语和希腊语。',s:'这些后缀放在词的末尾，决定词性。'}[type];
+  let html=crumbs(parts)+`<header class="page-head"><div class="kicker">${pad2(gi)}.${ci} / ${esc(catEn(cat))} · ${TYPE_EN[type]}</div><h1>${esc(catZh(cat))}</h1><p class="lede">${intro} 下面按能拼出的词数排列，点一个部件进入它的研究页。</p></header><ol class="mlist">`;
+  items.forEach((n,i)=>{
+    const vw=visibleWordsOf(n); const sample=vw.slice(0,3).map(w=>w.en).join(', ');
+    html+=`<li><button class="mrow${vw.length?'':' dim'}" data-id="${n.id}"><span class="idx">${pad2(i+1)}</span><span class="mrow-main"><span class="serif mrow-label">${esc(n.label)}</span><span class="mrow-meaning">${esc(n.meaning)}</span></span><span class="mrow-origin">${esc(n.origin||'')}</span><span class="mrow-sample">${esc(sample)}</span><span class="mrow-count">${vw.length?vw.length+' 词':'本词表无词'}</span>${isFavorite(n.id)?'<span class="mark">收藏</span>':''}${_progCache&&_progCache.morphemes[n.id]?'<span class="mark">已读</span>':''}</button></li>`;
+  });
+  html+='</ol>';
+  wsEl.innerHTML=html; bindCrumbs(parts);
+  wsEl.querySelectorAll('.mrow').forEach(b=>b.onclick=()=>wsGo('wall',b.dataset.id));
+}
+
+// ---------- root study ----------
+// one example word per prefix for the table "prefix + root → meaning"
+function prefixTable(n){
+  const rows=[], seen=new Set();
+  for(const w of visibleWordsOf(n).map(x=>x.en)){
+    const ids=(WORD_DATA.get(w)||[]).filter(id=>nodeMap[id]);
+    const pre=ids.find(id=>nodeMap[id].type==='p'&&id!==n.id)||'';
+    if(seen.has(pre)) continue; seen.add(pre);
+    rows.push({w,pre,ids}); if(rows.length>=7) break;
+  }
+  return rows;
+}
+function renderRoot(id){
   const n=nodeMap[id]; if(!n){ wsGo('shelf'); return; }
   const cat=NODE_CAT[id]; const words=visibleWordsOf(n).map(w=>w.en);
-  const parts=[{label:'工坊',go:()=>wsGo('shelf')},{label:catZh(cat),go:()=>wsGo('box',cat)},{label:n.label}];
-  const img=(window.MORPH_IMAGES||{})[id];
-  const fav=isFavorite(id);
-  let html=crumbs(parts)+'<div class="ws-wall-head">'+
-    '<div class="ws-wall-brick"><span class="ws-wall-icon">'+morphSprite(id,96)+'</span>'+
-      '<span class="brick brick-'+n.type+' in big" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-studs"><i></i><i></i><i></i><i></i></span><span class="brick-label">'+esc(n.label)+'</span></span></div>'+
-    '<div class="ws-wall-info"><div class="ws-wall-title"><span class="ws-wall-type ws-type-'+n.type+'">'+TYPE_ZH[n.type]+'</span><h2>'+esc(n.label)+'</h2>'+
-      '<button class="ws-fav'+(fav?' on':'')+'" title="收藏">'+(fav?'❤️':'🤍')+'</button></div>'+
-      '<div class="ws-wall-meaning">'+esc(n.meaning||'')+'</div>'+
-      (n.origin?'<div class="ws-wall-origin">来自 '+esc(n.origin)+'</div>':'')+
-      (n.story?'<div class="ws-wall-story"><b>故事</b>'+esc(n.story)+'</div>':'')+
-      (img&&img.file?'<div class="ws-wall-img"><img loading="lazy" alt="" src="assets/morphemes/'+esc(img.file)+'"><a class="ws-credit" href="'+esc(img.url||'#')+'" target="_blank" rel="noopener">'+esc((img.author||'Wikimedia Commons')+' · '+(img.license||''))+'</a></div>':'')+
-    '</div></div>';
-  html+='<div class="ws-wall-title2">用这块积木拼出来的词 <span>'+words.length+' 个'+(levelFilter.size?' · 当前等级':'')+'</span></div>';
-  if(!words.length) html+='<div class="ws-empty">这个等级下没有用它拼的词，换个等级看看</div>';
-  html+='<div class="ws-wall">'+words.slice(0,ws.wallLimit).map(wallRow).join('')+'</div>';
-  if(words.length>ws.wallLimit) html+='<button class="ws-more">再看 '+Math.min(30,words.length-ws.wallLimit)+' 个</button>';
+  const all=nodes.filter(x=>x.type===n.type); const num=pad2(all.indexOf(n)+1).padStart(3,'0');
+  const parts=[{label:'目录',go:()=>wsGo('shelf')},{label:catZh(cat),go:()=>wsGo('box',cat)},{label:n.label}];
+  const img=(window.MORPH_IMAGES||{})[id]; const fav=isFavorite(id);
+  const lang=originLang(n), ow=originWord(n);
+  let html=crumbs(parts)+`
+  <header class="root-head">
+    <div class="kicker">${TYPE_EN[n.type]} study / ${num}${lang?' · '+esc(lang):''}</div>
+    <div class="root-title-row"><h1 class="serif">${esc(n.label)}</h1><button class="fav-btn${fav?' on':''}" title="收藏">${fav?'已收藏':'收藏'}</button></div>
+    <p class="root-origin">${ow?'源自'+(lang?esc(originLangZh(n)):'')+'的 <i>'+esc(ow)+'</i>，':''}意思是「${esc(zh(n.meaning))}」${en(n.meaning)?'（'+esc(en(n.meaning))+'）':''}。</p>
+    ${n.story?'<p class="root-story">'+esc(n.story)+'</p>':''}
+    ${img&&img.file?'<figure class="root-fig"><img loading="lazy" alt="" src="assets/morphemes/'+esc(img.file)+'"><figcaption><a href="'+esc(img.url||'#')+'" target="_blank" rel="noopener">'+esc((img.author||'Wikimedia Commons')+' · '+(img.license||''))+'</a></figcaption></figure>':''}
+  </header>`;
+  const tbl=prefixTable(n);
+  if(tbl.length>1){
+    html+=`<section class="study"><div class="kicker">观察</div><h2>${n.type==='r'?'前缀如何改变同一个词根的含义':n.type==='p'?'同一个前缀接上不同词根':'同一个后缀接在不同的词根上'}</h2><table class="ptable"><tbody>`;
+    tbl.forEach(r=>{
+      const pn=r.pre?nodeMap[r.pre]:null;
+      const literal=r.ids.map(x=>zh(nodeMap[x].meaning).split('/')[0]).join(' + ');
+      html+=`<tr class="prow" data-w="${esc(r.w)}"><td class="pt-form">${segments(r.w,id)}</td><td class="pt-literal">${esc(literal)}</td><td class="pt-arrow">→</td><td class="pt-word"><span class="serif">${esc(r.w)}</span> <span class="gloss">${esc(shortCN(WORD_CN[r.w]||''))}</span></td></tr>`;
+    });
+    html+='</tbody></table></section>';
+  }
+  html+=`<section class="study"><div class="kicker">词表</div><h2>用 ${esc(n.label)} 构成的词<span class="count">${words.length} 个${levelFilter.size?' · 当前词表':''}</span></h2>`;
+  if(!words.length) html+='<p class="empty">当前词表里没有用它构成的词，换一个词表试试。</p>';
+  html+='<ol class="wlist">'+words.slice(0,ws.wallLimit).map((w,i)=>`<li><button class="wrow" data-w="${esc(w)}"><span class="idx">${pad2(i+1)}</span><span class="wrow-word serif">${esc(w)}</span><span class="wrow-seg">${segments(w,id)}</span><span class="wrow-cn">${esc(shortCN(WORD_CN[w]||''))}</span>${_progCache&&_progCache.words[w]?'<span class="mark">已看</span>':''}</button></li>`).join('')+'</ol>';
+  if(words.length>ws.wallLimit) html+='<button class="more-btn">继续列出 '+Math.min(40,words.length-ws.wallLimit)+' 个</button>';
+  html+='</section>';
   wsEl.innerHTML=html; bindCrumbs(parts);
   trackExplore('morpheme',id);
-  wsEl.querySelectorAll('.ws-row').forEach(r=>r.onclick=(e)=>{ const rect=r.getBoundingClientRect(); showWordDetail(r.dataset.w, Math.min(rect.right+8, window.innerWidth-440), rect.top); Sfx.click(); });
-  const more=wsEl.querySelector('.ws-more'); if(more) more.onclick=()=>{ ws.wallLimit+=30; const top=wsEl.scrollTop; renderWall(id); wsEl.scrollTop=top; };
-  const favBtn=wsEl.querySelector('.ws-fav'); favBtn.onclick=()=>{ toggleFavorite(id,[id],'morpheme'); const on=isFavorite(id); favBtn.classList.toggle('on',on); favBtn.textContent=on?'❤️':'🤍'; updateStudyBadge(); if(on){ toast('已收藏 '+n.label); Sfx.ding(); } };
-  // the wall rows "build" one after another
-  wsEl.querySelectorAll('.ws-row').forEach((r,i)=>{ r.style.animationDelay=Math.min(i*40,600)+'ms'; });
+  wsEl.querySelectorAll('.wrow,.prow').forEach(r=>r.onclick=(e)=>{ showWordDetail(r.dataset.w, e.clientX, e.clientY); });
+  const more=wsEl.querySelector('.more-btn'); if(more) more.onclick=()=>{ ws.wallLimit+=40; const top=wsEl.scrollTop; renderRoot(id); wsEl.scrollTop=top; };
+  const favBtn=wsEl.querySelector('.fav-btn'); favBtn.onclick=()=>{ toggleFavorite(id,[id],'morpheme'); const on=isFavorite(id); favBtn.classList.toggle('on',on); favBtn.textContent=on?'已收藏':'收藏'; updateStudyBadge(); if(on) toast('已收藏 '+n.label); };
 }
 
-// entry points used elsewhere
 function openMorph(id){ wsGo('wall',id); }
-document.getElementById('brand').onclick=(e)=>{ e.preventDefault(); wsGo('shelf'); };
 function wsRefresh(){ wsRender(); }
+document.getElementById('brand').onclick=(e)=>{ e.preventDefault(); wsGo('shelf'); };
