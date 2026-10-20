@@ -183,8 +183,8 @@ if(WORDS_RAW){
 // Short gloss for tags/lists: first sense only, POS markers removed, ≤14 chars
 function shortCN(cn){
   if(!cn) return '';
-  let s=cn.split(' / ')[0].replace(/^(\[[^\]]*\]\s*)?([a-z]+\.\s*)+/,'').trim();
-  s=s.split(/[,，;；]/).slice(0,2).join('，');
+  let s=cn.split(' / ')[0].replace(/^(\[[^\]]*\]\s*)?([a-z]+\.\s*)+/,'').replace(/[（(][^）)]*[）)]?/g,'').replace(/\s*[,，]\s*/g,'，').trim();
+  s=s.split(/[,，;；]/).map(x=>x.trim()).filter(Boolean).slice(0,2).join('，');
   return s.length>14 ? s.slice(0,13)+'…' : s;
 }
 // UI state shared across modules (declared early because several files read it)
@@ -209,3 +209,61 @@ WORD_DATA.forEach((morphs, word) => {
   WORD_PREFIX[p2].push(word);
 });
 console.log(`Word data: ${WORD_DATA.size} words loaded in ${(performance.now()-_t0).toFixed(0)}ms`);
+
+// ---------- question quality helpers ----------
+// Do the morphemes, read left to right, roughly spell the word? Returns the ids in spelling
+// order when they do (inspect = in + spect, national = nat + tion + al), else null. Tolerates
+// a dropped first letter (ex+spect → expect), a trimmed tail (nat+ure → nature) and up to two
+// linking letters between parts; the last part may leave three letters unexplained.
+const _formsCache={};
+function morphForms(id){
+  if(_formsCache[id]) return _formsCache[id];
+  const n=nodeMap[id]; const morph=n?(n.morph||n.label||''):'';
+  return _formsCache[id]=morph.replace(/\([^)]*\)/g,'').split('/').map(s=>s.trim().replace(/^-|-$/g,'').toLowerCase()).filter(Boolean).sort((a,b)=>b.length-a.length);
+}
+function _fitOrder(word, ids){
+  let pos=0;
+  for(const id of ids){
+    const forms=morphForms(id); let hit=-1;
+    outer: for(let skip=0; skip<=2; skip++){
+      const at=pos+skip; if(at>word.length) break;
+      for(const f of forms){
+        const cands=[f]; if(f.length>=4) cands.push(f.slice(1)); if(f.length>=3) cands.push(f.slice(0,-1)); if(f.length>=4) cands.push(f.slice(0,-2));
+        for(const c of cands){ if(c.length>=2 && word.startsWith(c,at)){ hit=at+c.length; break outer; } }
+      }
+    }
+    if(hit<0) return false; pos=hit;
+  }
+  return word.length-pos<=3;
+}
+function morphFit(word, ids){
+  ids=ids.filter(id=>nodeMap[id]); if(!ids.length) return null;
+  if(_fitOrder(word,ids)) return ids;
+  // the data lists parts by type (prefix, root, suffix); try the order they appear in the word
+  const byPos=ids.slice().sort((a,b)=>{ const pa=Math.min(...morphForms(a).map(f=>{ const i=word.indexOf(f.slice(0,3)); return i<0?99:i; })); const pb=Math.min(...morphForms(b).map(f=>{ const i=word.indexOf(f.slice(0,3)); return i<0?99:i; })); return pa-pb; });
+  return _fitOrder(word,byPos)?byPos:null;
+}
+// Part of speech of the first sense: n / v / a / ad / other
+function posOf(word){ const m=(WORD_CN[word]||'').match(/^(?:\[[^\]]*\]\s*)?([a-z]+)\./); if(!m) return ''; const p=m[1]; return /^v/.test(p)?'v':p==='n'?'n':p==='a'||p==='adj'?'a':p==='ad'||p==='adv'?'ad':p; }
+// Wrong options for a meaning question: same part of speech, similar frequency, not the
+// same gloss; one or two from the same root first (so the prefix has to be read).
+let _freqList=null;
+function pickDistractors(word, n, opts){
+  opts=opts||{}; const answer=shortCN(WORD_CN[word]||''); const seen=new Set([answer,'']); const out=[];
+  const toks=(c)=>c.replace(/…$/,'').split(/[，,]/).map(x=>x.replace(/^(使|令人|变得|变|成为)/,'').replace(/(的|地|者|们)$/,'')).filter(x=>x.length>=1);
+  const ansToks=toks(answer);
+  const clash=(c)=>{ const t=toks(c); return t.some(x=>ansToks.some(y=>x===y||(x.length>=2&&y.includes(x))||(y.length>=2&&x.includes(y)))); };
+  const okWord=(w)=>{ if(w===word||!WORD_CN[w]||!wordVisible(w)) return false; const c=shortCN(WORD_CN[w]); if(seen.has(c)||c.length>16||clash(c)) return false; return true; };
+  const add=(w)=>{ const c=shortCN(WORD_CN[w]); seen.add(c); out.push(opts.words?w:c); };
+  const ids=(WORD_DATA.get(word)||[]).filter(id=>nodeMap[id]); const rootId=ids.find(id=>nodeMap[id].type==='r');
+  if(rootId&&opts.sameRoot!==false){ for(const w of (MORPH_WORDS[rootId]||[])){ if(out.length>=(opts.sameRootMax||2)) break; if(okWord(w)&&(opts.anyPos||posOf(w)===posOf(word))) add(w); } }
+  _freqList=_freqList||[...WORD_DATA.keys()];
+  const idx=Math.max(0,_freqList.indexOf(word)); const pos=posOf(word);
+  for(let radius=120; out.length<n && radius<=_freqList.length; radius*=2){
+    const lo=Math.max(0,idx-radius), hi=Math.min(_freqList.length,idx+radius);
+    const cands=[]; for(let i=lo;i<hi;i++){ const w=_freqList[i]; if(okWord(w)&&(opts.anyPos||!pos||posOf(w)===pos)) cands.push(w); }
+    for(let i=cands.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [cands[i],cands[j]]=[cands[j],cands[i]]; }
+    for(const w of cands){ if(out.length>=n) break; if(okWord(w)) add(w); }
+  }
+  return out.length>=n?out.slice(0,n):null;
+}

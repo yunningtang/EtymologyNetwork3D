@@ -29,34 +29,47 @@ function qPool(scope){
   // scope {morph} limits the pool to the words built with that morpheme (练习这组词).
   const pool=[];
   const src=scope&&scope.morph ? (MORPH_WORDS[scope.morph]||[]).map(w=>[w,WORD_DATA.get(w)||[]]) : WORD_DATA;
-  for(const [w,ids] of src){ if(!wordVisible(w)) continue; if(!WORD_CN[w]) continue; const v=ids.filter(id=>nodeMap[id]); if(v.length) pool.push({w,ids:v}); if(pool.length>=1500) break; }
+  // A word qualifies only when it has a root and either its parts spell it (fit) or it has a
+  // hand-written 词源解释 — so "restaurant = re + ant" or "amazing = -ing" never become questions.
+  for(const [w,ids] of src){
+    if(!wordVisible(w)) continue; if(!WORD_CN[w]) continue;
+    const v=ids.filter(id=>nodeMap[id]); if(!v.some(id=>nodeMap[id].type==='r')) continue;
+    const fit=morphFit(w,v); const note=!!(window.WORD_NOTES||{})[w];
+    if(!fit&&!note) continue;
+    pool.push({w,ids:fit||v,fit:!!fit,note});
+    if(pool.length>=1500) break;
+  }
   return pool;
 }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function pick(a,n){ return shuffle(a.slice()).slice(0,n); }
 function buildQuestions(scope){
   const pool=qPool(scope); if(pool.length<(scope?4:12)) return [];
-  const all=scope?qPool():pool;              // distractors always come from the whole word list
-  const multi=pool.filter(p=>p.ids.length>=2);
+  const multi=pool.filter(p=>p.fit&&p.ids.length>=2);   // build questions need parts that really spell the word
   const qs=[]; const used=new Set();
   const take=(arr)=>{ for(const p of shuffle(arr.slice())){ if(!used.has(p.w)){ used.add(p.w); return p; } } return null; };
   const n=scope?Math.min(QUEST_N,pool.length):QUEST_N;
+  // Each slot rotates meaning → build → root; a slot that cannot be filled with its own type
+  // falls back to a meaning question, so a round always has n questions when the pool allows.
+  const makers={
+    meaning(){ const p=take(pool); if(!p) return null; const wrong=pickDistractors(p.w,3); if(!wrong){ used.delete(p.w); return null; }
+      return {type:'meaning',word:p.w,ids:p.ids,answer:shortCN(WORD_CN[p.w]),options:shuffle([shortCN(WORD_CN[p.w]),...wrong])}; },
+    build(){ const p=take(multi); if(!p) return null;
+      // the spare part: same type as one of the real parts, but none of its spellings occur in the word
+      const types=p.ids.map(id=>nodeMap[id].type);
+      const extra=pick(MORPHEMES.filter(m=>!p.ids.includes(m.id)&&types.includes(m.type)&&!morphForms(m.id).some(f=>p.w.includes(f.slice(0,3)))),1).map(m=>m.id);
+      return {type:'build',word:p.w,ids:p.ids,chips:shuffle([...p.ids,...extra])}; },
+    root(){ const p=take(pool); if(!p) return null; const root=p.ids.find(id=>nodeMap[id].type==='r');
+      // wrong options: similar frequency, none built on this root, none containing its spelling
+      const forms=morphForms(root);
+      const others=(pickDistractors(p.w,8,{words:true,sameRoot:false,anyPos:true})||[]).filter(w=>!(WORD_DATA.get(w)||[]).includes(root)&&!forms.some(f=>w.includes(f))).slice(0,3);
+      if(others.length<3){ used.delete(p.w); return null; }
+      return {type:'root',root,word:p.w,ids:p.ids,answer:p.w,options:shuffle([p.w,...others])}; },
+  };
+  const order=['meaning','build','root'];
   for(let i=0;i<n;i++){
-    const type=i%3; // 0 meaning, 1 build, 2 root
-    if(type===0){
-      const p=take(pool); if(!p) break;
-      const wrong=pick(all.filter(x=>x.w!==p.w&&shortCN(WORD_CN[x.w])!==shortCN(WORD_CN[p.w])),3).map(x=>shortCN(WORD_CN[x.w]));
-      qs.push({type:'meaning',word:p.w,ids:p.ids,answer:shortCN(WORD_CN[p.w]),options:shuffle([shortCN(WORD_CN[p.w]),...wrong])});
-    } else if(type===1){
-      const p=take(multi.length?multi:pool); if(!p) break;
-      const extra=pick(MORPHEMES.filter(m=>!p.ids.includes(m.id)&&m.type===nodeMap[p.ids[p.ids.length-1]].type),1).map(m=>m.id);
-      qs.push({type:'build',word:p.w,ids:p.ids,chips:shuffle([...p.ids,...extra])});
-    } else {
-      const p=take(pool.filter(x=>x.ids.some(id=>nodeMap[id].type==='r'))); if(!p) break;
-      const root=p.ids.find(id=>nodeMap[id].type==='r');
-      const others=pick(all.filter(x=>!x.ids.includes(root)&&!(WORD_DATA.get(x.w)||[]).includes(root)),3).map(x=>x.w);
-      qs.push({type:'root',root,word:p.w,ids:p.ids,answer:p.w,options:shuffle([p.w,...others])});
-    }
+    let qq=makers[order[i%3]](); if(!qq&&order[i%3]!=='meaning') qq=makers.meaning();
+    if(!qq) break; qs.push(qq);
   }
   return qs;
 }

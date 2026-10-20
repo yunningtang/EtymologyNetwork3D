@@ -301,14 +301,7 @@ function showTooltip(node,x,y){
 let _allWords=null;
 function guessOptions(word){
   const answer=shortCN(WORD_CN[word]||''); if(!answer) return null;
-  const seen=new Set([answer]), out=[];
-  const ids=(WORD_DATA.get(word)||[]).filter(id=>nodeMap[id]);
-  const rootId=ids.find(id=>nodeMap[id].type==='r');
-  const tryAdd=(w)=>{ if(w===word||!WORD_CN[w]||!wordVisible(w)) return; const c=shortCN(WORD_CN[w]); if(!c||seen.has(c)||c.length>18) return; seen.add(c); out.push(c); };
-  if(rootId){ for(const w of (MORPH_WORDS[rootId]||[])){ if(out.length>=2) break; tryAdd(w); } }
-  _allWords=_allWords||[...WORD_DATA.keys()];
-  let guard=0; while(out.length<3&&guard++<400){ tryAdd(_allWords[Math.floor(Math.random()*Math.min(_allWords.length,3000))]); }
-  if(out.length<3) return null;
+  const out=pickDistractors(word,3); if(!out) return null;
   const opts=[answer,...out]; for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [opts[i],opts[j]]=[opts[j],opts[i]]; }
   return {answer,opts};
 }
