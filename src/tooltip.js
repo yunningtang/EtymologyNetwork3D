@@ -14,7 +14,7 @@ const tooltip=document.getElementById('tooltip');
 const ttBadge=document.getElementById('tt-badge'),ttLabel=document.getElementById('tt-label');
 const ttOrigin=document.getElementById('tt-origin'),ttMeaning=document.getElementById('tt-meaning');
 const ttWords=document.getElementById('tt-words'),ttCount=document.getElementById('tt-count');
-const TYPE_LABELS={p:'Prefix',r:'Root',s:'Suffix',w:'Word'};
+const TYPE_LABELS={p:'前缀',r:'词根',s:'后缀',w:'单词'};
 // Guess-first mode (generation effect): a word card shows the morpheme breakdown first and
 // hides the dictionary meaning behind a "揭晓" control until the learner has made a guess.
 let guessMode=(function(){ try{ return localStorage.getItem('etym_guess')!=='0'; }catch(e){ return true; } })();

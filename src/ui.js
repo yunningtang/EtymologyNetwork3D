@@ -90,44 +90,9 @@ searchClear.onclick=()=>{ searchInput.value=''; searchQuery=''; searchClear.styl
 // ============================================================
 //  FILTERS (Type pills + sub-category chips)
 // ============================================================
-const SUB_FILTER_MAP={
-  p:['neg','dir','deg','num','aux'],
-  r:['create','move','sense','mind','lang','nature','society'],
-  s:['noun_s','adj_s','verb_s','adv_s']
-};
-const subFiltersEl=document.getElementById('sub-filters');
+// (type / sub-category filters now live inside the workshop shelf as tabs)
+function buildSubFilters(){}
 
-function buildSubFilters(type){
-  subFiltersEl.innerHTML='';
-  if(!type||type==='all'){ subFiltersEl.classList.remove('visible'); return; }
-  const cats=SUB_FILTER_MAP[type]||[];
-  cats.forEach(cat=>{
-    const m=CAT_META[cat]; if(!m) return;
-    const chip=document.createElement('button'); chip.className='sub-chip'; chip.dataset.cat=cat;
-    chip.innerHTML='<span class="sc-dot" style="background:'+m.hex+'"></span>'+m.label;
-    chip.onclick=()=>{
-      const wasActive=filterCats.has(cat);
-      filterCats.clear(); filterType='all';
-      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.type==='all'));
-      subFiltersEl.querySelectorAll('.sub-chip').forEach(c=>c.classList.remove('active'));
-      if(!wasActive){ filterCats.add(cat); chip.classList.add('active'); }
-      if(pinnedNode) unpinNode();
-      if(filterCats.size) wsGo('box',cat); else wsGo('shelf');
-    };
-    if(filterCats.has(cat)) chip.classList.add('active');
-    subFiltersEl.appendChild(chip);
-  });
-  subFiltersEl.classList.add('visible');
-}
-
-// Theme: "探险" (kid, default) or "星空" (glass). Persisted.
-(function(){
-  let theme='kid'; try{ theme=localStorage.getItem('etym_theme')||'kid'; }catch(e){}
-  const apply=()=>{ document.body.classList.toggle('kid',theme==='kid'); const b=document.getElementById('theme-toggle'); if(b) b.textContent=theme==='kid'?'切换到夜间':'切换到探险'; };
-  apply();
-  window.applyTheme=apply;
-  document.getElementById('theme-toggle').onclick=()=>{ theme=theme==='kid'?'glass':'kid'; try{ localStorage.setItem('etym_theme',theme); }catch(e){} apply(); };
-})();
 // Sound effects toggle
 (function(){ const b=document.getElementById('sfx-toggle'); const paint=()=>{ b.textContent=sfxOn?'开':'关'; b.classList.toggle('on',sfxOn); }; paint(); b.onclick=()=>{ setSfx(!sfxOn); paint(); if(sfxOn) Sfx.ding(); }; })();
 // Default level: 初高中 (中考 + 高考) — the audience is school-age learners
@@ -146,16 +111,6 @@ document.querySelectorAll('.lv-btn').forEach(btn=>{
   });
 });
 
-document.querySelectorAll('.filter-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active'); filterType=this.dataset.type;
-    filterCats.clear();
-    buildSubFilters(filterType);
-    if(pinnedNode) unpinNode(); wsGo('shelf');
-  });
-});
-
 // ============================================================
 //  STUDY PANEL
 // ============================================================
@@ -165,10 +120,10 @@ function renderStudyPanel(){
   const pct=Math.round(prog.totalMorphemes/MORPHEMES.length*100);
   stats.innerHTML=
     '<div class="sp-progress-bar"><div class="sp-progress-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="sp-stat"><span>🪐 已登陆的星球</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
-    '<div class="sp-stat"><span>⭐ 看过的单词</span><b>'+prog.totalWords+'</b></div>'+
-    '<div class="sp-stat"><span>❤️ 收藏</span><b>'+favs.length+'</b></div>'+
-    '<div class="sp-stat"><span>🏆 闯关最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
+    '<div class="sp-stat"><span>打开过的积木</span><b>'+prog.totalMorphemes+' / '+MORPHEMES.length+'</b></div>'+
+    '<div class="sp-stat"><span>看过的单词</span><b>'+prog.totalWords+'</b></div>'+
+    '<div class="sp-stat"><span>收藏</span><b>'+favs.length+'</b></div>'+
+    '<div class="sp-stat"><span>练习最高分</span><b>'+(function(){ try{ return localStorage.getItem('etym_quest_best')||'0'; }catch(e){ return '0'; } })()+' / 10</b></div>';
   const favsEl=document.getElementById('sp-favs');
   favsEl.innerHTML='';
   if(!favs.length){
@@ -215,8 +170,7 @@ window.addEventListener('keydown',e=>{
     if(ws.view!=='shelf'){ wsGo(ws.view==='wall'?'box':'shelf', ws.cat); return; }
     searchInput.value=''; searchQuery=''; searchClear.style.display='none';
     searchCount.style.display='none'; searchDropdown.classList.remove('visible'); searchResults=[];
-    filterCats.clear(); filterType='all'; buildSubFilters('all');
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.type==='all'));
+    filterCats.clear(); filterType='all';
     wsGo('shelf'); searchInput.blur();
   }
   if(e.key==='/'&&document.activeElement!==searchInput){ e.preventDefault(); searchInput.focus(); }
@@ -248,12 +202,6 @@ function startIntro(){
   setTimeout(()=>{document.getElementById('loading').style.display='none';},1000);
   animateCounter(document.getElementById('m-nodes'),visibleWordCount()||MORPHEMES.length);
   animateCounter(document.getElementById('m-clusters'),MORPHEMES.length);
-  // tagline fades in, holds, fades out; then the workshop is live
-  introOverlay.style.display='flex'; introOverlay.style.opacity=0;
-  requestAnimationFrame(()=>{ introOverlay.style.opacity=1; });
-  setTimeout(()=>{ introOverlay.style.opacity=0; },1900);
-  setTimeout(()=>{ appState='active'; introOverlay.style.display='none';
-    setTimeout(()=>{hint.classList.add('visible');},200); updateStudyBadge();
-    setTimeout(()=>{hint.classList.remove('visible');},7000); },INTRO_DUR);
+  setTimeout(()=>{ appState='active'; updateStudyBadge(); },400);
 }
 

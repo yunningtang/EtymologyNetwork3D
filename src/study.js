@@ -42,7 +42,7 @@ function trackExplore(type, id){
     bucket[id]=Date.now();
     prog['total'+(type==='morpheme'?'Morphemes':'Words')]=Object.keys(bucket).length;
     try{ localStorage.setItem(STORAGE_KEY_PROG, JSON.stringify(prog)); }catch(e){}
-    if(type==='morpheme' && typeof toast==='function' && appState==='active') toast('🧱 打开了一块新积木！已集齐 '+prog.totalMorphemes+' / '+MORPHEMES.length);
+    if(type==='morpheme' && typeof toast==='function' && appState==='active') toast('新积木：已打开 '+prog.totalMorphemes+' / '+MORPHEMES.length+' 块');
   }
   return prog;
 }

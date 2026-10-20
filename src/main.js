@@ -7,7 +7,6 @@ function init(){
   buildGraph(); nodes.forEach(n=>indexNode(n)); buildWordReverse();
   bar.style.width='70%'; status.textContent='把积木摆上架…';
   setTimeout(()=>{
-    if(window.applyTheme) applyTheme();
     wsRender();
     bar.style.width='100%';
     setTimeout(startIntro,250);

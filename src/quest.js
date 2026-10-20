@@ -105,7 +105,7 @@ function finishQ(ok,explain){
   const foot=qp.querySelector('.q-foot');
   foot.innerHTML='<div class="q-result '+(ok?'ok':'no')+'">'+(ok?'太棒了！':'差一点，正确答案是：')+' '+explain+'</div>'+
     '<div class="q-explain">'+ESCQ(q.word)+' = '+q.ids.map(id=>ESCQ(nodeMap[id].label)).join(' + ')+' ≈ '+ESCQ(buildMorphMeaning(q.ids))+'</div>'+
-    '<button class="q-next">'+(quest.i+1<QUEST_N?'下一题 →':'看结果 🏁')+'</button>';
+    '<button class="q-next">'+(quest.i+1<QUEST_N?'下一题':'看结果')+'</button>';
   trackExplore('word',q.word);
   foot.querySelector('.q-next').onclick=()=>{ quest.i++; if(quest.i<QUEST_N) renderQ(); else renderEnd(); };
 }
@@ -133,9 +133,9 @@ function renderEnd(){
   const s=quest.score; const stars=s>=9?3:s>=6?2:s>=3?1:0;
   let best=0; try{ best=+(localStorage.getItem('etym_quest_best')||0); if(s>best){ best=s; localStorage.setItem('etym_quest_best',String(s)); } }catch(e){}
   qp.innerHTML='<div class="q-end"><div class="q-stars">'+'⭐'.repeat(stars)+'<span class="dim">'+'⭐'.repeat(3-stars)+'</span></div>'+
-    '<div class="q-endtitle">'+(stars===3?'探险大师！':stars===2?'干得漂亮！':stars===1?'不错的开始！':'再试一次，你可以的！')+'</div>'+
+    '<div class="q-endtitle">'+(stars===3?'全对，太厉害了':stars===2?'做得很好':stars===1?'不错的开始':'再来一次')+'</div>'+
     '<div class="q-endscore">答对 '+s+' / '+QUEST_N+' 题 · 最高纪录 '+best+'</div>'+
-    '<div class="q-endbtns"><button class="q-next" id="q-again">再来一关 🚀</button><button class="q-opt" id="q-done">回到星图</button></div></div>';
+    '<div class="q-endbtns"><button class="q-next" id="q-again">再练一组</button><button class="q-opt" id="q-done">回到工坊</button></div></div>';
   if(stars===3) confetti(undefined,undefined,160);
   Sfx.tada();
   qp.querySelector('#q-again').onclick=openQuest; qp.querySelector('#q-done').onclick=closeQuest;
