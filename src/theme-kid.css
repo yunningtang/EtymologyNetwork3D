@@ -344,3 +344,10 @@ body.kid .ws-more:hover{background:rgba(255,255,255,0.1)}
   .ws-row-bricks{min-width:0;width:100%}
   .ws-row-word{min-width:0}
 }
+
+/* pixel sprites */
+.px{image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 0 rgba(0,0,0,0.25))}
+.ws-box-icon .px,.ws-tile-icon .px,.ws-wall-icon .px,.q-rootpx .px{display:block}
+.ws-wall-icon{line-height:0}
+.q-rootpx{margin-right:4px}
+.tt-icon{line-height:0;display:inline-flex;align-items:center}

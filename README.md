@@ -74,7 +74,7 @@ python3 -m http.server 8000   # 然后访问 http://localhost:8000
 | 层级 | 技术方案 |
 |------|---------|
 | 架构 | 纯静态页面 — 逻辑按模块拆分在 `src/`（经典脚本、共享全局作用域，双击 `index.html` 即可运行），词汇数据独立为 `data/words.js`，无构建步骤、无任何第三方库 |
-| 界面 | 纯 HTML/CSS 文档视图，无 WebGL。两套主题：默认「探险」（奶油色厚边面板、可按压按钮、词素表情图标）和「夜间」（Liquid Glass 毛玻璃）；在学习面板里切换 |
+| 界面 | 纯 HTML/CSS 文档视图，无 WebGL。每个盒子和每块积木都有一张 16×16 像素画预览（文本格子存储，运行时渲染成清晰的 SVG）。两套主题：默认「探险」（奶油色厚边面板、可按压按钮）和「夜间」（Liquid Glass 毛玻璃）；在学习面板里切换 |
 | 字体 | 系统字体栈（PingFang / 微软雅黑 / SF Mono 等），不加载 Google Fonts |
 | 数据 | 206 个词素；6,000+ 个中考/高考/CET4/CET6/考研/TOEFL/IELTS 核心词，每个词的词素映射都经过校验，释义与音标来自 [ECDICT](https://github.com/skywind3000/ECDICT) |
 | 存储 | `localStorage` 持久化收藏夹和学习进度 |
@@ -96,12 +96,14 @@ EtymologyNetwork3D/
 │   ├── workshop.js           # 积木工坊：盒子 → 积木 → 单词墙
 │   ├── bricks.js             # 积木组件（拼装动画、换前缀、拖拽）+ 合成音效
 │   ├── quest.js              # 「今天探索」闯关小游戏 + 彩纸/提示
-│   ├── icons.js              # 词素表情图标
+│   ├── pixels.js             # 像素画渲染（16×16 文本格子 → SVG）与 16 个盒子的图
+│   ├── icons.js              # 分类表情（仅作文字回退）
 │   ├── theme-kid.css         # 「探险」主题与闯关面板样式
 │   └── main.js               # 启动流程
 ├── data/
 │   ├── words.js              # 词汇数据：单词、词素映射、释义、音标、等级（由 scripts/vocab/build.js 生成）
-│   └── images.js             # 词素配图的文件名与署名（由 scripts/images/fetch-commons.js 生成）
+│   ├── images.js             # 词素配图的文件名与署名（由 scripts/images/fetch-commons.js 生成）
+│   └── sprites.js            # 206 块积木的像素画（16×16 文本格子，手绘）
 ├── assets/morphemes/         # 词素配图（Wikimedia Commons，自由许可）
 ├── scripts/vocab/
 │   ├── fetch.js              # 下载 ECDICT 词典与词根库到 scripts/output/（已 gitignore）

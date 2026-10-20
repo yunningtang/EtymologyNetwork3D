@@ -82,7 +82,7 @@ function showTooltip(node,x,y){
   ttBadge.style.background=(node.colorHex||'#999')+'26'; ttBadge.style.color=node.colorHex||'#999';
   ttLabel.textContent=node.label; ttOrigin.textContent=node.origin||'';
   // icon badge (kid theme shows it large; glass theme keeps it subtle)
-  if(node.type!=='w' && !node.isVirtual){ const ic=document.createElement('span'); ic.className='tt-icon'; ic.textContent=morphIcon(node.id); ttLabel.prepend(ic); }
+  if(node.type!=='w' && !node.isVirtual){ const ic=document.createElement('span'); ic.className='tt-icon'; ic.innerHTML=morphSprite(node.id,32); ttLabel.prepend(ic); }
   ttOrigin.style.display=node.origin?'block':'none';
 
   // Primary meaning area: only show curated/verified translations.

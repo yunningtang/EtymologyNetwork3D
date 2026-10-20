@@ -86,7 +86,7 @@ function renderQ(){
       '<div class="q-slots">'+q.ids.map(()=>'<span class="q-slot"></span>').join('')+'</div>'+
       '<div class="q-tray-hint">积木盒（拖上去或点一下；放错了点它拿回来）</div><div class="q-chips"></div><div class="q-sub">多了一块用不上的积木，小心别选错</div>';
   } else {
-    body='<div class="q-title">哪个单词里藏着这个词根？</div><div class="q-rootrow">'+morphChip(q.root,morphIcon(q.root)+' ')+'<span class="q-rootmeaning">'+ESCQ(nodeMap[q.root].meaning)+'</span></div>'+
+    body='<div class="q-title">哪个单词里藏着这个词根？</div><div class="q-rootrow"><span class="q-rootpx">'+morphSprite(q.root,48)+'</span>'+morphChip(q.root)+'<span class="q-rootmeaning">'+ESCQ(nodeMap[q.root].meaning)+'</span></div>'+
       '<div class="q-opts">'+q.options.map((o,k)=>'<button class="q-opt" data-k="'+k+'"><span class="q-key">'+(k+1)+'</span>'+ESCQ(o)+'</button>').join('')+'</div>';
   }
   qp.innerHTML=head+'<div class="q-body">'+body+'</div><div class="q-foot"></div>';

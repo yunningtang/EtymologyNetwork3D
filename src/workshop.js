@@ -47,7 +47,7 @@ function renderShelf(){
       const items=bricksIn(cat); const wc=items.reduce((a,n)=>a+visibleWordsOf(n).length,0);
       const sample=items.slice().sort((a,b)=>b.wordCount-a.wordCount).slice(0,3);
       html+='<button class="ws-box ws-box-'+type+'" data-cat="'+cat+'" style="--cc:'+(CAT_META[cat]||{}).hex+'">'+
-        '<div class="ws-box-lid"><span class="ws-box-icon">'+(CAT_ICON[cat]||'🧰')+'</span><span class="ws-box-name">'+esc(catZh(cat))+'</span><span class="ws-box-en">'+esc(catEn(cat))+'</span></div>'+
+        '<div class="ws-box-lid"><span class="ws-box-icon">'+boxSprite(cat,44)+'</span><span class="ws-box-name">'+esc(catZh(cat))+'</span><span class="ws-box-en">'+esc(catEn(cat))+'</span></div>'+
         '<div class="ws-box-peek">'+sample.map(n=>'<span class="brick mini brick-'+n.type+'" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-label">'+esc(n.label)+'</span></span>').join('')+'</div>'+
         '<div class="ws-box-meta">'+items.length+' 块积木 · '+wc+' 个词</div></button>';
     });
@@ -62,11 +62,11 @@ function renderShelf(){
 function renderBox(cat){
   const items=bricksIn(cat).sort((a,b)=>visibleWordsOf(b).length-visibleWordsOf(a).length);
   const type=BOX_TYPE[cat];
-  const parts=[{label:'🧰 工坊',go:()=>wsGo('shelf')},{label:(CAT_ICON[cat]||'')+' '+catZh(cat)}];
-  let html=crumbs(parts)+'<div class="ws-head"><h2>'+(CAT_ICON[cat]||'')+' '+esc(catZh(cat))+'<small>'+esc(catEn(cat))+' · '+TYPE_ZH[type]+'</small></h2><p>'+(type==='p'?'这些积木放在单词左边。':type==='r'?'这些积木是单词的核心，放在中间。':'这些积木放在单词右边，决定它是名词、形容词还是动词。')+' 点一块积木，看它能拼出哪些词。</p></div><div class="ws-bricks">';
+  const parts=[{label:'工坊',go:()=>wsGo('shelf')},{label:catZh(cat)}];
+  let html=crumbs(parts)+'<div class="ws-head"><h2>'+boxSprite(cat,40)+' '+esc(catZh(cat))+'<small>'+esc(catEn(cat))+' · '+TYPE_ZH[type]+'</small></h2><p>'+(type==='p'?'这些积木放在单词左边。':type==='r'?'这些积木是单词的核心，放在中间。':'这些积木放在单词右边，决定它是名词、形容词还是动词。')+' 点一块积木，看它能拼出哪些词。</p></div><div class="ws-bricks">';
   items.forEach(n=>{
     const wc=visibleWordsOf(n).length; const zh=(n.meaning||'').match(/[一-鿿].*$/);
-    html+='<button class="ws-brick-tile'+(wc?'':' dim')+'" data-id="'+n.id+'"><span class="ws-tile-icon">'+morphIcon(n.id)+'</span>'+
+    html+='<button class="ws-brick-tile'+(wc?'':' dim')+'" data-id="'+n.id+'"><span class="ws-tile-icon">'+morphSprite(n.id,56)+'</span>'+
       '<span class="brick brick-'+n.type+'" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-studs"><i></i><i></i><i></i></span><span class="brick-label">'+esc(n.label)+'</span></span>'+
       '<span class="ws-tile-meaning">'+esc(zh?zh[0]:n.meaning)+'</span><span class="ws-tile-count">'+(wc?wc+' 个词':'这个等级没有词')+'</span>'+
       (isFavorite(n.id)?'<span class="ws-tile-fav">❤️</span>':'')+(_progCache&&_progCache.morphemes[n.id]?'<span class="ws-tile-done">✓</span>':'')+'</button>';
@@ -85,11 +85,11 @@ function wallRow(w){
 function renderWall(id){
   const n=nodeMap[id]; if(!n){ wsGo('shelf'); return; }
   const cat=NODE_CAT[id]; const words=visibleWordsOf(n).map(w=>w.en);
-  const parts=[{label:'🧰 工坊',go:()=>wsGo('shelf')},{label:(CAT_ICON[cat]||'')+' '+catZh(cat),go:()=>wsGo('box',cat)},{label:morphIcon(id)+' '+n.label}];
+  const parts=[{label:'工坊',go:()=>wsGo('shelf')},{label:catZh(cat),go:()=>wsGo('box',cat)},{label:n.label}];
   const img=(window.MORPH_IMAGES||{})[id];
   const fav=isFavorite(id);
   let html=crumbs(parts)+'<div class="ws-wall-head">'+
-    '<div class="ws-wall-brick"><span class="ws-wall-icon">'+morphIcon(id)+'</span>'+
+    '<div class="ws-wall-brick"><span class="ws-wall-icon">'+morphSprite(id,96)+'</span>'+
       '<span class="brick brick-'+n.type+' in big" style="--bc:'+BRICK_COLOR[n.type]+';--bd:'+BRICK_DARK[n.type]+'"><span class="brick-studs"><i></i><i></i><i></i><i></i></span><span class="brick-label">'+esc(n.label)+'</span></span></div>'+
     '<div class="ws-wall-info"><div class="ws-wall-title"><span class="ws-wall-type ws-type-'+n.type+'">'+TYPE_ZH[n.type]+'</span><h2>'+esc(n.label)+'</h2>'+
       '<button class="ws-fav'+(fav?' on':'')+'" title="收藏">'+(fav?'❤️':'🤍')+'</button></div>'+

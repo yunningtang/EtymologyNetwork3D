@@ -30,7 +30,7 @@ function brickEl(id,opts){
   b.innerHTML='<div class="brick-studs">'+'<i></i>'.repeat(studs)+'</div><div class="brick-label">'+(n?n.label:id).replace(/[&<>]/g,'')+'</div>';
   if(opts.meaning!==false && n){
     const m=document.createElement('div'); m.className='brick-meaning';
-    const zh=(n.meaning||'').match(/[一-鿿].*$/); m.textContent=(typeof morphIcon==='function'?morphIcon(id)+' ':'')+(zh?zh[0]:n.meaning);
+    const zh=(n.meaning||'').match(/[一-鿿].*$/); m.textContent=(zh?zh[0]:n.meaning);
     b.appendChild(m);
   }
   return b;
