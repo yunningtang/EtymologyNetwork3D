@@ -48,27 +48,10 @@ function selectSearchResult(node){
   searchInput.value=node.label; searchQuery=node.label;
   searchClear.style.display='block';
   if(node.isVirtual){
-    // Virtual word node — highlight its morphemes and show word tooltip
-    const morphIds = node.morphemes ? node.morphemes.map(m=>m.id) : [];
-    const primaryId = morphIds.find(id => nodeMap[id] && nodeMap[id].type==='r') || morphIds[0];
-    if(primaryId && nodeMap[primaryId]){
-      // Show word info on the primary morpheme's position
-      pinnedNode = nodeMap[primaryId];
-      pinnedWordNode = node; // store virtual word for tooltip
-      projVec.set(pinnedNode.x,pinnedNode.y,pinnedNode.z); projVec.project(camera);
-      const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
-      showTooltip(node,sx,sy); tooltip.classList.add('pinned','visible');
-      // Camera focus
-      const len=Math.sqrt(pinnedNode.x**2+pinnedNode.y**2+pinnedNode.z**2);
-      if(len>0.01){ camT.theta=Math.atan2(pinnedNode.x,pinnedNode.z); camT.phi=Math.acos(Math.max(-1,Math.min(1,pinnedNode.y/len))); }
-      camT.dist=120; autoRotate=false; lastInteraction=Date.now();
-      // Highlight morphemes of this word
-      highlightSet = new Set(morphIds.filter(id=>nodeMap[id]));
-      morphIds.forEach(id=>{ if(adjacency[id]) adjacency[id].forEach(aid=>highlightSet.add(aid)); });
-      applyHighlight();
-    }
+    // a word: open its card near the search box
+    showWordDetail(node.label, Math.max(12, window.innerWidth/2-220), 140);
   } else {
-    pinNode(node); applyHighlight();
+    openMorph(node.id);
   }
 }
 let pinnedWordNode = null; // virtual word node for tooltip tracking
@@ -77,18 +60,13 @@ searchInput.addEventListener('input',function(){
   clearTimeout(searchDebounce);
   const val=this.value.trim();
   searchClear.style.display=val?'block':'none';
-  if(!val){ searchQuery=''; searchCount.style.display='none'; searchDropdown.classList.remove('visible'); applyHighlight(); return; }
+  if(!val){ searchQuery=''; searchCount.style.display='none'; searchDropdown.classList.remove('visible'); return; }
   searchDebounce=setTimeout(()=>{
     searchQuery=val;
     if(pinnedNode) unpinNode();
     searchResults=fuzzySearch(val);
     renderDropdown(searchResults);
-    // Count for highlight set
-    const hs=computeHighlightSet();
-    const c=hs?[...hs].filter(id=>nodeMap[id]).length:0;
-    searchCount.textContent=c+' found'; searchCount.style.display='block';
-    centerOnResults();
-    applyHighlight();
+    searchCount.textContent=searchResults.length+' 个'; searchCount.style.display='block';
   },80);
 });
 
@@ -107,33 +85,7 @@ searchInput.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{ if(!e.target.closest('#search-wrap')) searchDropdown.classList.remove('visible'); });
 
 searchClear.onclick=()=>{ searchInput.value=''; searchQuery=''; searchClear.style.display='none';
-  searchCount.style.display='none'; searchDropdown.classList.remove('visible'); searchResults=[]; applyHighlight(); searchInput.focus(); };
-
-function centerOnResults(){
-  if(!searchQuery) return;
-  const q=searchQuery.toLowerCase();
-  let cx=0,cy=0,cz=0,c=0;
-  // Check if query matches a word — center on its morphemes
-  const wordMorphs = WORD_DATA.get(q);
-  if(wordMorphs){
-    wordMorphs.forEach(mid => {
-      const n = nodeMap[mid];
-      if(n){ cx+=n.x;cy+=n.y;cz+=n.z;c++; }
-    });
-  }
-  // Also check morpheme label/meaning matches
-  nodes.forEach(n=>{
-    if(n.label.toLowerCase().includes(q)||(n.meaning&&n.meaning.toLowerCase().includes(q))){
-      cx+=n.x;cy+=n.y;cz+=n.z;c++;
-    }
-  });
-  if(c===0) return;
-  cx/=c;cy/=c;cz/=c;
-  const len=Math.sqrt(cx*cx+cy*cy+cz*cz);
-  if(len<0.01) return;
-  camT.theta=Math.atan2(cx,cz);
-  camT.phi=Math.acos(Math.max(-1,Math.min(1,cy/len)));
-}
+  searchCount.style.display='none'; searchDropdown.classList.remove('visible'); searchResults=[]; searchInput.focus(); };
 
 // ============================================================
 //  FILTERS (Type pills + sub-category chips)
@@ -159,7 +111,8 @@ function buildSubFilters(type){
       document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.type==='all'));
       subFiltersEl.querySelectorAll('.sub-chip').forEach(c=>c.classList.remove('active'));
       if(!wasActive){ filterCats.add(cat); chip.classList.add('active'); }
-      if(pinnedNode) unpinNode(); applyHighlight();
+      if(pinnedNode) unpinNode();
+      if(filterCats.size) wsGo('box',cat); else wsGo('shelf');
     };
     if(filterCats.has(cat)) chip.classList.add('active');
     subFiltersEl.appendChild(chip);
@@ -170,7 +123,7 @@ function buildSubFilters(type){
 // Theme: "探险" (kid, default) or "星空" (glass). Persisted.
 (function(){
   let theme='kid'; try{ theme=localStorage.getItem('etym_theme')||'kid'; }catch(e){}
-  const apply=()=>{ document.body.classList.toggle('kid',theme==='kid'); const b=document.getElementById('theme-toggle'); if(b) b.textContent=theme==='kid'?'切换到星空':'切换到探险'; if(typeof nodeMesh!=='undefined'&&nodeMesh) nodeMesh.material.uniforms.uCartoon.value=theme==='kid'?1:0; };
+  const apply=()=>{ document.body.classList.toggle('kid',theme==='kid'); const b=document.getElementById('theme-toggle'); if(b) b.textContent=theme==='kid'?'切换到夜间':'切换到探险'; };
   apply();
   window.applyTheme=apply;
   document.getElementById('theme-toggle').onclick=()=>{ theme=theme==='kid'?'glass':'kid'; try{ localStorage.setItem('etym_theme',theme); }catch(e){} apply(); };
@@ -187,9 +140,9 @@ document.querySelectorAll('.lv-btn').forEach(btn=>{
     this.classList.add('active');
     levelFilter = this.dataset.lv ? new Set(this.dataset.lv.split('')) : new Set();
     document.getElementById('m-nodes').textContent=visibleWordCount();
-    if(pinnedNode){ const n=pinnedWordNode||pinnedNode; if(pinnedWordNode) showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); else showTooltip(n, tooltip.offsetLeft, tooltip.offsetTop); tooltip.classList.add('pinned'); }
+    if(pinnedWordNode){ showWordDetail(pinnedWordNode.label, tooltip.offsetLeft, tooltip.offsetTop, true); }
     if(searchQuery){ searchResults=fuzzySearch(searchQuery); renderDropdown(searchResults); }
-    if(currentView==='2d'){ buildMindmap(); mmRequestRedraw(); }
+    wsRefresh();
   });
 });
 
@@ -199,7 +152,7 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
     this.classList.add('active'); filterType=this.dataset.type;
     filterCats.clear();
     buildSubFilters(filterType);
-    if(pinnedNode) unpinNode(); applyHighlight();
+    if(pinnedNode) unpinNode(); wsGo('shelf');
   });
 });
 
@@ -234,7 +187,7 @@ function renderStudyPanel(){
     item.querySelector('.sp-fav-speak').onclick=(e)=>{ e.stopPropagation(); speakWord(f.word); };
     item.querySelector('.sp-fav-del').onclick=(e)=>{ e.stopPropagation(); toggleFavorite(f.word); renderStudyPanel(); };
     item.onclick=()=>{
-      if(isMorph && nodeMap[f.morphemes[0]]){ pinNode(nodeMap[f.morphemes[0]]); closeStudyPanel(); }
+      if(isMorph && nodeMap[f.morphemes[0]]){ openMorph(f.morphemes[0]); closeStudyPanel(); }
       else { searchInput.value=f.word; searchInput.dispatchEvent(new Event('input')); closeStudyPanel(); }
     };
     favsEl.appendChild(item);
@@ -251,170 +204,22 @@ document.getElementById('study-toggle').onclick=()=>{
 document.getElementById('sp-close').onclick=closeStudyPanel;
 
 // ============================================================
-//  EVENT HANDLERS
+//  EVENT HANDLERS (keyboard)
 // ============================================================
-let isDragging=false, prevMouse={x:0,y:0};
-
-function markInteraction(){ lastInteraction=Date.now(); autoRotate=false; }
-
-// Hover work is gated to one rAF: mousemove (100+ Hz) just records coords;
-// the actual O(N) projection + GPU buffer rewrite runs at most once per frame.
-let _hoverPending=false;
-function scheduleHoverCheck(){
-  if(_hoverPending) return;
-  _hoverPending=true;
-  requestAnimationFrame(()=>{
-    _hoverPending=false;
-    if(currentView!=='3d') return;
-    if(isDragging||pinnedNode) return;
-    const found=findHoveredNode();
-    if(found!==hoveredNode){
-      clearTimeout(tooltipHideTimer);
-      if(found){
-        hoveredNode=found; applyHighlight(); showTooltip(found,mouse.x,mouse.y);
-        document.body.style.cursor='pointer';
-      } else {
-        scheduleHide(); document.body.style.cursor='default';
-      }
-    } else if(hoveredNode){ positionTooltip(mouse.x,mouse.y); }
-  });
-}
-
-window.addEventListener('mousemove',e=>{
-  mouse.x=e.clientX; mouse.y=e.clientY;
-  if(currentView!=='3d') return;
-  if(isDragging){
-    camT.theta+=(e.clientX-prevMouse.x)*0.005;
-    camT.phi-=(e.clientY-prevMouse.y)*0.005;
-    camT.phi=Math.max(0.1,Math.min(Math.PI-0.1,camT.phi));
-    prevMouse.x=e.clientX; prevMouse.y=e.clientY; markInteraction(); return;
-  }
-  if(pinnedNode){
-    // Update pinned tooltip position
-    projVec.set(pinnedNode.x,pinnedNode.y,pinnedNode.z); projVec.project(camera);
-    const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
-    positionTooltip(sx,sy); return;
-  }
-  scheduleHoverCheck();
-});
-
-window.addEventListener('mousedown',e=>{
-  if(currentView!=='3d') return;
-  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')||e.target.closest('#study-panel')||e.target.closest('#search-dropdown')) return;
-  isDragging=true; prevMouse.x=e.clientX; prevMouse.y=e.clientY;
-});
-
-window.addEventListener('mouseup',e=>{
-  if(!isDragging) return;
-  isDragging=false;
-});
-
-// Click handler (separate from drag)
-let mouseDownPos={x:0,y:0};
-window.addEventListener('mousedown',e=>{mouseDownPos.x=e.clientX;mouseDownPos.y=e.clientY;},{capture:true});
-window.addEventListener('click',e=>{
-  if(currentView!=='3d') return;
-  if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'||e.target.closest('#tooltip')||e.target.closest('#study-panel')||e.target.closest('#search-dropdown')) return;
-  const dx=e.clientX-mouseDownPos.x,dy=e.clientY-mouseDownPos.y;
-  if(Math.sqrt(dx*dx+dy*dy)>5) return;
-  mouse.x=e.clientX; mouse.y=e.clientY;
-  const found=findHoveredNode();
-  if(found){ pinNode(found); }
-  else if(pinnedNode){ unpinNode(); }
-});
-
-window.addEventListener('wheel',e=>{
-  // Let tooltip, study panel, and search dropdown scroll naturally
-  const t=e.target;
-  if(currentView!=='3d') return;
-  if(t.closest('#tooltip')||t.closest('#study-panel')||t.closest('#search-dropdown')) return;
-  camT.dist+=e.deltaY*0.15;
-  camT.dist=Math.max(50,Math.min(400,camT.dist));
-  markInteraction(); e.preventDefault();
-},{passive:false});
-
-// Touch support
-let touchStart={x:0,y:0,time:0,isDrag:false};
-let touchStartDist=0;
-
-window.addEventListener('touchstart',e=>{
-  if(e.touches.length===1){
-    touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY,time:Date.now(),isDrag:false};
-    prevMouse.x=e.touches[0].clientX; prevMouse.y=e.touches[0].clientY;
-  } else if(e.touches.length===2){
-    const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
-    touchStartDist=Math.sqrt(dx*dx+dy*dy);
-  }
-  markInteraction();
-},{passive:true});
-
-window.addEventListener('touchmove',e=>{
-  e.preventDefault();
-  if(e.touches.length===1){
-    touchStart.isDrag=true;
-    const dx=e.touches[0].clientX-prevMouse.x, dy=e.touches[0].clientY-prevMouse.y;
-    camT.theta+=dx*0.005; camT.phi-=dy*0.005;
-    camT.phi=Math.max(0.1,Math.min(Math.PI-0.1,camT.phi));
-    prevMouse.x=e.touches[0].clientX; prevMouse.y=e.touches[0].clientY;
-  } else if(e.touches.length===2){
-    const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
-    const d=Math.sqrt(dx*dx+dy*dy);
-    camT.dist*=touchStartDist/d; camT.dist=Math.max(50,Math.min(400,camT.dist));
-    touchStartDist=d;
-  }
-},{passive:false});
-
-window.addEventListener('touchend',e=>{
-  const dt=Date.now()-touchStart.time;
-  if(!touchStart.isDrag&&dt<300&&e.changedTouches.length===1){
-    // TAP! Treat as click
-    mouse.x=touchStart.x; mouse.y=touchStart.y;
-    const found=findHoveredNode();
-    if(found){ pinNode(found); }
-    else if(pinnedNode){ unpinNode(); }
-  }
-});
-
-// Keyboard
+let appState='loading'; // loading -> intro -> active
 window.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     if(document.getElementById('study-panel').classList.contains('open')){ closeStudyPanel(); return; }
     if(searchDropdown.classList.contains('visible')){ searchDropdown.classList.remove('visible'); return; }
+    if(pinnedNode||pinnedWordNode||tooltip.classList.contains('visible')){ unpinNode(); return; }
+    if(ws.view!=='shelf'){ wsGo(ws.view==='wall'?'box':'shelf', ws.cat); return; }
     searchInput.value=''; searchQuery=''; searchClear.style.display='none';
     searchCount.style.display='none'; searchDropdown.classList.remove('visible'); searchResults=[];
     filterCats.clear(); filterType='all'; buildSubFilters('all');
     document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.type==='all'));
-    if(pinnedNode)unpinNode(); applyHighlight(); searchInput.blur();
+    wsGo('shelf'); searchInput.blur();
   }
   if(e.key==='/'&&document.activeElement!==searchInput){ e.preventDefault(); searchInput.focus(); }
-  // Keyboard navigation of the 3D globe (ignored while typing)
-  const typing=document.activeElement&&(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA');
-  if(typing||currentView!=='3d'||appState!=='active') return;
-  const step=0.12;
-  if(e.key==='ArrowLeft'){ camT.theta-=step; markInteraction(); e.preventDefault(); }
-  else if(e.key==='ArrowRight'){ camT.theta+=step; markInteraction(); e.preventDefault(); }
-  else if(e.key==='ArrowUp'){ camT.phi=Math.max(0.1,camT.phi-step); markInteraction(); e.preventDefault(); }
-  else if(e.key==='ArrowDown'){ camT.phi=Math.min(Math.PI-0.1,camT.phi+step); markInteraction(); e.preventDefault(); }
-  else if(e.key==='+'||e.key==='='){ camT.dist=Math.max(50,camT.dist-20); markInteraction(); e.preventDefault(); }
-  else if(e.key==='-'||e.key==='_'){ camT.dist=Math.min(400,camT.dist+20); markInteraction(); e.preventDefault(); }
-  else if(e.key==='Enter'){
-    // Pin the bright node closest to the screen centre
-    mouse.x=window.innerWidth/2; mouse.y=window.innerHeight/2;
-    let best=null, bd=Infinity;
-    nodes.forEach(n=>{
-      if(highlightSet&&!highlightSet.has(n.id)) return;
-      projVec.set(n.x,n.y,n.z); projVec.project(camera); if(projVec.z>1) return;
-      const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
-      const d=Math.hypot(sx-mouse.x,sy-mouse.y); if(d<bd){bd=d;best=n;}
-    });
-    if(best){ pinNode(best); e.preventDefault(); }
-  }
-});
-
-// Resize
-window.addEventListener('resize',()=>{
-  camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight); resizeLabels();
 });
 
 // ============================================================
@@ -432,38 +237,23 @@ function animateCounter(el,target){
 // ============================================================
 //  INTRO SEQUENCE
 // ============================================================
-let appState='loading'; // loading -> intro -> active
 let introStart=0;
 const INTRO_DUR=2800;
 const introOverlay=document.getElementById('intro-overlay');
 const hint=document.getElementById('hint');
-const instructions=document.getElementById('instructions');
 
 function startIntro(){
   appState='intro'; introStart=performance.now();
-  cam.dist=500; camT.dist=175;
   document.getElementById('loading').classList.add('hide');
   setTimeout(()=>{document.getElementById('loading').style.display='none';},1000);
-  // Start stats animation
   animateCounter(document.getElementById('m-nodes'),visibleWordCount()||MORPHEMES.length);
-  animateCounter(document.getElementById('m-edges'),edges.length);
   animateCounter(document.getElementById('m-clusters'),MORPHEMES.length);
+  // tagline fades in, holds, fades out; then the workshop is live
+  introOverlay.style.display='flex'; introOverlay.style.opacity=0;
+  requestAnimationFrame(()=>{ introOverlay.style.opacity=1; });
+  setTimeout(()=>{ introOverlay.style.opacity=0; },1900);
+  setTimeout(()=>{ appState='active'; introOverlay.style.display='none';
+    setTimeout(()=>{hint.classList.add('visible');},200); updateStudyBadge();
+    setTimeout(()=>{hint.classList.remove('visible');},7000); },INTRO_DUR);
 }
 
-function updateIntro(){
-  if(appState!=='intro') return;
-  const elapsed=performance.now()-introStart;
-  const p=Math.min(elapsed/INTRO_DUR,1);
-  // Tagline fade: in 0-0.3, visible 0.3-0.7, out 0.7-1.0
-  let op=0;
-  if(p<0.25) op=p/0.25;
-  else if(p<0.65) op=1;
-  else op=Math.max(0,(1-p)/0.35);
-  introOverlay.style.opacity=op;
-  if(p>=1){
-    appState='active'; introOverlay.style.display='none';
-    setTimeout(()=>{hint.classList.add('visible');},300);
-    setTimeout(()=>{instructions.classList.add('visible');updateStudyBadge();},800);
-    setTimeout(()=>{hint.classList.remove('visible');},8000);
-  }
-}

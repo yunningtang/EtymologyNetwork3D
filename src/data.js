@@ -183,6 +183,13 @@ function shortCN(cn){
   s=s.split(/[,，;；]/).slice(0,2).join('，');
   return s.length>14 ? s.slice(0,13)+'…' : s;
 }
+// UI state shared across modules (declared early because several files read it)
+let pinnedNode=null;            // morpheme node the card is pinned to (legacy; the workshop opens walls instead)
+let ttDragged=false;            // card was dragged by hand
+let searchQuery='', filterType='all';
+let searchResults=[], sdActiveIdx=-1, searchDebounce=null;
+let filterCats=new Set();       // sub-category filter (semantic boxes)
+
 // Exam-level filter: empty = show everything; otherwise a word must carry one of the selected codes.
 // Supplementary words without a level (added for sparse morphemes) only show when no filter is active.
 let levelFilter = new Set();

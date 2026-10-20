@@ -15,7 +15,7 @@ function buildGraph() {
 
     const node = { id:m.id, type:m.type, label:m.morph, origin:m.origin, meaning:m.meaning, story:m.story||'',
       wordList: allWords.slice(0, 300), wordCount: allWords.length,
-      color: new THREE.Color(hex), colorHex: hex, catLabel: getCatLabel(m.id),
+      colorHex: hex, catLabel: getCatLabel(m.id),
       x:0,y:0,z:0,vx:0,vy:0,vz:0 };
     nodes.push(node); nodeMap[m.id]=node; adjacency[m.id]=new Set();
   });
@@ -129,40 +129,4 @@ function buildEtymologyStr(w){
   }).filter(Boolean).join(' + ');
 }
 
-// ============================================================
-//  FORCE-DIRECTED LAYOUT
-// ============================================================
-const SPHERE_R = 80;
-function initPositions() {
-  nodes.forEach(n => {
-    const t=Math.random()*Math.PI*2, p=Math.acos(2*Math.random()-1);
-    const r=SPHERE_R*0.6;
-    n.x=r*Math.sin(p)*Math.cos(t)+(Math.random()-0.5)*10;
-    n.y=r*Math.sin(p)*Math.sin(t)+(Math.random()-0.5)*10;
-    n.z=r*Math.cos(p)+(Math.random()-0.5)*10;
-  });
-}
-function runSimulation(steps) {
-  // All nodes are morphemes now — direct N² repulsion is fine for ~205 nodes
-  const repStr=250, attStr=0.015, tDist=12, damp=0.80, dThr=80;
-  for(let s=0;s<steps;s++){
-    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
-      const a=nodes[i],b=nodes[j]; let dx=a.x-b.x,dy=a.y-b.y,dz=a.z-b.z;
-      const d2=dx*dx+dy*dy+dz*dz; if(d2>dThr*dThr||d2<0.01)continue;
-      const d=Math.sqrt(d2),f=repStr/d2; dx/=d;dy/=d;dz/=d;
-      a.vx+=dx*f;a.vy+=dy*f;a.vz+=dz*f; b.vx-=dx*f;b.vy-=dy*f;b.vz-=dz*f;
-    }
-    edges.forEach(e=>{
-      const a=nodeMap[e.source],b=nodeMap[e.target]; if(!a||!b)return;
-      let dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z; const d=Math.sqrt(dx*dx+dy*dy+dz*dz);
-      if(d<0.01)return; const f=(d-tDist)*attStr; dx/=d;dy/=d;dz/=d;
-      a.vx+=dx*f;a.vy+=dy*f;a.vz+=dz*f; b.vx-=dx*f;b.vy-=dy*f;b.vz-=dz*f;
-    });
-    nodes.forEach(n=>{
-      const tR=SPHERE_R*0.6;
-      const d=Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z);
-      if(d>0.01){const rf=(tR-d)*0.005; n.vx+=(n.x/d)*rf;n.vy+=(n.y/d)*rf;n.vz+=(n.z/d)*rf;}
-      n.vx*=damp;n.vy*=damp;n.vz*=damp; n.x+=n.vx;n.y+=n.vy;n.z+=n.vz;
-    });
-  }
-}
+// (3D force layout removed — the workshop view is a plain document)

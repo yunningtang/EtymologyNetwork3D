@@ -19,29 +19,32 @@
 
 <!-- Loading -->
 <div id="loading">
-  <div class="brand-load">Etymology Network</div>
+  <div class="brand-load">词根积木工坊</div>
   <div class="loader-ring"></div>
-  <div id="load-status">正在点亮词根星球…</div>
+  <div id="load-status">正在把积木摆上架…</div>
   <div id="load-progress"><div id="load-bar"></div></div>
 </div>
 
 <!-- Intro Overlay -->
 <div id="intro-overlay">
   <div class="tagline">每个英语单词，都是拼出来的</div>
-  <div class="tagline-sub">206 个词根星球 · 6,000 多个单词 · 一张会动的星图</div>
+  <div class="tagline-sub">206 块积木 · 6,000 多个单词 · 全都能拼出来</div>
 </div>
 
 <!-- Hint -->
 <div id="hint">
   <span class="pulse-dot"></span>
-  <span>点一颗星球，看看它藏着哪些单词</span>
+  <span>打开一个积木盒，看看里面能拼出什么</span>
 </div>
+
+<!-- Workshop (main view) -->
+<div id="workshop" aria-live="polite"></div>
 
 <!-- Top Bar -->
 <div id="topbar">
-  <div id="brand">Etymology Network</div>
+  <div id="brand">词根积木工坊</div>
   <div id="metrics">
-    Words <b id="m-nodes">0</b> &nbsp;·&nbsp; Morphemes <b id="m-clusters">0</b> &nbsp;·&nbsp; Connections <b id="m-edges">0</b>
+    <b id="m-nodes">0</b> 个词 &nbsp;·&nbsp; <b id="m-clusters">0</b> 块积木 &nbsp;·&nbsp; 16 个盒子
   </div>
 </div>
 
@@ -74,12 +77,6 @@
 </div>
 <div id="sub-filters"></div>
 
-<!-- Instructions -->
-<div id="instructions">
-  拖拽旋转 · 滚轮缩放<br>
-  <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 旋转 &nbsp; <kbd>+</kbd><kbd>−</kbd> 缩放 &nbsp; <kbd>Enter</kbd> 选中中间那颗<br>
-  <kbd>/</kbd> 搜索 &nbsp; <kbd>Esc</kbd> 回到全图
-</div>
 
 <!-- Study Toggle & Panel -->
 <button id="study-toggle" aria-label="Study progress 学习进度" aria-haspopup="dialog">
@@ -134,22 +131,9 @@
   </div>
 </div>
 
-<!-- View Toggle -->
-<div id="view-toggle">
-  <button class="view-btn active" data-view="3d">🪐 星图</button>
-  <button class="view-btn" data-view="2d">🗺️ 地图</button>
-</div>
-
-<!-- 2D Mindmap -->
-<div id="mindmap-container">
-  <canvas id="mindmap-canvas"></canvas>
-</div>
-<div id="mindmap-hint">点一个词根，展开它的单词家族</div>
 
 <!-- Label canvas for morpheme names -->
-<canvas id="label-canvas"></canvas>
 
-<script src="vendor/three.min.js"></script>
 <script src="data/words.js"></script>
 <script src="data/images.js"></script>
 <script src="src/morphemes.js"></script>
@@ -158,13 +142,10 @@
 <script src="src/data.js"></script>
 <script src="src/search.js"></script>
 <script src="src/graph.js"></script>
-<script src="src/scene3d.js"></script>
 <script src="src/study.js"></script>
-<script src="src/highlight.js"></script>
 <script src="src/tooltip.js"></script>
 <script src="src/ui.js"></script>
-<script src="src/loop.js"></script>
-<script src="src/mindmap.js"></script>
+<script src="src/workshop.js"></script>
 <script src="src/quest.js"></script>
 <script src="src/main.js"></script>
 </body>

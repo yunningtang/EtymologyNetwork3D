@@ -5,18 +5,7 @@
 //  HOVER DETECTION
 // ============================================================
 const mouse={x:0,y:0};
-function findHoveredNode(){
-  let closest=null, cd=Infinity;
-  nodes.forEach(n=>{
-    projVec.set(n.x,n.y,n.z); projVec.project(camera);
-    if(projVec.z>1) return;
-    const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
-    const dx=sx-mouse.x, dy=sy-mouse.y, dist=Math.sqrt(dx*dx+dy*dy);
-    const thr=28;
-    if(dist<thr&&dist<cd){cd=dist;closest=n;}
-  });
-  return closest;
-}
+// (hover detection removed with the 3D view)
 
 // ============================================================
 //  TOOLTIP
@@ -82,7 +71,7 @@ function showWordDetail(word, x, y, _fromBack){
     pinnedWordNode = vNode;
   }
   showTooltip(vNode, x, y);
-  tooltip.classList.add('pinned');
+  tooltip.classList.add('pinned','visible');
 }
 
 function showTooltip(node,x,y){
@@ -330,7 +319,7 @@ function showTooltip(node,x,y){
 }
 
 function positionTooltip(x,y){
-  const tw=380, th=tooltip.offsetHeight||220;
+  const tw=Math.min(440,window.innerWidth-16), th=tooltip.offsetHeight||220;
   let tx=x+18, ty=y-10;
   if(tx+tw>window.innerWidth) tx=x-tw-18;
   if(tx<10) tx=10;
@@ -340,7 +329,7 @@ function positionTooltip(x,y){
 }
 
 function hideTooltip(){ tooltip.classList.remove('visible'); tooltip.classList.remove('pinned'); }
-function scheduleHide(){ tooltipHideTimer=setTimeout(()=>{ if(!pinnedNode){hoveredNode=null;hideTooltip();applyHighlight();} },200); }
+function scheduleHide(){ tooltipHideTimer=setTimeout(()=>{ if(!pinnedNode){hideTooltip();} },200); }
 
 // Tooltip dragging
 (function(){
@@ -373,32 +362,17 @@ document.getElementById('tt-back').onclick=(e)=>{
   const prev=ttHistory.pop();
   if(ttHistory.length===0) document.getElementById('tt-back').style.display='none';
   if(prev.type==='morpheme' && nodeMap[prev.id]){
-    pinnedNode=nodeMap[prev.id]; hoveredNode=nodeMap[prev.id]; applyHighlight();
-    showTooltip(nodeMap[prev.id], prev.x, prev.y); tooltip.classList.add('pinned');
+    openMorph(prev.id);
   } else if(prev.type==='word'){
     showWordDetail(prev.label, prev.x, prev.y, true);
   }
 };
 
-function pinNode(node){
-  pinnedNode=node; hoveredNode=node; autoRotate=false; lastInteraction=Date.now();
-  // Fly camera to face node
-  const len=Math.sqrt(node.x*node.x+node.y*node.y+node.z*node.z);
-  if(len>0.01){
-    camT.theta=Math.atan2(node.x,node.z);
-    camT.phi=Math.acos(Math.max(-1,Math.min(1,node.y/len)));
-    camT.dist=Math.min(cam.dist,160);
-  }
-  applyHighlight();
-  // Show tooltip at projected node position
-  projVec.set(node.x,node.y,node.z); projVec.project(camera);
-  const sx=(projVec.x+1)/2*window.innerWidth, sy=(-projVec.y+1)/2*window.innerHeight;
-  showTooltip(node,sx,sy); tooltip.classList.add('pinned');
-  document.getElementById('hint').classList.remove('visible');
-}
+// A morpheme opens as a wall in the workshop (no floating card needed)
+function pinNode(node){ document.getElementById('hint').classList.remove('visible'); openMorph(node.id); }
 
 function unpinNode(){
-  pinnedNode=null; pinnedWordNode=null; ttDragged=false; tooltip.classList.remove('pinned'); hideTooltip(); applyHighlight(); ttClearHistory();
+  pinnedNode=null; pinnedWordNode=null; ttDragged=false; tooltip.classList.remove('pinned'); hideTooltip(); ttClearHistory();
 }
 
 document.getElementById('tt-close').onclick=()=>unpinNode();
